@@ -5,17 +5,18 @@ import { requirePermission, logAdminAction } from '@/lib/utils/admin-auth';
 // GET /api/admin/artworks/[id] - Get single artwork
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requirePermission('canManageArtworks');
 
+    const { id } = await params;
     const supabase = await createClient();
 
     const { data: artwork, error } = await supabase
       .from('artworks')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) {
@@ -39,11 +40,12 @@ export async function GET(
 // PUT /api/admin/artworks/[id] - Update artwork
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requirePermission('canManageArtworks');
 
+    const { id } = await params;
     const body = await request.json();
     const {
       contest_id,
@@ -79,7 +81,7 @@ export async function PUT(
         style: style || null,
         position: position || 0,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -114,18 +116,19 @@ export async function PUT(
 // DELETE /api/admin/artworks/[id] - Delete artwork
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await requirePermission('canDeleteAny');
 
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check if artwork exists
     const { data: artwork } = await supabase
       .from('artworks')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (!artwork) {
@@ -139,7 +142,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('artworks')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) {
       throw error;

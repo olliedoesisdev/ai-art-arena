@@ -29,7 +29,7 @@ export default function ArtworkList({ artworks }: ArtworkListProps) {
   const router = useRouter();
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const handleDelete = async (id: string, title: string) {
+  const handleDelete = async (id: string, title: string) => {
     if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
       return;
     }

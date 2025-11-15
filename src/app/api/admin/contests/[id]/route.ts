@@ -5,17 +5,18 @@ import { requirePermission, logAdminAction } from '@/lib/utils/admin-auth';
 // GET /api/admin/contests/[id] - Get single contest
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requirePermission('canManageContests');
 
+    const { id } = await params;
     const supabase = await createClient();
 
     const { data: contest, error } = await supabase
       .from('contests')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) {
@@ -39,11 +40,12 @@ export async function GET(
 // PUT /api/admin/contests/[id] - Update contest
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requirePermission('canManageContests');
 
+    const { id } = await params;
     const body = await request.json();
     const { title, week_number, year, start_date, end_date, status } = body;
 
@@ -68,7 +70,7 @@ export async function PUT(
         end_date,
         status,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -103,18 +105,19 @@ export async function PUT(
 // DELETE /api/admin/contests/[id] - Delete contest
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await requirePermission('canDeleteAny');
 
+    const { id } = await params;
     const supabase = await createClient();
 
     // Check if contest exists
     const { data: contest } = await supabase
       .from('contests')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (!contest) {
@@ -128,7 +131,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('contests')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) {
       throw error;
