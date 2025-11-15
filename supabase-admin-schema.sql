@@ -185,7 +185,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- ============================================
--- 11. Insert your first admin user (REPLACE WITH YOUR EMAIL)
+-- 11. Insert your first admin user (olliedoesis.dev@gmail.com)
 -- ============================================
 -- IMPORTANT: After running this schema, you need to:
 -- 1. Sign up in your app with your email
@@ -195,9 +195,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Example (uncomment and modify):
 -- INSERT INTO admin_users (id, email, name, role)
 -- VALUES (
---   'YOUR_USER_ID_FROM_AUTH_USERS',
---   'your-email@example.com',
---   'Your Name',
+--   '-+',
+--   'olliedoesis.dev@gmail.com',
+--   'Oliver White',
 --   'admin'
 -- );
 
