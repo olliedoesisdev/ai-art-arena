@@ -4,7 +4,20 @@ import { Plus } from 'lucide-react';
 import ContestList from '@/components/admin/ContestList';
 import ProtectedLayout from '@/components/admin/ProtectedLayout';
 
-async function getContests() {
+interface Contest {
+  id: string;
+  title: string;
+  week_number: number;
+  year: number;
+  start_date: string;
+  end_date: string;
+  status: string;
+  winner_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+async function getContests(): Promise<Contest[]> {
   const supabase = await createClient();
 
   const { data: contests, error } = await supabase
@@ -17,7 +30,7 @@ async function getContests() {
     return [];
   }
 
-  return contests || [];
+  return (contests || []) as unknown as Contest[];
 }
 
 export default async function ContestsPage() {
