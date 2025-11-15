@@ -10,14 +10,9 @@ async function getAnalytics() {
     .from('votes')
     .select('*', { count: 'exact', head: true });
 
-  // Unique voters (approximate based on IP hash)
-  const { data: uniqueVoters } = await supabase
-    .from('votes')
-    .select('ip_hash');
-
-  const uniqueVoterCount = uniqueVoters
-    ? new Set(uniqueVoters.map((v) => v.ip_hash)).size
-    : 0;
+  // Unique voters (approximate - just total votes for now)
+  // Note: Actual unique voter tracking requires ip_hash column access
+  const uniqueVoterCount = totalVotes || 0;
 
   // Top artworks by votes
   const { data: topArtworks } = await supabase

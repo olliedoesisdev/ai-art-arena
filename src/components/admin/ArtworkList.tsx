@@ -11,7 +11,7 @@ interface Artwork {
   title: string;
   description: string | null;
   image_url: string;
-  artist_name: string;
+  artist_name: string | null;
   vote_count: number;
   created_at: string;
   contests?: {
@@ -93,7 +93,7 @@ export default function ArtworkList({ artworks }: ArtworkListProps) {
           {/* Content */}
           <div className="p-4">
             <h3 className="text-white font-semibold mb-1">{artwork.title}</h3>
-            <p className="text-slate-400 text-sm mb-2">by {artwork.artist_name}</p>
+            <p className="text-slate-400 text-sm mb-2">by {artwork.artist_name || 'Anonymous'}</p>
 
             {artwork.contests && (
               <p className="text-slate-500 text-xs mb-3">

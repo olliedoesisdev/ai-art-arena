@@ -9,14 +9,7 @@ async function getArtworks() {
 
   const { data: artworks, error } = await supabase
     .from('artworks')
-    .select(`
-      *,
-      contests:contest_id (
-        title,
-        week_number,
-        year
-      )
-    `)
+    .select('*')
     .order('created_at', { ascending: false });
 
   if (error) {
