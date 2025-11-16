@@ -4,12 +4,12 @@ import { createHash } from 'crypto'
 
 export const dynamic = 'force-dynamic'
 
-// Helper function to hash IP address for privacy
+// Helper function to hash IP address for privacy (kept for analytics)
 function hashIP(ip: string): string {
   return createHash('sha256').update(ip + process.env.IP_SALT || 'default-salt').digest('hex')
 }
 
-// Helper function to get client IP
+// Helper function to get client IP (kept for analytics)
 function getClientIP(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for')
   const realIP = request.headers.get('x-real-ip')
@@ -38,7 +38,17 @@ export async function POST(request: Request) {
 
     const supabase = await createServerClient()
 
-    // Get client IP and hash it
+    // Get the authenticated user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'You must be logged in to vote' },
+        { status: 401 }
+      )
+    }
+
+    // Get client IP and hash it (for analytics only)
     const clientIP = getClientIP(request)
     const ipHash = hashIP(clientIP)
     const userAgent = request.headers.get('user-agent') || 'unknown'
@@ -75,14 +85,15 @@ export async function POST(request: Request) {
     const { data: canVote, error: canVoteError } = await supabase
       .rpc('can_vote', {
         p_artwork_id: artworkId,
-        p_ip_hash: ipHash,
+        p_user_id: user.id,
+        p_contest_id: contestId,
       })
 
     if (canVoteError) throw canVoteError
 
     if (!canVote) {
       return NextResponse.json(
-        { error: 'You have already voted for this artwork today' },
+        { error: 'You have already voted for this artwork in this contest' },
         { status: 429 }
       )
     }
@@ -93,6 +104,7 @@ export async function POST(request: Request) {
       .insert({
         artwork_id: artworkId,
         contest_id: contestId,
+        user_id: user.id,
         ip_hash: ipHash,
         user_agent: userAgent,
       })
@@ -101,7 +113,7 @@ export async function POST(request: Request) {
       // Check if it's a duplicate vote error
       if (voteError.code === '23505') {
         return NextResponse.json(
-          { error: 'You have already voted for this artwork today' },
+          { error: 'You have already voted for this artwork in this contest' },
           { status: 429 }
         )
       }
@@ -136,27 +148,34 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const artworkId = searchParams.get('artworkId')
+    const contestId = searchParams.get('contestId')
 
-    if (!artworkId) {
+    if (!artworkId || !contestId) {
       return NextResponse.json(
-        { error: 'Artwork ID is required' },
+        { error: 'Artwork ID and Contest ID are required' },
         { status: 400 }
       )
     }
 
     const supabase = await createServerClient()
-    const clientIP = getClientIP(request)
-    const ipHash = hashIP(clientIP)
+
+    // Get the authenticated user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      return NextResponse.json({ canVote: false, requiresAuth: true })
+    }
 
     const { data: canVote, error } = await supabase
       .rpc('can_vote', {
         p_artwork_id: artworkId,
-        p_ip_hash: ipHash,
+        p_user_id: user.id,
+        p_contest_id: contestId,
       })
 
     if (error) throw error
 
-    return NextResponse.json({ canVote })
+    return NextResponse.json({ canVote, requiresAuth: false })
   } catch (error) {
     console.error('Error checking vote status:', error)
     return NextResponse.json(

@@ -1,16 +1,15 @@
 import ActiveContestClient from "@/components/contest/ActiveContestClient";
 import { Suspense } from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 
+// Types
 interface Contest {
-  id: string;
-  title: string;
+  contest_id: string;
   week_number: number;
-  year: number;
   start_date: string;
   end_date: string;
-  status: string;
-  winner_id: string | null;
+  time_remaining: string;
 }
 
 interface Artwork {
@@ -25,17 +24,20 @@ interface Artwork {
   view_count: number;
   created_at: string;
   updated_at: string;
-  artist_name: string;
-  position: number;
 }
 
+// Fetch active contest data
 async function getActiveContest() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/contests/active`,
-    {
-      next: { revalidate: 60 },
-    }
-  );
+  // Determine the base URL based on environment
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
+    ? process.env.NEXT_PUBLIC_SITE_URL
+    : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
+  const res = await fetch(`${baseUrl}/api/contests/active`, {
+    next: { revalidate: 60 },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch active contest");
@@ -44,6 +46,7 @@ async function getActiveContest() {
   return res.json();
 }
 
+// Loading skeleton
 function ContestSkeleton() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
@@ -53,7 +56,7 @@ function ContestSkeleton() {
           <div className="h-6 bg-slate-800 rounded-lg w-48 mx-auto" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3, 4, 5].map((i) => (
+          {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
               className="bg-slate-800/50 rounded-xl h-96 animate-pulse"
@@ -65,6 +68,7 @@ function ContestSkeleton() {
   );
 }
 
+// Main contest component
 async function ActiveContest() {
   const data = await getActiveContest();
   const { contest, artworks } = data as {
@@ -98,6 +102,7 @@ async function ActiveContest() {
   return <ActiveContestClient contest={contest} initialArtworks={artworks} />;
 }
 
+// Page component
 export default function ContestPage() {
   return (
     <Suspense fallback={<ContestSkeleton />}>
@@ -106,7 +111,8 @@ export default function ContestPage() {
   );
 }
 
-export const metadata = {
+// Metadata
+export const metadata: Metadata = {
   title: "AI Art Contest - Vote Now",
   description:
     "Vote for your favorite AI-generated artwork in this week's competition",

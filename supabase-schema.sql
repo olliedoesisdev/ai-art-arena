@@ -75,18 +75,20 @@ CREATE TRIGGER update_artworks_updated_at BEFORE UPDATE ON artworks
 -- Function to get active contest
 CREATE OR REPLACE FUNCTION get_active_contest()
 RETURNS TABLE (
-  id UUID,
-  title TEXT,
+  contest_id UUID,
   week_number INTEGER,
-  year INTEGER,
   start_date TIMESTAMPTZ,
   end_date TIMESTAMPTZ,
-  status TEXT,
-  winner_id UUID
+  time_remaining INTERVAL
 ) AS $$
 BEGIN
   RETURN QUERY
-  SELECT c.id, c.title, c.week_number, c.year, c.start_date, c.end_date, c.status, c.winner_id
+  SELECT
+    c.id as contest_id,
+    c.week_number,
+    c.start_date,
+    c.end_date,
+    (c.end_date - NOW()) as time_remaining
   FROM contests c
   WHERE c.status = 'active'
     AND c.start_date <= NOW()
