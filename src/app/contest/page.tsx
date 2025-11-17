@@ -3,14 +3,11 @@ import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import type { ContestRow } from "@/types/database";
 
 // Types
-interface Contest {
-  contest_id: string;
-  week_number: number;
-  start_date: string;
-  end_date: string;
-  time_remaining: string;
+interface Contest extends ContestRow {
+  time_remaining?: string;
 }
 
 interface Artwork {

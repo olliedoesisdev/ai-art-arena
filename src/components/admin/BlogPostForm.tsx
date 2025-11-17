@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, Eye, Calendar, Tag, FolderOpen, Link as LinkIcon, Image as ImageIcon, Upload, Clock } from 'lucide-react';
+import { Save, Eye, Calendar, Tag, FolderOpen, Link as LinkIcon, Image as ImageIcon, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { TipTapEditor } from '@/components/blog/TipTapEditor';
 import { FAQBlock, generateFAQSchema, type FAQItem } from '@/components/blog/FAQBlock';
@@ -148,14 +148,15 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
             </p>
           );
         case 'heading':
-          const HeadingTag = `h${node.attrs.level}` as keyof JSX.IntrinsicElements;
-          const headingClasses = {
+          const HeadingTag = `h${node.attrs.level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+          const headingClasses: Record<number, string> = {
             1: 'text-3xl font-bold text-white mb-6 mt-8',
             2: 'text-2xl font-bold text-white mb-4 mt-6',
             3: 'text-xl font-semibold text-white mb-3 mt-4',
-          }[node.attrs.level] || 'text-lg font-semibold text-white mb-2';
+          };
+          const className = headingClasses[node.attrs.level as number] || 'text-lg font-semibold text-white mb-2';
           return (
-            <HeadingTag key={index} className={headingClasses}>
+            <HeadingTag key={index} className={className}>
               {node.content?.map((child: any, i: number) => renderInline(child, i))}
             </HeadingTag>
           );

@@ -10,7 +10,10 @@ async function runDiagnostics() {
     features: {}
   };
 
-  // Check 1: Database tables
+  // NOTE: Queries use public.blog_* views which map to admin.blog_* tables
+  // Run database/05-create-public-views.sql to create the views
+
+  // Check 1: Database tables (via public views)
   try {
     const tables = ['blog_posts', 'blog_categories', 'blog_tags', 'blog_post_tags', 'blog_media', 'blog_post_revisions'] as const;
     for (const table of tables) {
@@ -18,7 +21,7 @@ async function runDiagnostics() {
       results.database[table] = !error;
     }
   } catch (error) {
-    results.database.error = 'Failed to check tables';
+    results.database.error = 'Failed to check tables - Run database/05-create-public-views.sql';
   }
 
   // Check 2: Categories seeded
@@ -33,6 +36,7 @@ async function runDiagnostics() {
     results.database.categories = data || [];
   } catch (error) {
     results.database.categories_seeded = false;
+    results.database.error_details = 'Run database/05-create-public-views.sql to create views';
   }
 
   // Check 3: Admin users exist
