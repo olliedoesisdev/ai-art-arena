@@ -4,7 +4,7 @@ import { requirePermission, logAdminAction } from '@/lib/utils/admin-auth';
 
 // GET /api/admin/artworks/[id] - Get single artwork
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -119,7 +119,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const adminUser = await requirePermission('canDeleteAny');
+    await requirePermission('canDeleteAny');
 
     const { id } = await params;
     const supabase = await createClient();
@@ -136,7 +136,7 @@ export async function DELETE(
     }
 
     // Delete votes associated with this artwork
-    await supabase.from('votes').delete().eq('artwork_id', params.id);
+    await supabase.from('votes').delete().eq('artwork_id', id);
 
     // Delete artwork
     const { error } = await supabase
@@ -152,7 +152,7 @@ export async function DELETE(
     await logAdminAction({
       action: 'delete_artwork',
       resourceType: 'artwork',
-      resourceId: params.id,
+      resourceId: id,
       changes: { deleted_artwork: artwork.title },
       ipAddress: request.headers.get('x-forwarded-for') || undefined,
       userAgent: request.headers.get('user-agent') || undefined,

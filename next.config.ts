@@ -39,10 +39,22 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
 
+  // Disable source maps in development to fix parsing errors
+  productionBrowserSourceMaps: false,
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.devtool = false;
+    }
+    return config;
+  },
+
   // Environment variables that should be available in the browser
   env: {
-    NEXT_PUBLIC_APP_URL:
-      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+    NEXT_PUBLIC_SITE_URL:
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.NODE_ENV === "production"
+        ? "https://olliedoesis.dev"
+        : "http://localhost:3000"),
   },
 };
 

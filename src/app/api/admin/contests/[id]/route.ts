@@ -4,7 +4,7 @@ import { requirePermission, logAdminAction } from '@/lib/utils/admin-auth';
 
 // GET /api/admin/contests/[id] - Get single contest
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -108,7 +108,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const adminUser = await requirePermission('canDeleteAny');
+    await requirePermission('canDeleteAny');
 
     const { id } = await params;
     const supabase = await createClient();
@@ -125,7 +125,7 @@ export async function DELETE(
     }
 
     // Delete associated artworks first
-    await supabase.from('artworks').delete().eq('contest_id', params.id);
+    await supabase.from('artworks').delete().eq('contest_id', id);
 
     // Delete contest
     const { error } = await supabase
@@ -141,7 +141,7 @@ export async function DELETE(
     await logAdminAction({
       action: 'delete_contest',
       resourceType: 'contest',
-      resourceId: params.id,
+      resourceId: id,
       changes: { deleted_contest: contest.title },
       ipAddress: request.headers.get('x-forwarded-for') || undefined,
       userAgent: request.headers.get('user-agent') || undefined,

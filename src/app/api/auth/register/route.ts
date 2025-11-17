@@ -5,11 +5,11 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const { email, password, name } = await request.json();
+    const { email, name, redirectUrl } = await request.json();
 
-    if (!email || !password) {
+    if (!email) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: 'Email is required' },
         { status: 400 }
       );
     }
@@ -23,21 +23,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate password length
-    if (password.length < 6) {
-      return NextResponse.json(
-        { error: 'Password must be at least 6 characters' },
-        { status: 400 }
-      );
-    }
-
     const supabase = await createServerClient();
 
-    // Sign up the user with Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // Note: Supabase Auth automatically handles duplicate email checks
+    // No need to manually check for existing users in the auth.users table
+
+    // Send magic link for signup
+    const { error: authError } = await supabase.auth.signInWithOtp({
       email,
-      password,
       options: {
+        emailRedirectTo: redirectUrl || `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
         data: {
           name: name || null,
         },
@@ -51,36 +46,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!authData.user) {
-      return NextResponse.json(
-        { error: 'Failed to create user' },
-        { status: 500 }
-      );
-    }
-
-    // Add user to public_users table
-    const { error: dbError } = await supabase
-      .from('public_users')
-      .insert({
-        id: authData.user.id,
-        email: authData.user.email!,
-        name: name || null,
-      });
-
-    if (dbError) {
-      console.error('Error inserting into public_users:', dbError);
-      // Even if this fails, the auth user is created, so return success
-      // The user can still vote, they just won't be in public_users table
-    }
-
     return NextResponse.json({
       success: true,
-      user: {
-        id: authData.user.id,
-        email: authData.user.email,
-        name: name || null,
-      },
-      message: 'Registration successful! You can now vote.',
+      message: 'Magic link sent! Check your email to complete registration.',
     });
   } catch (error) {
     console.error('Error during registration:', error);

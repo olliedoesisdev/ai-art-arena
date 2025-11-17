@@ -27,7 +27,7 @@ export default function ResetPasswordPage() {
     // Supabase sends the token in the URL hash or as a query parameter
     if (hash || searchParams.has('code')) {
       // The Supabase client will automatically handle the token exchange
-      supabase.auth.getSession().then(({ data: { session }, error }) => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           setValidToken(true);
         } else {

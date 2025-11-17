@@ -10,13 +10,13 @@ interface VoterAuthModalProps {
 }
 
 export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuthModalProps) {
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState<'login' | 'signup'>('signup');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,12 +32,15 @@ export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuth
     setSuccess(null);
 
     try {
+      // Get the base URL for redirects
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+
       if (mode === 'signup') {
-        // Register new user
+        // Register new user with magic link
         const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, name }),
+          body: JSON.stringify({ email, name, redirectUrl }),
         });
 
         const data = await response.json();
@@ -48,48 +51,56 @@ export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuth
           return;
         }
 
-        setSuccess('Account created! Logging you in...');
-
-        // Auto-login after signup
-        const { error: loginError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (loginError) {
-          setError('Account created but login failed. Please try logging in.');
-          setLoading(false);
-          return;
-        }
-
-        setTimeout(() => {
-          onSuccess();
-          onClose();
-        }, 1000);
+        setSuccess('Check your email for a magic link to sign in! (No password needed)');
+        setEmailSent(true);
+        setLoading(false);
       } else {
-        // Login existing user
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
+        // Send magic link for existing user
+        const { error: magicLinkError } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: redirectUrl,
+          },
         });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          setError(data.error || 'Login failed');
+        if (magicLinkError) {
+          setError(magicLinkError.message);
           setLoading(false);
           return;
         }
 
-        setSuccess('Login successful!');
-        setTimeout(() => {
-          onSuccess();
-          onClose();
-        }, 500);
+        setSuccess('Check your email for a magic link to sign in!');
+        setEmailSent(true);
+        setLoading(false);
       }
     } catch (err) {
       setError('An unexpected error occurred');
+      setLoading(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: redirectUrl,
+        },
+      });
+
+      if (error) {
+        setError(error.message);
+      } else {
+        setSuccess('Email sent! Check your inbox.');
+      }
+    } catch (err) {
+      setError('Failed to resend email');
+    } finally {
       setLoading(false);
     }
   };
@@ -98,6 +109,7 @@ export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuth
     setMode(mode === 'login' ? 'signup' : 'login');
     setError(null);
     setSuccess(null);
+    setEmailSent(false);
   };
 
   return (
@@ -120,8 +132,8 @@ export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuth
         </h2>
         <p className="text-slate-400 text-sm mb-6">
           {mode === 'login'
-            ? 'Welcome back! Sign in to cast your vote.'
-            : 'Register with your email to start voting on amazing AI art!'}
+            ? 'Enter your email to receive a magic link - no password needed!'
+            : 'Register with just your email - no password required!'}
         </p>
 
         {/* Form */}
@@ -138,7 +150,7 @@ export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuth
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Your name"
-                disabled={loading}
+                disabled={loading || emailSent}
               />
             </div>
           )}
@@ -155,28 +167,8 @@ export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuth
               required
               className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="you@example.com"
-              disabled={loading}
+              disabled={loading || emailSent}
             />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="••••••••"
-              disabled={loading}
-            />
-            {mode === 'signup' && (
-              <p className="text-xs text-slate-500 mt-1">At least 6 characters</p>
-            )}
           </div>
 
           {/* Error Message */}
@@ -194,13 +186,24 @@ export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuth
           )}
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 text-white font-medium rounded-lg transition-colors"
-          >
-            {loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}
-          </button>
+          {!emailSent ? (
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 text-white font-medium rounded-lg transition-colors"
+            >
+              {loading ? 'Sending...' : mode === 'login' ? 'Send Magic Link' : 'Create Account & Send Link'}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResendEmail}
+              disabled={loading}
+              className="w-full px-4 py-3 bg-slate-600 hover:bg-slate-700 disabled:bg-slate-800 text-white font-medium rounded-lg transition-colors"
+            >
+              {loading ? 'Sending...' : 'Resend Email'}
+            </button>
+          )}
         </form>
 
         {/* Switch Mode */}

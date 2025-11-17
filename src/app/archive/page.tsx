@@ -2,28 +2,16 @@
 
 import { ArchiveGrid } from '@/components/archive'
 import { useState, useEffect } from 'react'
+import type { Artwork, Contest } from '@/types'
 
-interface Winner {
-  id: string
-  title: string
-  image_url: string
-  vote_count: number
-}
+interface Winner extends Artwork {}
 
-interface Contest {
-  id: string
-  title: string
-  week_number: number
-  year: number
-  start_date: string
-  end_date: string
-  status: string
-  winner_id: string | null
+interface ContestWithWinner extends Contest {
   winner?: Winner
 }
 
 interface ArchiveData {
-  contests: Contest[]
+  contests: ContestWithWinner[]
   pagination: {
     page: number
     limit: number
@@ -95,6 +83,14 @@ export default function ArchivePage() {
   const contests = data?.contests || []
   const pagination = data?.pagination
 
+  // Transform contests to match ArchiveGrid's expected format
+  const transformedContests = contests
+    .filter(c => c.winner) // Only include contests with winners
+    .map(c => ({
+      contest: c,
+      winner: c.winner!
+    }))
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
       <div className="container mx-auto px-4 py-16">
@@ -119,9 +115,9 @@ export default function ArchivePage() {
         </div>
 
         {/* Archive Grid */}
-        {contests.length > 0 ? (
+        {transformedContests.length > 0 ? (
           <>
-            <ArchiveGrid contests={contests} />
+            <ArchiveGrid contests={transformedContests} />
 
             {/* Pagination */}
             {pagination && pagination.totalPages > 1 && (

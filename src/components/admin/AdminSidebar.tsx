@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   X,
+  Newspaper,
 } from 'lucide-react';
 import { useState } from 'react';
 import { AdminUser } from '@/types/admin';
@@ -24,6 +25,7 @@ const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Contests', href: '/admin/contests', icon: Trophy },
   { name: 'Artworks', href: '/admin/artworks', icon: Image },
+  { name: 'Blog', href: '/admin/blog', icon: Newspaper },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   { name: 'Users', href: '/admin/users', icon: Users, adminOnly: true },
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: FileText, adminOnly: true },
@@ -90,7 +92,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             {filteredNavigation.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
               const Icon = item.icon;
 
               return (

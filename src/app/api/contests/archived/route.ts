@@ -25,12 +25,12 @@ export async function GET(request: Request) {
     // For each contest, get the winner artwork details
     const contestsWithWinners = await Promise.all(
       (contests || []).map(async (contest) => {
-        if (!contest.winner_id) return contest
+        if (!contest.winner_artwork_id) return contest
 
         const { data: winner } = await supabase
           .from('artworks')
           .select('*')
-          .eq('id', contest.winner_id)
+          .eq('id', contest.winner_artwork_id)
           .single()
 
         return {

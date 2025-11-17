@@ -2,6 +2,7 @@ import ActiveContestClient from "@/components/contest/ActiveContestClient";
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
 
 // Types
 interface Contest {
@@ -18,32 +19,52 @@ interface Artwork {
   title: string;
   description: string | null;
   image_url: string;
-  prompt: string;
-  style: string | null;
+  prompt: string | null;
+  artist_name: string | null;
+  position: number;
   vote_count: number;
-  view_count: number;
   created_at: string;
-  updated_at: string;
 }
 
-// Fetch active contest data
+// Fetch active contest data directly from Supabase
 async function getActiveContest() {
-  // Determine the base URL based on environment
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
-    ? process.env.NEXT_PUBLIC_SITE_URL
-    : process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+  try {
+    const supabase = await createClient();
 
-  const res = await fetch(`${baseUrl}/api/contests/active`, {
-    next: { revalidate: 60 },
-  });
+    // Get active contest with its artworks
+    const { data: contest, error: contestError } = await supabase
+      .rpc("get_active_contest")
+      .single();
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch active contest");
+    if (contestError) {
+      if (contestError.code === "PGRST116") {
+        // No active contest found
+        return { contest: null, artworks: [] };
+      }
+      throw contestError;
+    }
+
+    if (!contest) {
+      return { contest: null, artworks: [] };
+    }
+
+    // Get artworks for the active contest
+    const { data: artworks, error: artworksError } = await supabase
+      .from("artworks")
+      .select("*")
+      .eq("contest_id", contest.contest_id)
+      .order("created_at", { ascending: true });
+
+    if (artworksError) throw artworksError;
+
+    return {
+      contest,
+      artworks: artworks || [],
+    };
+  } catch (error) {
+    console.error("Error fetching active contest:", error);
+    return { contest: null, artworks: [] };
   }
-
-  return res.json();
 }
 
 // Loading skeleton

@@ -40,10 +40,13 @@ export const ContestTimer: React.FC<ContestTimerProps> = ({
   className,
   compact = false,
 }) => {
+  const [mounted, setMounted] = React.useState(false);
   const [timeLeft, setTimeLeft] = React.useState(() => getTimeRemaining(endDate));
   const [hasExpired, setHasExpired] = React.useState(false);
 
   React.useEffect(() => {
+    setMounted(true);
+
     // Initial check
     const initial = getTimeRemaining(endDate);
     setTimeLeft(initial);
@@ -68,6 +71,16 @@ export const ContestTimer: React.FC<ContestTimerProps> = ({
 
     return () => clearInterval(interval);
   }, [endDate, onExpire, hasExpired]);
+
+  // Don't render until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className={cn("flex items-center gap-2", className)}>
+        <Clock className="h-4 w-4 text-muted-foreground" />
+        <span className="text-sm text-muted-foreground">Loading...</span>
+      </div>
+    );
+  }
 
   // Show "Contest Ended" badge when expired
   if (hasExpired || timeLeft.hasEnded) {

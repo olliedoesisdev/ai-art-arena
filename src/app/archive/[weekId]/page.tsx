@@ -35,11 +35,11 @@ async function getContestDetails(weekId: string) {
 
   // Get winner details if exists
   let winner = null
-  if (contest.winner_id) {
+  if (contest.winner_artwork_id) {
     const { data: winnerData } = await supabase
       .from('artworks')
       .select('*')
-      .eq('id', contest.winner_id)
+      .eq('id', contest.winner_artwork_id)
       .single()
 
     winner = winnerData
@@ -102,11 +102,6 @@ export default async function ArchiveDetailPage({ params }: PageProps) {
                   </svg>
                   {winner.vote_count} votes
                 </span>
-                {winner.style && (
-                  <span className="px-3 py-1 bg-slate-700 rounded-full text-sm">
-                    {winner.style}
-                  </span>
-                )}
               </div>
               {winner.prompt && (
                 <details className="mt-6 text-left">
@@ -127,7 +122,7 @@ export default async function ArchiveDetailPage({ params }: PageProps) {
           <h2 className="text-3xl font-bold text-white mb-8 text-center">
             All Entries
           </h2>
-          <ArchiveDetails artworks={artworks} winnerId={winner?.id} />
+          <ArchiveDetails artworks={artworks} />
         </div>
 
         {/* Back to Archive */}

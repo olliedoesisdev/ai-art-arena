@@ -140,7 +140,6 @@ CREATE POLICY "Service role can insert audit logs"
 
 -- ============================================
 -- 7. Create function to update updated_at timestamp
-ion to update updated_at timestamp
 -- ============================================
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

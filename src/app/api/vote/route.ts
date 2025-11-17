@@ -105,6 +105,7 @@ export async function POST(request: Request) {
         artwork_id: artworkId,
         contest_id: contestId,
         user_id: user.id,
+        user_identifier: user.id, // Use user ID as identifier for authenticated users
         ip_hash: ipHash,
         user_agent: userAgent,
       })
