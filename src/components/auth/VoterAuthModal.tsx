@@ -12,10 +12,10 @@ interface VoterAuthModalProps {
 export default function VoterAuthModal({ isOpen, onClose }: VoterAuthModalProps) {
   const [mode, setMode] = useState<'login' | 'signup'>('signup');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState(');
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
 
   const supabase = createBrowserClient(
