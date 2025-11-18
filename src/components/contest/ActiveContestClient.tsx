@@ -155,7 +155,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         {contest.status === "ended" && findWinnerArtwork && (
           <WinnerBanner
             artwork={findWinnerArtwork}
-            weekNumber={contest.week_number}
+            weekNumber={contest.week_number || 0}
           />
         )}
 

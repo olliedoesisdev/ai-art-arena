@@ -43,11 +43,11 @@ export default function BlogPostList({ posts: initialPosts }: BlogPostListProps)
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'success' | 'warning' | 'default' | 'error'> = {
+    const variants: Record<string, 'success' | 'warning' | 'default' | 'destructive'> = {
       published: 'success',
       draft: 'warning',
       scheduled: 'default',
-      archived: 'error'
+      archived: 'destructive'
     };
 
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;

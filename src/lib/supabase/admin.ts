@@ -17,7 +17,7 @@ export async function createAdminClient() {
   // Create client with schema option
   const supabase = createSupabaseClient<Database>(supabaseUrl, supabaseKey, {
     db: {
-      schema: 'admin'
+      schema: 'public'
     }
   });
 

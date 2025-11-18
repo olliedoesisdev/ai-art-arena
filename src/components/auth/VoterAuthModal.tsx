@@ -6,10 +6,10 @@ import { createBrowserClient } from '@supabase/ssr';
 interface VoterAuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
-export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuthModalProps) {
+export default function VoterAuthModal({ isOpen, onClose }: VoterAuthModalProps) {
   const [mode, setMode] = useState<'login' | 'signup'>('signup');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');

@@ -144,7 +144,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
         case 'paragraph':
           return (
             <p key={index} className="text-slate-300 mb-4">
-              {node.content?.map((child: any, i: number) => renderInline(child, i))}
+              {node.content?.map((child: any, _i: number) => renderInline(child, _i))}
             </p>
           );
         case 'heading':
@@ -157,7 +157,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
           const className = headingClasses[node.attrs.level as number] || 'text-lg font-semibold text-white mb-2';
           return (
             <HeadingTag key={index} className={className}>
-              {node.content?.map((child: any, i: number) => renderInline(child, i))}
+              {node.content?.map((child: any, _i: number) => renderInline(child, _i))}
             </HeadingTag>
           );
         case 'bulletList':
@@ -183,7 +183,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
         case 'blockquote':
           return (
             <blockquote key={index} className="border-l-4 border-primary pl-4 italic text-slate-400 mb-4">
-              {node.content?.map((child: any, i: number) => renderPreview({ content: [child] }))}
+              {node.content?.map((child: any, _i: number) => renderPreview({ content: [child] }))}
             </blockquote>
           );
         case 'codeBlock':
@@ -294,7 +294,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
         throw new Error(error.error || 'Failed to save post');
       }
 
-      const { post: savedPost } = await response.json();
+      const { post: _savedPost } = await response.json();
 
       // Clear auto-save after successful save
       autoSave.clear();
