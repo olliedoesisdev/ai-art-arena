@@ -38,7 +38,7 @@ export function FAQBlock({ items, onChange, editable = false }: FAQBlockProps) {
 
   if (editable) {
     return (
-      <div className="space-y-4 p-4 border border-slate-700 rounded-lg bg-slate-900/50">
+      <div className="space-y-4 p-4 border border-slate-700 rounded-lg bg-white shadow-sm">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-white">FAQ Section</h3>
           <Button
@@ -67,14 +67,14 @@ export function FAQBlock({ items, onChange, editable = false }: FAQBlockProps) {
                   placeholder="Question..."
                   value={item.question}
                   onChange={(e) => updateItem(index, 'question', e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
                 />
                 <textarea
                   placeholder="Answer..."
                   value={item.answer}
                   onChange={(e) => updateItem(index, 'answer', e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                 />
               </div>
               <Button
@@ -99,7 +99,7 @@ export function FAQBlock({ items, onChange, editable = false }: FAQBlockProps) {
       {items.map((item, index) => (
         <div
           key={index}
-          className="border border-slate-700 rounded-lg overflow-hidden bg-slate-900/50"
+          className="border border-slate-700 rounded-lg overflow-hidden bg-white shadow-sm"
         >
           <button
             type="button"

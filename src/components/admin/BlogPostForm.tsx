@@ -136,25 +136,25 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
   // Render preview of content
   const renderPreview = (content: any) => {
     if (!content || !content.content) {
-      return <p className="text-slate-500">Start writing to see preview...</p>;
+      return <p className="text-slate-600">Start writing to see preview...</p>;
     }
 
     return content.content.map((node: any, index: number) => {
       switch (node.type) {
         case 'paragraph':
           return (
-            <p key={index} className="text-slate-300 mb-4">
+            <p key={index} className="text-slate-700 mb-4">
               {node.content?.map((child: any, _i: number) => renderInline(child, _i))}
             </p>
           );
         case 'heading':
           const HeadingTag = `h${node.attrs.level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
           const headingClasses: Record<number, string> = {
-            1: 'text-3xl font-bold text-white mb-6 mt-8',
-            2: 'text-2xl font-bold text-white mb-4 mt-6',
-            3: 'text-xl font-semibold text-white mb-3 mt-4',
+            1: 'text-3xl font-bold text-slate-900 mb-6 mt-8',
+            2: 'text-2xl font-bold text-slate-900 mb-4 mt-6',
+            3: 'text-xl font-semibold text-slate-900 mb-3 mt-4',
           };
-          const className = headingClasses[node.attrs.level as number] || 'text-lg font-semibold text-white mb-2';
+          const className = headingClasses[node.attrs.level as number] || 'text-lg font-semibold text-slate-900 mb-2';
           return (
             <HeadingTag key={index} className={className}>
               {node.content?.map((child: any, _i: number) => renderInline(child, _i))}
@@ -162,7 +162,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
           );
         case 'bulletList':
           return (
-            <ul key={index} className="list-disc list-inside text-slate-300 mb-4 space-y-2">
+            <ul key={index} className="list-disc list-inside text-slate-700 mb-4 space-y-2">
               {node.content?.map((item: any, i: number) => (
                 <li key={i}>
                   {item.content?.[0]?.content?.map((child: any, j: number) => renderInline(child, j))}
@@ -172,7 +172,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
           );
         case 'orderedList':
           return (
-            <ol key={index} className="list-decimal list-inside text-slate-300 mb-4 space-y-2">
+            <ol key={index} className="list-decimal list-inside text-slate-700 mb-4 space-y-2">
               {node.content?.map((item: any, i: number) => (
                 <li key={i}>
                   {item.content?.[0]?.content?.map((child: any, j: number) => renderInline(child, j))}
@@ -182,14 +182,14 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
           );
         case 'blockquote':
           return (
-            <blockquote key={index} className="border-l-4 border-primary pl-4 italic text-slate-400 mb-4">
+            <blockquote key={index} className="border-l-4 border-primary pl-4 italic text-slate-600 mb-4">
               {node.content?.map((child: any, _i: number) => renderPreview({ content: [child] }))}
             </blockquote>
           );
         case 'codeBlock':
           return (
-            <pre key={index} className="bg-slate-950 border border-slate-700 rounded-lg p-4 mb-4 overflow-x-auto">
-              <code className="text-sm text-slate-300">
+            <pre key={index} className="bg-slate-100 border border-slate-300 rounded-lg p-4 mb-4 overflow-x-auto">
+              <code className="text-sm text-slate-700">
                 {node.content?.[0]?.text}
               </code>
             </pre>
@@ -222,7 +222,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
           } else if (mark.type === 'italic') {
             text = <em key={`italic-${index}`}>{text}</em>;
           } else if (mark.type === 'code') {
-            text = <code key={`code-${index}`} className="bg-slate-800 px-1.5 py-0.5 rounded text-sm">{text}</code>;
+            text = <code key={`code-${index}`} className="bg-slate-200 px-1.5 py-0.5 rounded text-sm">{text}</code>;
           } else if (mark.type === 'link') {
             text = (
               <a
@@ -314,10 +314,10 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
     <>
       {/* Recovery Prompt */}
       {showRecoveryPrompt && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold text-white mb-2">Recover Unsaved Work?</h3>
-            <p className="text-slate-400 mb-6">
+        <div className="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">Recover Unsaved Work?</h3>
+            <p className="text-slate-600 mb-6">
               We found an auto-saved draft from your previous session. Would you like to recover it?
             </p>
             <div className="flex gap-3">
@@ -344,7 +344,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
 
       {/* Auto-save Indicator */}
       {autoSave.lastSaved && (
-        <div className="fixed top-4 right-4 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 flex items-center gap-2 text-sm text-slate-400 z-40">
+        <div className="fixed top-4 right-4 bg-white border border-slate-300 shadow-sm rounded-lg px-4 py-2 flex items-center gap-2 text-sm text-slate-600 z-40">
           <Clock className="w-4 h-4" />
           Last saved at {autoSave.lastSaved.toLocaleTimeString()}
         </div>
@@ -352,40 +352,40 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
 
       <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
       {/* Title & Slug */}
-      <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-6 space-y-4">
+      <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
-            Title <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Title <span className="text-red-600">*</span>
           </label>
           <input
             type="text"
             value={title}
             onChange={(e) => handleTitleChange(e.target.value)}
             placeholder="Enter post title..."
-            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
-            Slug <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Slug <span className="text-red-600">*</span>
           </label>
           <div className="flex items-center gap-2">
-            <span className="text-slate-500">/blog/</span>
+            <span className="text-slate-600">/blog/</span>
             <input
               type="text"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               placeholder="post-slug"
-              className="flex-1 px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="flex-1 px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               required
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Excerpt
           </label>
           <textarea
@@ -393,16 +393,16 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
             onChange={(e) => setExcerpt(e.target.value)}
             placeholder="Brief summary of the post..."
             rows={3}
-            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+            className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
           />
         </div>
       </div>
 
       {/* Content Editor */}
-      <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-6 space-y-4">
+      <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 space-y-4">
         <div className="flex items-center justify-between mb-2">
-          <label className="block text-sm font-medium text-slate-300">
-            Content <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-slate-700">
+            Content <span className="text-red-600">*</span>
           </label>
           <Button
             type="button"
@@ -427,7 +427,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
           {showPreview && (
             <div className="border-l border-slate-700 pl-4">
               <div className="sticky top-4">
-                <h3 className="text-sm font-semibold text-white mb-4">Live Preview</h3>
+                <h3 className="text-sm font-semibold text-slate-900 mb-4">Live Preview</h3>
                 <div className="prose prose-invert max-w-none">
                   {renderPreview(content)}
                 </div>
@@ -438,9 +438,9 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
       </div>
 
       {/* FAQ Section */}
-      <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-6 space-y-4">
+      <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-slate-300">
+          <label className="block text-sm font-medium text-slate-700">
             FAQ Section (for SEO)
           </label>
           <Button
@@ -465,8 +465,8 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
       {/* Sidebar: Meta Info */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Featured Image */}
-        <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-6 space-y-4">
-          <label className="block text-sm font-medium text-slate-300 flex items-center gap-2">
+        <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 space-y-4">
+          <label className="block text-sm font-medium text-slate-700 flex items-center gap-2">
             <ImageIcon className="w-4 h-4" />
             Featured Image
           </label>
@@ -475,7 +475,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
             value={featuredImage}
             onChange={(e) => setFeaturedImage(e.target.value)}
             placeholder="https://..."
-            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+            className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm"
           />
           {featuredImage && (
             <img
@@ -489,20 +489,20 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
             value={featuredImageAlt}
             onChange={(e) => setFeaturedImageAlt(e.target.value)}
             placeholder="Alt text for accessibility"
-            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+            className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm"
           />
         </div>
 
         {/* Category */}
-        <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-6 space-y-4">
-          <label className="block text-sm font-medium text-slate-300 flex items-center gap-2">
+        <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 space-y-4">
+          <label className="block text-sm font-medium text-slate-700 flex items-center gap-2">
             <FolderOpen className="w-4 h-4" />
             Category
           </label>
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           >
             <option value="">No category</option>
             {categories.map(cat => (
@@ -514,14 +514,14 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
 
           {/* Contest Link */}
           <div className="pt-2">
-            <label className="block text-sm font-medium text-slate-300 flex items-center gap-2 mb-2">
+            <label className="block text-sm font-medium text-slate-700 flex items-center gap-2 mb-2">
               <LinkIcon className="w-4 h-4" />
               Link to Contest
             </label>
             <select
               value={contestId}
               onChange={(e) => setContestId(e.target.value)}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             >
               <option value="">No contest</option>
               {contests.map(contest => (
@@ -534,8 +534,8 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
         </div>
 
         {/* Tags */}
-        <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-6 space-y-4">
-          <label className="block text-sm font-medium text-slate-300 flex items-center gap-2">
+        <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 space-y-4">
+          <label className="block text-sm font-medium text-slate-700 flex items-center gap-2">
             <Tag className="w-4 h-4" />
             Tags
           </label>
@@ -547,8 +547,8 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
                 onClick={() => toggleTag(tag.id)}
                 className={`px-3 py-1 rounded-full text-sm transition-colors ${
                   selectedTags.includes(tag.id)
-                    ? 'bg-primary text-white'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    ? 'bg-primary text-slate-900'
+                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
                 }`}
               >
                 {tag.name}
@@ -559,11 +559,11 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
       </div>
 
       {/* SEO Metadata */}
-      <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-6 space-y-4">
-        <h3 className="text-lg font-semibold text-white">SEO Metadata</h3>
+      <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 space-y-4">
+        <h3 className="text-lg font-semibold text-slate-900">SEO Metadata</h3>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Meta Title
           </label>
           <input
@@ -571,15 +571,15 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
             value={metaTitle}
             onChange={(e) => setMetaTitle(e.target.value)}
             placeholder={title || 'Post title'}
-            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           />
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-600 mt-1">
             {metaTitle.length}/60 characters (ideal: 50-60)
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             Meta Description
           </label>
           <textarea
@@ -587,15 +587,15 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
             onChange={(e) => setMetaDescription(e.target.value)}
             placeholder={excerpt || 'Brief description for search engines'}
             rows={3}
-            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+            className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
           />
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-600 mt-1">
             {metaDescription.length}/160 characters (ideal: 120-160)
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
             OG Image URL
           </label>
           <input
@@ -603,28 +603,28 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
             value={ogImage}
             onChange={(e) => setOgImage(e.target.value)}
             placeholder={featuredImage || 'https://...'}
-            className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
           />
         </div>
       </div>
 
       {/* Publish Options */}
-      <div className="bg-slate-900/50 border border-slate-700 rounded-lg p-6 space-y-4">
-        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+      <div className="bg-white border border-slate-300 shadow-sm rounded-lg p-6 space-y-4">
+        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
           <Calendar className="w-5 h-5" />
           Publishing
         </h3>
 
         {status === 'scheduled' && (
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Scheduled For
             </label>
             <input
               type="datetime-local"
               value={scheduledFor}
               onChange={(e) => setScheduledFor(e.target.value)}
-              className="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
         )}
