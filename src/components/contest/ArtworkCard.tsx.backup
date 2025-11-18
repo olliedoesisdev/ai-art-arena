@@ -1,14 +1,13 @@
 /**
  * ArtworkCard Component
- * Displays artwork with voting functionality, hover overlay, and navigation
+ * Displays artwork with voting functionality and winner badge
  */
 
 "use client";
 
 import * as React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Trophy, Eye, Sparkles } from "lucide-react";
+import { Trophy, Eye } from "lucide-react";
 import { Card, CardContent, CardFooter, Badge, Modal } from "@/components/ui";
 import { VoteButton } from "./VoteButton";
 import { cn } from "@/lib/utils";
@@ -32,15 +31,7 @@ export interface ArtworkCardProps {
 }
 
 /**
- * Truncate text to specified length with ellipsis
- */
-const truncateText = (text: string, maxLength: number): string => {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trim() + "...";
-};
-
-/**
- * Artwork card with image, details, hover overlay, and voting
+ * Artwork card with image, details, and voting
  *
  * @example
  * ```tsx
@@ -61,40 +52,11 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
   showWinner = false,
   className,
 }) => {
-  const router = useRouter();
   const [isHovered, setIsHovered] = React.useState(false);
-  const [showDetails, setShowDetails] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isImageLoading, setIsImageLoading] = React.useState(true);
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Prevent navigation if clicking on vote button or view full size button
-    const target = e.target as HTMLElement;
-    if (target.closest('button') || target.closest('[role="button"]')) {
-      return;
-    }
-
-    // Mobile: first tap shows details, second tap navigates
-    if (window.innerWidth < 768) {
-      if (!showDetails) {
-        setShowDetails(true);
-        return;
-      }
-    }
-
-    // Navigate to individual artwork page
-    router.push(`/contest/artwork/${artwork.id}`);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      router.push(`/contest/artwork/${artwork.id}`);
-    }
-  };
-
-  const handleViewFullSize = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleImageClick = () => {
     setIsModalOpen(true);
   };
 
@@ -102,28 +64,11 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
     setIsImageLoading(false);
   };
 
-  // Close mobile details overlay when not hovering
-  React.useEffect(() => {
-    if (!isHovered && window.innerWidth >= 768) {
-      setShowDetails(false);
-    }
-  }, [isHovered]);
-
-  const displayOverlay = isHovered || showDetails;
-
   return (
     <>
       <Card
         hover
-        className={cn(
-          "overflow-hidden transition-all duration-300 cursor-pointer",
-          className
-        )}
-        onClick={handleCardClick}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        role="button"
-        aria-label={`View ${artwork.title} by ${artwork.artist_name}`}
+        className={cn("overflow-hidden transition-all duration-300", className)}
       >
         {/* Image Container */}
         <div
@@ -133,26 +78,13 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
         >
           {/* Winner Badge */}
           {showWinner && (
-            <div className="absolute left-3 top-3 z-20">
+            <div className="absolute left-3 top-3 z-10">
               <Badge variant="warning" className="flex items-center gap-1">
                 <Trophy className="h-3 w-3" />
                 Winner
               </Badge>
             </div>
           )}
-
-          {/* Clickable Indicator */}
-          <div className="absolute right-3 top-3 z-20">
-            <div className={cn(
-              "rounded-full bg-white/90 p-2 shadow-lg transition-all duration-300",
-              displayOverlay ? "scale-110 bg-[#4B9CD3]" : "scale-100"
-            )}>
-              <Sparkles className={cn(
-                "h-4 w-4 transition-colors duration-300",
-                displayOverlay ? "text-white" : "text-[#0A1929]"
-              )} />
-            </div>
-          </div>
 
           {/* Image Loading State */}
           {isImageLoading && (
@@ -169,7 +101,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className={cn(
               "object-cover transition-all duration-500",
-              displayOverlay && "scale-105",
+              isHovered && "scale-105",
               isImageLoading && "opacity-0"
             )}
             onLoad={handleImageLoad}
@@ -177,52 +109,20 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
             priority={false}
           />
 
-          {/* Hover Overlay - Details */}
+          {/* Hover Overlay - View Full Size */}
           <div
             className={cn(
-              "absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-[#0A1929] via-[#0A1929]/95 to-[#0A1929]/60 p-4 opacity-0 transition-opacity duration-300",
-              displayOverlay && "opacity-100"
+              "absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 transition-opacity duration-300",
+              isHovered && "opacity-100"
             )}
           >
-            {/* Top Section - Spacer */}
-            <div />
-
-            {/* Bottom Section - Details */}
-            <div className="space-y-3">
-              {/* Title */}
-              <h3 className="text-lg font-bold text-white line-clamp-2">
-                {artwork.title}
-              </h3>
-
-              {/* Artist */}
-              <p className="text-sm text-[#4B9CD3] font-medium">
-                by {artwork.artist_name}
-              </p>
-
-              {/* Prompt */}
-              {artwork.prompt && (
-                <p className="text-sm text-white/90 line-clamp-3">
-                  {truncateText(artwork.prompt, 150)}
-                </p>
-              )}
-
-              {/* Vote Count */}
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-white/70">
-                  {artwork.vote_count} {artwork.vote_count === 1 ? 'vote' : 'votes'}
-                </p>
-
-                {/* View Full Size Button */}
-                <button
-                  onClick={handleViewFullSize}
-                  className="flex items-center gap-1.5 rounded-lg bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white shadow-lg transition-all hover:bg-white/20 hover:scale-105"
-                  aria-label="View full size image"
-                >
-                  <Eye className="h-3.5 w-3.5" />
-                  Full Size
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={handleImageClick}
+              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-foreground shadow-lg transition-transform hover:scale-105"
+            >
+              <Eye className="h-4 w-4" />
+              View Full Size
+            </button>
           </div>
         </div>
 
@@ -287,12 +187,6 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
           <p className="text-sm text-muted-foreground">
             by <span className="font-medium text-foreground">{artwork.artist_name}</span>
           </p>
-          {artwork.prompt && (
-            <div className="mt-3 rounded-lg bg-muted p-3">
-              <p className="text-xs font-medium text-muted-foreground mb-1">Prompt</p>
-              <p className="text-sm text-foreground">{artwork.prompt}</p>
-            </div>
-          )}
           {showWinner && (
             <Badge variant="warning" className="inline-flex items-center gap-1">
               <Trophy className="h-3 w-3" />
