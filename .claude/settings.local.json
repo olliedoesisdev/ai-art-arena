@@ -5,7 +5,11 @@
       "Bash(curl:*)",
       "Bash(echo:*)",
       "Bash(npm run build:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

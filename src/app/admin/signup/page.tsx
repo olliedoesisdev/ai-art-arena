@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
 import Link from 'next/link';
@@ -15,6 +15,12 @@ export default function AdminSignupPage() {
   const [success, setSuccess] = useState(false);
   const [isFirstUser, setIsFirstUser] = useState(false);
   const router = useRouter();
+
+  // Ensure loading state is reset on mount to prevent stuck disabled inputs
+  useEffect(() => {
+    setLoading(false);
+    setSuccess(false);
+  }, []);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -204,6 +210,7 @@ export default function AdminSignupPage() {
                   className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="John Doe"
                   disabled={loading}
+                  autoComplete="name"
                 />
               </div>
 
@@ -221,6 +228,7 @@ export default function AdminSignupPage() {
                   className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="admin@example.com"
                   disabled={loading}
+                  autoComplete="email"
                 />
               </div>
 
@@ -238,6 +246,7 @@ export default function AdminSignupPage() {
                   className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="••••••••"
                   disabled={loading}
+                  autoComplete="new-password"
                 />
                 <p className="text-slate-500 text-xs mt-1">At least 8 characters</p>
               </div>
@@ -256,6 +265,7 @@ export default function AdminSignupPage() {
                   className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="••••••••"
                   disabled={loading}
+                  autoComplete="new-password"
                 />
               </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 import Link from "next/link";
@@ -11,6 +11,11 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  // Ensure loading state is reset on mount to prevent stuck disabled inputs
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -170,9 +175,11 @@ export default function AdminLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
                 className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="admin@example.com"
                 disabled={loading}
+                autoComplete="email"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && password) {
                     handleLogin();
@@ -201,9 +208,11 @@ export default function AdminLoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
                 className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••"
                 disabled={loading}
+                autoComplete="current-password"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && email) {
                     handleLogin();
