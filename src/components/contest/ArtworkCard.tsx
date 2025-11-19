@@ -116,7 +116,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
       <Card
         hover
         className={cn(
-          "overflow-hidden transition-all duration-300 cursor-pointer",
+          "overflow-hidden transition-all duration-300 cursor-pointer bg-white shadow-xl hover:shadow-2xl border-0",
           className
         )}
         onClick={handleCardClick}
@@ -127,7 +127,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
       >
         {/* Image Container */}
         <div
-          className="relative aspect-square overflow-hidden bg-muted"
+          className="relative aspect-square overflow-hidden bg-slate-100"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -145,19 +145,19 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
           <div className="absolute right-3 top-3 z-20">
             <div className={cn(
               "rounded-full bg-white/90 p-2 shadow-lg transition-all duration-300",
-              displayOverlay ? "scale-110 bg-[#4B9CD3]" : "scale-100"
+              displayOverlay ? "scale-110 bg-purple-600" : "scale-100"
             )}>
               <Sparkles className={cn(
                 "h-4 w-4 transition-colors duration-300",
-                displayOverlay ? "text-white" : "text-[#0A1929]"
+                displayOverlay ? "text-white" : "text-purple-600"
               )} />
             </div>
           </div>
 
           {/* Image Loading State */}
           {isImageLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-muted">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-600 border-t-transparent" />
             </div>
           )}
 
@@ -169,7 +169,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className={cn(
               "object-cover transition-all duration-500",
-              displayOverlay && "scale-105",
+              displayOverlay && "scale-105 brightness-90",
               isImageLoading && "opacity-0"
             )}
             onLoad={handleImageLoad}
@@ -180,7 +180,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
           {/* Hover Overlay - Details */}
           <div
             className={cn(
-              "absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-[#0A1929] via-[#0A1929]/95 to-[#0A1929]/60 p-4 opacity-0 transition-opacity duration-300",
+              "absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-purple-900 via-purple-900/95 to-purple-900/60 p-4 opacity-0 transition-opacity duration-300",
               displayOverlay && "opacity-100"
             )}
           >
@@ -195,7 +195,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
               </h3>
 
               {/* Artist */}
-              <p className="text-sm text-[#4B9CD3] font-medium">
+              <p className="text-sm text-yellow-300 font-medium">
                 by {artwork.artist_name}
               </p>
 
@@ -208,7 +208,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
               {/* Vote Count */}
               <div className="flex items-center justify-between">
-                <p className="text-xs text-white/70">
+                <p className="text-xs text-white/70 font-medium">
                   {artwork.vote_count} {artwork.vote_count === 1 ? 'vote' : 'votes'}
                 </p>
 
@@ -227,27 +227,27 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
         </div>
 
         {/* Card Content */}
-        <CardContent className="space-y-2 p-4">
+        <CardContent className="space-y-2 p-5 bg-white">
           {/* Title */}
-          <h3 className="line-clamp-1 text-lg font-semibold text-foreground">
+          <h3 className="line-clamp-1 text-lg font-bold text-slate-900">
             {artwork.title}
           </h3>
 
+          {/* Artist */}
+          <p className="text-sm text-slate-600">
+            by <span className="font-semibold text-purple-700">{artwork.artist_name}</span>
+          </p>
+
           {/* Description */}
           {artwork.description && (
-            <p className="line-clamp-2 text-sm text-muted-foreground">
+            <p className="line-clamp-2 text-sm text-slate-500">
               {artwork.description}
             </p>
           )}
-
-          {/* Artist */}
-          <p className="text-xs text-muted-foreground">
-            by <span className="font-medium text-foreground">{artwork.artist_name}</span>
-          </p>
         </CardContent>
 
         {/* Card Footer - Vote Button */}
-        <CardFooter className="border-t border-border p-4">
+        <CardFooter className="border-t border-slate-200 p-4 bg-white">
           <VoteButton
             artworkId={artwork.id}
             currentVotes={artwork.vote_count}

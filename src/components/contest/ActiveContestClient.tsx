@@ -136,19 +136,57 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
     }
   }, [contest.id]);
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      <div className="container mx-auto px-4 py-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-4 py-12 relative z-10">
+        {/* Compact Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-3 tracking-tight">
             {contest.week_number
               ? `Week ${contest.week_number} Contest`
-              : "Active Contest"}
+              : "AI Art Contest"}
           </h1>
-          <p className="text-xl text-slate-400 mb-6">
-            Ends {new Date(contest.end_date).toLocaleString()}
+
+          {/* Compact Info Row */}
+          <div className="flex items-center justify-center gap-6 flex-wrap mb-4">
+            <ContestTimer endDate={contest.end_date} compact />
+            {!isAuthenticated && (
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="px-5 py-2 bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold rounded-lg transition-all hover:scale-105 shadow-lg text-sm"
+              >
+                Register to Vote
+              </button>
+            )}
+            {isAuthenticated && (
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+                <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">
+                  {userEmail?.[0].toUpperCase()}
+                </div>
+                <span className="text-white text-sm font-medium">{userEmail}</span>
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    setIsAuthenticated(false);
+                    setUserEmail(null);
+                  }}
+                  className="ml-2 text-white/70 hover:text-white text-xs underline"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+
+          <p className="text-white/90 text-sm max-w-2xl mx-auto">
+            Vote for your favorite AI-generated artwork • {isAuthenticated ? 'Click any artwork to vote' : 'Sign in to vote'} • Contest ends {new Date(contest.end_date).toLocaleDateString()}
           </p>
-          <ContestTimer endDate={contest.end_date} />
         </div>
 
         {/* Winner Banner */}
@@ -161,61 +199,10 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
 
         {/* Feedback message */}
         {message && (
-          <div className="mb-6 rounded-md bg-amber-900/80 p-3 text-sm font-medium text-white">
+          <div className="mb-6 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-3 text-sm font-medium text-white text-center shadow-lg">
             {message}
           </div>
         )}
-
-        {/* User Status Bar */}
-        {isAuthenticated ? (
-          <div className="bg-green-900/20 border border-green-700/50 rounded-xl p-4 mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">
-                {userEmail?.[0].toUpperCase()}
-              </div>
-              <div>
-                <p className="text-white font-medium">Signed in as {userEmail}</p>
-                <p className="text-slate-400 text-sm">Ready to vote!</p>
-              </div>
-            </div>
-            <button
-              onClick={async () => {
-                await supabase.auth.signOut();
-                setIsAuthenticated(false);
-                setUserEmail(null);
-              }}
-              className="px-4 py-2 text-sm text-slate-300 hover:text-white border border-slate-600 hover:border-slate-500 rounded-lg transition-colors"
-            >
-              Sign Out
-            </button>
-          </div>
-        ) : (
-          <div className="bg-blue-900/20 border border-blue-700/50 rounded-xl p-4 mb-6 flex items-center justify-between">
-            <p className="text-slate-300">
-              <span className="text-white font-medium">Sign in to vote</span> — Create an account with email and password
-            </p>
-            <button
-              onClick={() => setShowAuthModal(true)}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors whitespace-nowrap"
-            >
-              Sign In / Sign Up
-            </button>
-          </div>
-        )}
-
-        {/* Instructions */}
-        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 mb-12">
-          <h2 className="text-2xl font-bold text-white mb-3">How to Vote</h2>
-          <ul className="text-slate-300 space-y-2">
-            <li>• Create an account with your email and password</li>
-            <li>• Vote for your favorite AI-generated artwork</li>
-            <li>• You can vote once per artwork per contest</li>
-            <li>
-              • Contest ends {new Date(contest.end_date).toLocaleDateString()}
-            </li>
-            <li>• The artwork with the most votes wins!</li>
-          </ul>
-        </div>
 
         {/* Artworks Grid */}
         <ContestGrid
@@ -229,7 +216,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         <div className="text-center mt-16">
           <a
             href="/archive"
-            className="inline-block px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+            className="inline-block px-8 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-lg transition-all border border-white/20 hover:scale-105"
           >
             View Past Contests
           </a>
