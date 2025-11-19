@@ -46,7 +46,14 @@ export default function VoterAuthModal({ isOpen, onClose }: VoterAuthModalProps)
         const data = await response.json();
 
         if (!response.ok) {
-          setError(data.error || 'Registration failed');
+          const errorMsg = data.error || 'Registration failed';
+          setError(errorMsg);
+
+          // Log detailed error in development
+          if (data.details) {
+            console.error('Registration error details:', data.details);
+          }
+
           setLoading(false);
           return;
         }
@@ -60,11 +67,23 @@ export default function VoterAuthModal({ isOpen, onClose }: VoterAuthModalProps)
           email,
           options: {
             emailRedirectTo: redirectUrl,
+            shouldCreateUser: true,
           },
         });
 
         if (magicLinkError) {
-          setError(magicLinkError.message);
+          console.error('Magic link error:', magicLinkError);
+
+          // Provide user-friendly error messages
+          let errorMessage = magicLinkError.message;
+
+          if (magicLinkError.message.includes('rate limit')) {
+            errorMessage = 'Too many requests. Please wait a moment and try again.';
+          } else if (magicLinkError.message.includes('SMTP') || magicLinkError.message.includes('email')) {
+            errorMessage = 'Failed to send confirmation email. Please try again in a few minutes or contact support.';
+          }
+
+          setError(errorMessage);
           setLoading(false);
           return;
         }
@@ -74,7 +93,8 @@ export default function VoterAuthModal({ isOpen, onClose }: VoterAuthModalProps)
         setLoading(false);
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred. Please try again.');
       setLoading(false);
     }
   };
@@ -90,16 +110,29 @@ export default function VoterAuthModal({ isOpen, onClose }: VoterAuthModalProps)
         email,
         options: {
           emailRedirectTo: redirectUrl,
+          shouldCreateUser: true,
         },
       });
 
       if (error) {
-        setError(error.message);
+        console.error('Resend email error:', error);
+
+        // Provide user-friendly error messages
+        let errorMessage = error.message;
+
+        if (error.message.includes('rate limit')) {
+          errorMessage = 'Too many requests. Please wait a moment before trying again.';
+        } else if (error.message.includes('SMTP') || error.message.includes('email')) {
+          errorMessage = 'Failed to send email. Please try again in a few minutes or contact support.';
+        }
+
+        setError(errorMessage);
       } else {
-        setSuccess('Email sent! Check your inbox.');
+        setSuccess('Email sent! Check your inbox (and spam folder).');
       }
     } catch (err) {
-      setError('Failed to resend email');
+      console.error('Unexpected error:', err);
+      setError('Failed to resend email. Please try again.');
     } finally {
       setLoading(false);
     }
