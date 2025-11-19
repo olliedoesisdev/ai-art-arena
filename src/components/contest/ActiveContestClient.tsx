@@ -136,15 +136,8 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
     }
   }, [contest.id]);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-yellow-400/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/10 rounded-full blur-3xl" />
-      </div>
-
-      <div className="container mx-auto px-4 py-12 relative z-10">
+    <div className="min-h-screen bg-slate-900">
+      <div className="container mx-auto px-4 py-12">
         {/* Compact Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-3 tracking-tight">
@@ -159,13 +152,13 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
             {!isAuthenticated && (
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="px-5 py-2 bg-yellow-400 hover:bg-yellow-300 text-purple-900 font-bold rounded-lg transition-all hover:scale-105 shadow-lg text-sm"
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all hover:scale-105 shadow-lg text-sm"
               >
                 Register to Vote
               </button>
             )}
             {isAuthenticated && (
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+              <div className="flex items-center gap-2 bg-slate-800 rounded-lg px-4 py-2 border border-slate-700">
                 <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">
                   {userEmail?.[0].toUpperCase()}
                 </div>
@@ -176,7 +169,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
                     setIsAuthenticated(false);
                     setUserEmail(null);
                   }}
-                  className="ml-2 text-white/70 hover:text-white text-xs underline"
+                  className="ml-2 text-slate-400 hover:text-white text-xs underline"
                 >
                   Sign Out
                 </button>
@@ -184,7 +177,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
             )}
           </div>
 
-          <p className="text-white/90 text-sm max-w-2xl mx-auto">
+          <p className="text-slate-400 text-sm max-w-2xl mx-auto">
             Vote for your favorite AI-generated artwork • {isAuthenticated ? 'Click any artwork to vote' : 'Sign in to vote'} • Contest ends {new Date(contest.end_date).toLocaleDateString()}
           </p>
         </div>
@@ -199,7 +192,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
 
         {/* Feedback message */}
         {message && (
-          <div className="mb-6 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 p-3 text-sm font-medium text-white text-center shadow-lg">
+          <div className="mb-6 rounded-lg bg-slate-800 border border-slate-700 p-3 text-sm font-medium text-white text-center shadow-lg">
             {message}
           </div>
         )}
@@ -216,7 +209,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         <div className="text-center mt-16">
           <a
             href="/archive"
-            className="inline-block px-8 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-lg transition-all border border-white/20 hover:scale-105"
+            className="inline-block px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-all border border-slate-700 hover:scale-105"
           >
             View Past Contests
           </a>

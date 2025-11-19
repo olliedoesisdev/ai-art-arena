@@ -108,12 +108,12 @@ export const ContestTimer: React.FC<ContestTimerProps> = ({
     parts.push(`${timeLeft.minutes}m`);
 
     return (
-      <div className={cn("flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20", className)}>
-        <Clock className={cn("h-4 w-4", isUrgent ? "text-yellow-400" : "text-white/90")} />
+      <div className={cn("flex items-center gap-2 bg-slate-800 rounded-lg px-4 py-2 border border-slate-700", className)}>
+        <Clock className={cn("h-4 w-4", isUrgent ? "text-orange-400" : "text-slate-400")} />
         <span
           className={cn(
             "text-sm font-bold",
-            isUrgent ? "text-yellow-400" : "text-white"
+            isUrgent ? "text-orange-400" : "text-white"
           )}
         >
           {parts.join(" ")} left

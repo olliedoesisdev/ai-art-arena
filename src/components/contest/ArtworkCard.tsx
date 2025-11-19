@@ -116,7 +116,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
       <Card
         hover
         className={cn(
-          "overflow-hidden transition-all duration-300 cursor-pointer bg-white shadow-xl hover:shadow-2xl border-0",
+          "overflow-hidden transition-all duration-300 cursor-pointer bg-slate-800 shadow-xl hover:shadow-2xl border border-slate-700 hover:border-slate-600",
           className
         )}
         onClick={handleCardClick}
@@ -127,7 +127,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
       >
         {/* Image Container */}
         <div
-          className="relative aspect-square overflow-hidden bg-slate-100"
+          className="relative aspect-[4/3] overflow-hidden bg-slate-100"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -145,11 +145,11 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
           <div className="absolute right-3 top-3 z-20">
             <div className={cn(
               "rounded-full bg-white/90 p-2 shadow-lg transition-all duration-300",
-              displayOverlay ? "scale-110 bg-purple-600" : "scale-100"
+              displayOverlay ? "scale-110 bg-blue-600" : "scale-100"
             )}>
               <Sparkles className={cn(
                 "h-4 w-4 transition-colors duration-300",
-                displayOverlay ? "text-white" : "text-purple-600"
+                displayOverlay ? "text-white" : "text-blue-600"
               )} />
             </div>
           </div>
@@ -157,7 +157,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
           {/* Image Loading State */}
           {isImageLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-600 border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
             </div>
           )}
 
@@ -180,7 +180,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
           {/* Hover Overlay - Details */}
           <div
             className={cn(
-              "absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-purple-900 via-purple-900/95 to-purple-900/60 p-4 opacity-0 transition-opacity duration-300",
+              "absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-slate-900 via-slate-900/95 to-slate-900/60 p-4 opacity-0 transition-opacity duration-300",
               displayOverlay && "opacity-100"
             )}
           >
@@ -195,7 +195,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
               </h3>
 
               {/* Artist */}
-              <p className="text-sm text-yellow-300 font-medium">
+              <p className="text-sm text-blue-400 font-medium">
                 by {artwork.artist_name}
               </p>
 
@@ -227,15 +227,15 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
         </div>
 
         {/* Card Content */}
-        <CardContent className="space-y-2 p-5 bg-white">
+        <CardContent className="space-y-2 p-5 bg-slate-800">
           {/* Title */}
-          <h3 className="line-clamp-1 text-lg font-bold text-slate-900">
+          <h3 className="line-clamp-1 text-lg font-bold text-white">
             {artwork.title}
           </h3>
 
           {/* Artist */}
-          <p className="text-sm text-slate-600">
-            by <span className="font-semibold text-purple-700">{artwork.artist_name}</span>
+          <p className="text-sm text-slate-400">
+            by <span className="font-semibold text-blue-400">{artwork.artist_name}</span>
           </p>
 
           {/* Description */}
@@ -247,7 +247,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
         </CardContent>
 
         {/* Card Footer - Vote Button */}
-        <CardFooter className="border-t border-slate-200 p-4 bg-white">
+        <CardFooter className="border-t border-slate-700 p-4 bg-slate-800">
           <VoteButton
             artworkId={artwork.id}
             currentVotes={artwork.vote_count}
