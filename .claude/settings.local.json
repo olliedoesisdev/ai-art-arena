@@ -9,7 +9,8 @@
       "Bash(taskkill:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(cmd //c taskkill //PID 21220 //F)"
     ],
     "deny": [],
     "ask": []

@@ -5,11 +5,11 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const { email, name, redirectUrl } = await request.json();
+    const { email, password, name } = await request.json();
 
-    if (!email) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: 'Email is required' },
+        { error: 'Email and password are required' },
         { status: 400 }
       );
     }
@@ -23,20 +23,24 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate password length
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: 'Password must be at least 6 characters long' },
+        { status: 400 }
+      );
+    }
+
     const supabase = await createServerClient();
 
-    // Note: Supabase Auth automatically handles duplicate email checks
-    // No need to manually check for existing users in the auth.users table
-
-    // Send magic link for signup
-    const { error: authError } = await supabase.auth.signInWithOtp({
+    // Sign up with email and password
+    const { data, error: authError } = await supabase.auth.signUp({
       email,
+      password,
       options: {
-        emailRedirectTo: redirectUrl || `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
         data: {
           name: name || null,
         },
-        shouldCreateUser: true,
       },
     });
 
@@ -46,12 +50,10 @@ export async function POST(request: Request) {
       // Provide more specific error messages
       let errorMessage = authError.message;
 
-      if (authError.message.includes('rate limit')) {
-        errorMessage = 'Too many requests. Please wait a moment and try again.';
-      } else if (authError.message.includes('email')) {
-        errorMessage = 'Failed to send confirmation email. Please check your email address and try again.';
-      } else if (authError.message.includes('SMTP')) {
-        errorMessage = 'Email service is temporarily unavailable. Please try again in a few minutes or contact support.';
+      if (authError.message.includes('already registered')) {
+        errorMessage = 'This email is already registered. Please sign in instead.';
+      } else if (authError.message.includes('password')) {
+        errorMessage = 'Password does not meet requirements. Use at least 6 characters.';
       }
 
       return NextResponse.json(
@@ -63,11 +65,12 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('Magic link sent successfully to:', email);
+    console.log('User registered successfully:', email);
 
     return NextResponse.json({
       success: true,
-      message: 'Magic link sent! Check your email to complete registration.',
+      message: 'Account created successfully!',
+      user: data.user,
     });
   } catch (error) {
     console.error('Error during registration:', error);

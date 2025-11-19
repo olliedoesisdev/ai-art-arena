@@ -192,7 +192,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         ) : (
           <div className="bg-blue-900/20 border border-blue-700/50 rounded-xl p-4 mb-6 flex items-center justify-between">
             <p className="text-slate-300">
-              <span className="text-white font-medium">Sign in to vote</span> — Register with your email to participate
+              <span className="text-white font-medium">Sign in to vote</span> — Create an account with email and password
             </p>
             <button
               onClick={() => setShowAuthModal(true)}
@@ -207,7 +207,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 mb-12">
           <h2 className="text-2xl font-bold text-white mb-3">How to Vote</h2>
           <ul className="text-slate-300 space-y-2">
-            <li>• Register with your email to participate</li>
+            <li>• Create an account with your email and password</li>
             <li>• Vote for your favorite AI-generated artwork</li>
             <li>• You can vote once per artwork per contest</li>
             <li>
