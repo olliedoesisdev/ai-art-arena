@@ -227,7 +227,10 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
         </div>
 
         {/* Card Content */}
-        <CardContent className="space-y-2 p-5 bg-white">
+        <CardContent
+          className="space-y-2 p-5 bg-white"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Title */}
           <h3 className="line-clamp-1 text-lg font-bold text-slate-900">
             {artwork.title}
@@ -247,7 +250,10 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
         </CardContent>
 
         {/* Card Footer - Vote Button */}
-        <CardFooter className="border-t border-slate-200 p-4 bg-white">
+        <CardFooter
+          className="border-t border-slate-200 p-4 bg-white"
+          onClick={(e) => e.stopPropagation()}
+        >
           <VoteButton
             artworkId={artwork.id}
             currentVotes={artwork.vote_count}
