@@ -95,15 +95,35 @@ SQL script to verify and fix database configuration:
    - `can_vote()` function checks if user already voted
    - Duplicate votes are rejected with friendly error message
 
+## Critical Issue Found After Initial Fix
+
+### Problem
+After fixing the frontend, votes still failed with error:
+```
+record "new" has no field "vote_date"
+```
+
+This indicates an old database trigger referencing the removed `vote_date` column from the IP-based voting system.
+
+### Solution
+Created [fix-vote-trigger.sql](fix-vote-trigger.sql) to:
+1. Drop all old triggers on votes table
+2. Drop old trigger functions referencing `vote_date`
+3. Create new `update_artwork_vote_count()` function
+4. Create trigger for INSERT/DELETE operations
+
+**⚠️ CRITICAL**: You must run [fix-vote-trigger.sql](fix-vote-trigger.sql) in Supabase SQL Editor before voting will work!
+
 ## Testing
 
 ### Manual Test Steps
-1. Open http://localhost:3001/contest
-2. **Without Auth**: Buttons should show "Vote", clicking opens auth modal
-3. **After Sign In**: Buttons should still show "Vote" (blue, enabled)
-4. **Click Vote**: Should record vote, show "Voted" (gray)
-5. **Try voting again**: Should show "already voted" error
-6. **Refresh page**: Vote state should persist (localStorage)
+1. **First**: Run [fix-vote-trigger.sql](fix-vote-trigger.sql) in Supabase SQL Editor
+2. Open http://localhost:3001/contest
+3. **Without Auth**: Buttons should show "Vote", clicking opens auth modal
+4. **After Sign In**: Buttons should still show "Vote" (blue, enabled)
+5. **Click Vote**: Should record vote, show "Voted" (gray)
+6. **Try voting again**: Should show "already voted" error
+7. **Refresh page**: Vote state should persist (localStorage)
 
 ### Database Verification
 ```bash
@@ -120,10 +140,13 @@ Should show all green checkmarks.
 ## Files Created
 - `check-database-config.ts` - Database diagnostic tool
 - `verify-and-fix-voting.sql` - SQL verification and fix script
+- `fix-vote-trigger.sql` - **CRITICAL FIX** for vote_date trigger error
 - `VOTING-FIX-SUMMARY.md` - This file
 
-## Next Steps
-1. Test voting in the browser
-2. Verify votes are being recorded in the database
-3. Check that vote counts update correctly
-4. Ensure localStorage persists voted state across page reloads
+## Next Steps - IMPORTANT!
+1. **CRITICAL**: Run [fix-vote-trigger.sql](fix-vote-trigger.sql) in Supabase SQL Editor
+2. Test voting in the browser
+3. Verify votes are being recorded in the database
+4. Check that vote counts update correctly
+5. Ensure localStorage persists voted state across page reloads
+6. Confirm duplicate votes are prevented
