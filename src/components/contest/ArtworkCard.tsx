@@ -116,7 +116,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
       <Card
         hover
         className={cn(
-          "overflow-hidden transition-all duration-300 cursor-pointer bg-white shadow-xl hover:shadow-2xl border border-slate-300 hover:border-slate-400",
+          "overflow-hidden transition-all duration-300 cursor-pointer bg-white shadow-lg hover:shadow-xl border-2 border-black",
           className
         )}
         onClick={handleCardClick}
@@ -237,13 +237,13 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
           </h3>
 
           {/* Artist */}
-          <p className="text-sm text-slate-600">
-            by <span className="font-semibold text-blue-600">{artwork.artist_name}</span>
+          <p className="text-sm text-gray-700">
+            by <span className="font-semibold text-black">{artwork.artist_name}</span>
           </p>
 
           {/* Description */}
           {artwork.description && (
-            <p className="line-clamp-2 text-sm text-slate-500">
+            <p className="line-clamp-2 text-sm text-gray-600">
               {artwork.description}
             </p>
           )}
@@ -251,7 +251,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
         {/* Card Footer - Vote Button */}
         <CardFooter
-          className="border-t border-slate-200 p-4 bg-white"
+          className="border-t-2 border-black p-4 bg-white"
           onClick={(e) => e.stopPropagation()}
         >
           <VoteButton

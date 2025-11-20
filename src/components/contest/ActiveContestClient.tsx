@@ -136,11 +136,11 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
     }
   }, [contest.id]);
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-12">
         {/* Compact Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-3 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-black mb-3 tracking-tight">
             {contest.week_number
               ? `Week ${contest.week_number} Contest`
               : "AI Art Contest"}
@@ -152,24 +152,24 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
             {!isAuthenticated && (
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all hover:scale-105 shadow-lg text-sm"
+                className="px-5 py-2 bg-black hover:bg-gray-800 text-white font-bold rounded-lg transition-all hover:scale-105 shadow-lg text-sm"
               >
                 Register to Vote
               </button>
             )}
             {isAuthenticated && (
-              <div className="flex items-center gap-2 bg-slate-800 rounded-lg px-4 py-2 border border-slate-700">
+              <div className="flex items-center gap-2 bg-white rounded-lg px-4 py-2 border border-gray-300 shadow-sm">
                 <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">
                   {userEmail?.[0].toUpperCase()}
                 </div>
-                <span className="text-white text-sm font-medium">{userEmail}</span>
+                <span className="text-black text-sm font-medium">{userEmail}</span>
                 <button
                   onClick={async () => {
                     await supabase.auth.signOut();
                     setIsAuthenticated(false);
                     setUserEmail(null);
                   }}
-                  className="ml-2 text-slate-400 hover:text-white text-xs underline"
+                  className="ml-2 text-gray-600 hover:text-black text-xs underline"
                 >
                   Sign Out
                 </button>
@@ -177,7 +177,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
             )}
           </div>
 
-          <p className="text-slate-400 text-sm max-w-2xl mx-auto">
+          <p className="text-gray-700 text-sm max-w-2xl mx-auto">
             Vote for your favorite AI-generated artwork • {isAuthenticated ? 'Click any artwork to vote' : 'Sign in to vote'} • Contest ends {new Date(contest.end_date).toLocaleDateString()}
           </p>
         </div>
@@ -192,7 +192,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
 
         {/* Feedback message */}
         {message && (
-          <div className="mb-6 rounded-lg bg-slate-800 border border-slate-700 p-3 text-sm font-medium text-white text-center shadow-lg">
+          <div className="mb-6 rounded-lg bg-white border border-gray-300 p-3 text-sm font-medium text-black text-center shadow-lg">
             {message}
           </div>
         )}
@@ -209,7 +209,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         <div className="text-center mt-16">
           <a
             href="/archive"
-            className="inline-block px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-all border border-slate-700 hover:scale-105"
+            className="inline-block px-8 py-3 bg-white hover:bg-gray-100 text-black rounded-lg transition-all border border-gray-300 hover:scale-105 shadow-sm"
           >
             View Past Contests
           </a>
