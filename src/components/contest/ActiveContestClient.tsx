@@ -13,7 +13,7 @@ export interface ActiveContestClientProps {
     year?: number;
     start_date?: string;
     end_date: string;
-    status: string;
+    status?: string; // Optional since get_active_contest may not return it
     winner_id?: string | null;
   };
   initialArtworks: Artwork[];
@@ -85,8 +85,18 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
       const data = await res.json();
 
       if (!res.ok || data.error) {
-        const err = data?.error || data?.message || "Failed to record vote";
-        setMessage(String(err));
+        let errorMsg = data?.error || data?.message || "Failed to record vote";
+
+        // Provide user-friendly error messages
+        if (errorMsg.includes("already voted")) {
+          errorMsg = "You've already voted for this artwork in this contest!";
+        } else if (errorMsg.includes("logged in") || errorMsg.includes("authenticated")) {
+          errorMsg = "Please sign in to vote";
+        } else if (errorMsg.includes("not active")) {
+          errorMsg = "This contest is no longer accepting votes";
+        }
+
+        setMessage(errorMsg);
         return;
       }
 
@@ -183,7 +193,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         </div>
 
         {/* Winner Banner */}
-        {contest.status === "ended" && findWinnerArtwork && (
+        {findWinnerArtwork && (
           <WinnerBanner
             artwork={findWinnerArtwork}
             weekNumber={contest.week_number || 0}
@@ -202,7 +212,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
           artworks={artworks}
           onVote={onVote}
           votedArtworkId={votedArtworkId}
-          canVote={contest.status === "active"}
+          canVote={true}
         />
 
         {/* Archive Link */}

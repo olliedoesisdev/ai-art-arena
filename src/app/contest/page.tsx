@@ -54,8 +54,14 @@ async function getActiveContest() {
 
     if (artworksError) throw artworksError;
 
+    // Map contest_id to id for compatibility with ActiveContestClient
+    const mappedContest = {
+      ...contest,
+      id: contest.contest_id,
+    };
+
     return {
-      contest,
+      contest: mappedContest,
       artworks: artworks || [],
     };
   } catch (error) {
