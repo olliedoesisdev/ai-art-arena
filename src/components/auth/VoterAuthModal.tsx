@@ -44,13 +44,27 @@ export default function VoterAuthModal({ isOpen, onClose, onSuccess }: VoterAuth
 
         if (!response.ok) {
           const errorMsg = data.error || 'Registration failed';
-          setError(errorMsg);
 
           // Log detailed error in development
           if (data.details) {
             console.error('Registration error details:', data.details);
           }
 
+          // If user already registered, auto-switch to login mode
+          if (errorMsg.includes('already registered') || data.details?.includes('already registered')) {
+            setError('This email is already registered. Switching to sign in...');
+            setLoading(false);
+
+            // Auto-switch to login mode after a short delay
+            setTimeout(() => {
+              setMode('login');
+              setError(null);
+              setSuccess(null);
+            }, 1500);
+            return;
+          }
+
+          setError(errorMsg);
           setLoading(false);
           return;
         }
