@@ -18,7 +18,6 @@ interface Artwork {
   description: string;
   image_url: string;
   prompt: string;
-  style: string;
   position: number;
 }
 
@@ -40,7 +39,6 @@ export default function ArtworkForm({ artwork, mode }: ArtworkFormProps) {
     description: artwork?.description || '',
     image_url: artwork?.image_url || '',
     prompt: artwork?.prompt || '',
-    style: artwork?.style || '',
     position: artwork?.position || 0,
   });
 
@@ -185,35 +183,19 @@ export default function ArtworkForm({ artwork, mode }: ArtworkFormProps) {
         />
       </div>
 
-      {/* Prompt and Style */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="prompt" className="block text-sm font-medium text-slate-300 mb-2">
-            AI Prompt
-          </label>
-          <textarea
-            id="prompt"
-            value={formData.prompt}
-            onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
-            rows={3}
-            className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="A scenic landscape at sunset..."
-          />
-        </div>
-
-        <div>
-          <label htmlFor="style" className="block text-sm font-medium text-slate-300 mb-2">
-            Style
-          </label>
-          <input
-            id="style"
-            type="text"
-            value={formData.style}
-            onChange={(e) => setFormData({ ...formData, style: e.target.value })}
-            className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Photorealistic, Abstract, etc."
-          />
-        </div>
+      {/* AI Prompt */}
+      <div>
+        <label htmlFor="prompt" className="block text-sm font-medium text-slate-300 mb-2">
+          AI Prompt
+        </label>
+        <textarea
+          id="prompt"
+          value={formData.prompt}
+          onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
+          rows={3}
+          className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="A scenic landscape at sunset..."
+        />
       </div>
 
       {/* Position */}
