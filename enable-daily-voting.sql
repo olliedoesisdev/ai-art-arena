@@ -12,9 +12,10 @@ WHERE table_name = 'votes' AND constraint_type = 'UNIQUE';
 -- STEP 2: Add vote_date column if it doesn't exist
 ALTER TABLE votes ADD COLUMN IF NOT EXISTS vote_date DATE DEFAULT CURRENT_DATE;
 
--- Update existing votes to have vote_date based on created_at
+-- Update existing votes to have vote_date set to today
+-- (Since we don't have a created_at column, we'll set all existing votes to today)
 UPDATE votes
-SET vote_date = DATE(created_at)
+SET vote_date = CURRENT_DATE
 WHERE vote_date IS NULL;
 
 -- Make vote_date NOT NULL
