@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const supabase = await createServerClient();
+    const supabase = await createClient();
 
     // Check if user is authenticated and is admin
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -45,7 +45,10 @@ export async function GET(request: Request) {
 
     if (votesError) {
       console.error('Error fetching voters:', votesError);
-      throw votesError;
+      return NextResponse.json(
+        { error: 'Failed to fetch voters', details: votesError.message },
+        { status: 500 }
+      );
     }
 
     // Transform the data to include voter info
@@ -64,7 +67,10 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error in artwork-voters API:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch voters' },
+      {
+        error: 'Failed to fetch voters',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
