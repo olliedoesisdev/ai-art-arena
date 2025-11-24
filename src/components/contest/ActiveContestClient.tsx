@@ -212,7 +212,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
           artworks={artworks}
           onVote={onVote}
           votedArtworkId={votedArtworkId}
-          canVote={true}
+          canVote={isAuthenticated}
         />
 
         {/* Archive Link */}
