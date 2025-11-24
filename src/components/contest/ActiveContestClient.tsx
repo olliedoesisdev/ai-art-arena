@@ -45,23 +45,61 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
     return artworks.find((a) => a.id === contest.winner_id) ?? null;
   }, [contest.winner_id, artworks]);
 
+  // Fetch user's votes from database
+  const fetchUserVotes = React.useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_user_votes_today', {
+          p_user_id: userId,
+          p_contest_id: contest.id,
+        });
+
+      if (error) {
+        console.error('Error fetching user votes:', error);
+        return;
+      }
+
+      if (data && Array.isArray(data)) {
+        // Set the first voted artwork for display
+        if (data.length > 0) {
+          setVotedArtworkId(data[0].artwork_id);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching votes:', error);
+    }
+  }, [supabase, contest.id]);
+
   // Check authentication status on mount
   React.useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setIsAuthenticated(!!user);
       setUserEmail(user?.email || null);
+
+      // Fetch user's votes if authenticated
+      if (user) {
+        await fetchUserVotes(user.id);
+      }
     };
     checkAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setIsAuthenticated(!!session?.user);
       setUserEmail(session?.user?.email || null);
+
+      // Fetch votes when user signs in
+      if (session?.user) {
+        await fetchUserVotes(session.user.id);
+      } else {
+        // Clear votes when user signs out
+        setVotedArtworkId(null);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase.auth]);
+  }, [supabase.auth, fetchUserVotes]);
 
   const onVote = async (artworkId: string) => {
     // Check if user is authenticated
@@ -89,7 +127,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
 
         // Provide user-friendly error messages
         if (errorMsg.includes("already voted")) {
-          errorMsg = "You've already voted for this artwork in this contest!";
+          errorMsg = "You've already voted for this artwork today! Come back tomorrow to vote again.";
         } else if (errorMsg.includes("logged in") || errorMsg.includes("authenticated")) {
           errorMsg = "Please sign in to vote";
         } else if (errorMsg.includes("not active")) {
@@ -113,15 +151,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
       );
 
       setVotedArtworkId(artworkId);
-      try {
-        // Persist vote locally so UI reflects vote across reloads
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem(`votedArtwork:${contest.id}`, artworkId);
-        }
-      } catch (_e) {
-        // ignore storage errors
-      }
-      setMessage("Vote recorded — thank you!");
+      setMessage("Vote recorded — thank you! You can vote again tomorrow.");
     } catch (error) {
       console.error("Vote error:", error);
       setMessage("Failed to record vote. Try again.");
@@ -132,19 +162,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
     }
   };
 
-  // Initialize voted artwork from localStorage
-  React.useEffect(() => {
-    try {
-      if (typeof window !== "undefined") {
-        const stored = window.localStorage.getItem(
-          `votedArtwork:${contest.id}`
-        );
-        if (stored) setVotedArtworkId(stored);
-      }
-    } catch (_e) {
-      // ignore
-    }
-  }, [contest.id]);
+  // Votes are now fetched from database on auth, no longer using localStorage
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-12">
