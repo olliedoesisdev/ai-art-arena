@@ -19,8 +19,10 @@ export interface ContestGridProps {
   canVote?: boolean;
   /** Cooldown end time */
   cooldownEndsAt?: Date | null;
-  /** ID of artwork user voted for */
+  /** ID of artwork user voted for (deprecated: use votedArtworkIds) */
   votedArtworkId?: string | null;
+  /** Set of artwork IDs user voted for */
+  votedArtworkIds?: Set<string>;
   /** Loading state */
   isLoading?: boolean;
   /** Additional CSS classes */
@@ -47,6 +49,7 @@ export const ContestGrid: React.FC<ContestGridProps> = ({
   canVote = true,
   cooldownEndsAt = null,
   votedArtworkId = null,
+  votedArtworkIds = new Set(),
   isLoading = false,
   className,
 }) => {
@@ -76,7 +79,8 @@ export const ContestGrid: React.FC<ContestGridProps> = ({
       className={`grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ${className || ""}`}
     >
       {artworks.map((artwork) => {
-        const hasVoted = votedArtworkId === artwork.id;
+        // Check if user voted for this artwork (prefer votedArtworkIds, fallback to votedArtworkId)
+        const hasVoted = votedArtworkIds.has(artwork.id) || votedArtworkId === artwork.id;
 
         return (
           <ArtworkCard

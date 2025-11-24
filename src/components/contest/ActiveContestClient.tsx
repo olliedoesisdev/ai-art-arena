@@ -24,9 +24,10 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
   initialArtworks,
 }) => {
   const [artworks, setArtworks] = React.useState<Artwork[]>(initialArtworks);
+  const [votedArtworkIds, setVotedArtworkIds] = React.useState<Set<string>>(new Set());
   const [votedArtworkId, setVotedArtworkId] = React.useState<string | null>(
     null
-  );
+  ); // Deprecated: keeping for backwards compatibility
   const [isVotingMap, setIsVotingMap] = React.useState<Record<string, boolean>>(
     {}
   );
@@ -60,9 +61,13 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
       }
 
       if (data && Array.isArray(data)) {
-        // Set the first voted artwork for display
-        if (data.length > 0) {
-          setVotedArtworkId(data[0].artwork_id);
+        // Create a Set of voted artwork IDs
+        const votedIds = new Set(data.map((row: any) => row.artwork_id));
+        setVotedArtworkIds(votedIds);
+
+        // Set the first one for backwards compatibility
+        if (votedIds.size > 0) {
+          setVotedArtworkId(Array.from(votedIds)[0]);
         }
       }
     } catch (error) {
@@ -94,6 +99,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         await fetchUserVotes(session.user.id);
       } else {
         // Clear votes when user signs out
+        setVotedArtworkIds(new Set());
         setVotedArtworkId(null);
       }
     });
@@ -150,6 +156,8 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
         )
       );
 
+      // Add to voted artworks set
+      setVotedArtworkIds((prev) => new Set([...prev, artworkId]));
       setVotedArtworkId(artworkId);
       setMessage("Vote recorded — thank you! You can vote again tomorrow.");
     } catch (error) {
@@ -231,6 +239,7 @@ export const ActiveContestClient: React.FC<ActiveContestClientProps> = ({
           onVote={onVote}
           votedArtworkId={votedArtworkId}
           canVote={isAuthenticated}
+          votedArtworkIds={votedArtworkIds}
         />
 
         {/* Archive Link */}
