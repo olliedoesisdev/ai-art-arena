@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { TrendingUp, Users, Heart, Trophy } from 'lucide-react';
 import ProtectedLayout from '@/components/admin/ProtectedLayout';
+import { ArtworkVoteDetails } from '@/components/admin/ArtworkVoteDetails';
 
 async function getAnalytics() {
   const supabase = await createClient();
@@ -21,19 +22,26 @@ async function getAnalytics() {
     .order('vote_count', { ascending: false })
     .limit(10);
 
-  // Recent votes
+  // Recent votes with user information
   const { data: recentVotes } = await supabase
     .from('votes')
     .select(`
       id,
       voted_at,
+      vote_date,
+      user_id,
       artworks:artwork_id (
+        id,
         title,
         artist_name
+      ),
+      public_users:user_id (
+        email,
+        name
       )
     `)
     .order('voted_at', { ascending: false })
-    .limit(20);
+    .limit(50);
 
   // Votes by day (last 7 days)
   const sevenDaysAgo = new Date();
@@ -129,20 +137,23 @@ export default async function AnalyticsPage() {
             {analytics.topArtworks.map((artwork, index) => (
               <div
                 key={artwork.id}
-                className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-lg border border-slate-700"
+                className="p-4 bg-slate-900/50 rounded-lg border border-slate-700"
               >
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full text-white font-bold">
-                  {index + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-white font-medium truncate">{artwork.title}</h3>
-                  <p className="text-sm text-slate-400">by {artwork.artist_name}</p>
-                </div>
-                <div className="flex-shrink-0">
-                  <span className="text-2xl font-bold text-blue-400">
-                    {artwork.vote_count}
-                  </span>
-                  <span className="text-sm text-slate-400 ml-1">votes</span>
+                <div className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full text-white font-bold">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-white font-medium truncate">{artwork.title}</h3>
+                    <p className="text-sm text-slate-400">by {artwork.artist_name}</p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <ArtworkVoteDetails
+                      artworkId={artwork.id}
+                      artworkTitle={artwork.title}
+                      voteCount={artwork.vote_count}
+                    />
+                  </div>
                 </div>
               </div>
             ))}
@@ -164,7 +175,13 @@ export default async function AnalyticsPage() {
                     Artwork
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">
-                    Artist
+                    Voter
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">
+                    Email
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">
+                    Date
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-slate-300">
                     Time
@@ -178,10 +195,16 @@ export default async function AnalyticsPage() {
                       {vote.artworks?.title || 'Unknown'}
                     </td>
                     <td className="px-4 py-3 text-slate-300">
-                      {vote.artworks?.artist_name || 'Unknown'}
+                      {vote.public_users?.name || vote.public_users?.email?.split('@')[0] || 'Anonymous'}
+                    </td>
+                    <td className="px-4 py-3 text-slate-400 text-sm font-mono">
+                      {vote.public_users?.email || 'N/A'}
                     </td>
                     <td className="px-4 py-3 text-slate-400 text-sm">
-                      {new Date(vote.voted_at).toLocaleString()}
+                      {vote.vote_date ? new Date(vote.vote_date).toLocaleDateString() : new Date(vote.voted_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-3 text-slate-400 text-sm">
+                      {new Date(vote.voted_at).toLocaleTimeString()}
                     </td>
                   </tr>
                 ))}
