@@ -93,7 +93,7 @@ export async function POST(request: Request) {
 
     if (!canVote) {
       return NextResponse.json(
-        { error: 'You have already voted for this artwork in this contest' },
+        { error: 'You have already voted for this artwork today. Come back tomorrow to vote again!' },
         { status: 429 }
       )
     }
@@ -114,7 +114,7 @@ export async function POST(request: Request) {
       // Check if it's a duplicate vote error
       if (voteError.code === '23505') {
         return NextResponse.json(
-          { error: 'You have already voted for this artwork in this contest' },
+          { error: 'You have already voted for this artwork today. Come back tomorrow to vote again!' },
           { status: 429 }
         )
       }
