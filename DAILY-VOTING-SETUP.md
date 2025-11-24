@@ -123,9 +123,11 @@ Should show `votes_user_artwork_date_unique` (not `votes_user_artwork_contest_un
 If you have old votes without `vote_date`, the script handles it:
 ```sql
 UPDATE votes
-SET vote_date = DATE(created_at)
+SET vote_date = CURRENT_DATE
 WHERE vote_date IS NULL;
 ```
+
+Note: All existing votes will be set to today's date. This means users can't vote again for those artworks until tomorrow.
 
 ## SQL Scripts to Run (In Order)
 
