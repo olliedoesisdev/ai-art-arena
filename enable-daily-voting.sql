@@ -29,6 +29,10 @@ ALTER TABLE votes DROP CONSTRAINT IF EXISTS votes_user_artwork_contest_unique;
 SELECT '✓ Dropped old constraint' as status;
 
 -- STEP 4: Add new unique constraint (one per day)
+-- Drop it first in case it already exists
+ALTER TABLE votes DROP CONSTRAINT IF EXISTS votes_user_artwork_date_unique;
+
+-- Create the new constraint
 ALTER TABLE votes ADD CONSTRAINT votes_user_artwork_date_unique
   UNIQUE(user_id, artwork_id, vote_date);
 
