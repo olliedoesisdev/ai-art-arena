@@ -51,6 +51,7 @@ export const ROUTES = {
   contest: "/contest",
   active_contest: "/contest/active",
   archive: "/archive",
+  about: "/about",
   contest_by_week: (weekId: string | number) => `/contest/${weekId}`,
   archive_by_week: (weekId: string | number) => `/archive/${weekId}`,
 } as const;

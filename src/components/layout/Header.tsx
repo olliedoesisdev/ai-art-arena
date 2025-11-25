@@ -25,6 +25,7 @@ export const Header: React.FC = () => {
   const navLinks = [
     { href: ROUTES.contest, label: "Contest" },
     { href: ROUTES.archive, label: "Archive" },
+    { href: ROUTES.about, label: "About" },
   ];
 
   return (
