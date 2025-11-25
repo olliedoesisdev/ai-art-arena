@@ -82,6 +82,17 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
     }
   }, []);
 
+  // Validate content structure
+  const getValidContent = (data: any) => {
+    if (!data || typeof data !== 'object') {
+      return { type: 'doc', content: [] };
+    }
+    if (data.type === 'doc' && Array.isArray(data.content)) {
+      return data;
+    }
+    return { type: 'doc', content: [] };
+  };
+
   // Recover from auto-save
   const recoverDraft = () => {
     const savedDraft = autoSave.load();
@@ -89,7 +100,7 @@ export default function BlogPostForm({ post, categories, tags, contests }: BlogP
       setTitle(savedDraft.title || '');
       setSlug(savedDraft.slug || '');
       setExcerpt(savedDraft.excerpt || '');
-      setContent(savedDraft.content || { type: 'doc', content: [] });
+      setContent(getValidContent(savedDraft.content));
       setCategoryId(savedDraft.categoryId || '');
       setContestId(savedDraft.contestId || '');
       setSelectedTags(savedDraft.selectedTags || []);

@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
+import TiptapImage from '@tiptap/extension-image';
+import TiptapLink from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import CharacterCount from '@tiptap/extension-character-count';
 import {
@@ -45,7 +45,7 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   };
 
   return (
-    <div className="border-b border-slate-700 bg-slate-900/50 p-2 flex flex-wrap gap-1">
+    <div className="border-b border-slate-300 bg-slate-50 p-2 flex flex-wrap gap-1">
       {/* Text Formatting */}
       <Button
         type="button"
@@ -242,19 +242,33 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 };
 
 export function TipTapEditor({ content, onChange, placeholder = 'Start writing...' }: TipTapEditorProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Validate and sanitize content
+  const getValidContent = () => {
+    // If content is empty or invalid, return empty doc
+    if (!content || typeof content !== 'object') {
+      return { type: 'doc', content: [] };
+    }
+
+    // If content looks valid (has type and content array), use it
+    if (content.type === 'doc' && Array.isArray(content.content)) {
+      return content;
+    }
+
+    // Otherwise return empty doc
+    return { type: 'doc', content: [] };
+  };
+
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-      }),
-      Image.configure({
+      StarterKit,
+      TiptapImage.configure({
         HTMLAttributes: {
           class: 'rounded-lg max-w-full h-auto',
         },
       }),
-      Link.configure({
+      TiptapLink.configure({
         openOnClick: false,
         HTMLAttributes: {
           class: 'text-primary hover:underline',
@@ -265,23 +279,38 @@ export function TipTapEditor({ content, onChange, placeholder = 'Start writing..
       }),
       CharacterCount,
     ],
-    content,
+    content: getValidContent(),
     editorProps: {
       attributes: {
-        class: 'prose prose-invert max-w-none min-h-[400px] p-4 focus:outline-none',
+        class: 'prose prose-slate max-w-none min-h-[400px] p-4 focus:outline-none bg-white text-slate-900',
       },
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getJSON());
     },
+    immediatelyRender: false,
+    shouldRerenderOnTransaction: false,
   });
 
+  // Only render after component mounts on client
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <div className="border border-slate-300 rounded-lg overflow-hidden bg-white">
+        <div className="p-4 text-slate-600">Loading editor...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="border border-slate-700 rounded-lg overflow-hidden bg-slate-950">
+    <div className="border border-slate-300 rounded-lg overflow-hidden bg-white">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
       {editor && (
-        <div className="border-t border-slate-700 px-4 py-2 text-xs text-slate-400">
+        <div className="border-t border-slate-300 px-4 py-2 text-xs text-slate-600">
           {editor.storage.characterCount.characters()} characters
         </div>
       )}
