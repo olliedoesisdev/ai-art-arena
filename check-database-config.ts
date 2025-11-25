@@ -33,7 +33,7 @@ const results: CheckResult[] = []
 
 async function checkPublicUsersTable() {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('public_users')
       .select('id')
       .limit(1)
@@ -70,7 +70,7 @@ async function checkPublicUsersTable() {
 async function checkVotesTableSchema() {
   try {
     // Try to query votes table
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('votes')
       .select('id, artwork_id, contest_id, user_id, user_identifier, ip_hash')
       .limit(1)
