@@ -8,6 +8,7 @@
 import * as React from "react";
 import { ArtworkCard } from "./ArtworkCard";
 import { ContestGridSkeleton } from "@/components/ui";
+import { CONTEST_CONFIG, GRID_CONFIG } from "@/lib/constants";
 import type { Artwork } from "@/types";
 
 export interface ContestGridProps {
@@ -55,7 +56,7 @@ export const ContestGrid: React.FC<ContestGridProps> = ({
 }) => {
   // Show skeleton while loading
   if (isLoading) {
-    return <ContestGridSkeleton count={6} />;
+    return <ContestGridSkeleton count={CONTEST_CONFIG.max_artworks_per_contest} />;
   }
 
   // Empty state
@@ -76,7 +77,7 @@ export const ContestGrid: React.FC<ContestGridProps> = ({
 
   return (
     <div
-      className={`grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ${className || ""}`}
+      className={`${GRID_CONFIG.getGridClasses(artworks.length)} gap-6 ${className || ""}`}
     >
       {artworks.map((artwork) => {
         // Check if user voted for this artwork (prefer votedArtworkIds, fallback to votedArtworkId)

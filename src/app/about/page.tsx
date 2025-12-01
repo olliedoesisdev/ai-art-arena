@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Trophy, Code, Heart, Github, Mail, Calculator, Printer, Rocket } from "lucide-react";
+import { Trophy, Heart, Github, Calculator, Printer, Rocket } from "lucide-react";
 import { SITE_CONFIG, ROUTES } from "@/lib/constants";
 
 export const metadata = {

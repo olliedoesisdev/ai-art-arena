@@ -10,6 +10,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@auth/supabase-adapter": "^1.11.1",
+    "@sentry/nextjs": "^10.27.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.81.1",
     "@tiptap/extension-character-count": "^3.10.7",
@@ -18,14 +20,21 @@
     "@tiptap/extension-placeholder": "^3.10.7",
     "@tiptap/react": "^3.10.7",
     "@tiptap/starter-kit": "^3.10.7",
+    "@upstash/ratelimit": "^2.0.7",
+    "@upstash/redis": "^1.35.7",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "lru-cache": "^11.2.2",
     "lucide-react": "^0.553.0",
     "next": "16.0.3",
+    "next-auth": "^5.0.0-beta.30",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "resend": "^6.5.2",
+    "sonner": "^2.0.7",
     "swr": "^2.3.6",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^20",

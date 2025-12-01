@@ -3,7 +3,6 @@ import { format } from 'date-fns';
 import { Calendar, Clock, ArrowLeft, Code2, Database, Palette } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import type { Metadata } from 'next';
-import React from 'react';
 
 export const metadata: Metadata = {
   title: 'About Me - AI Art Arena',

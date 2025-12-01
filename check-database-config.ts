@@ -178,11 +178,11 @@ async function checkActiveContest() {
     results.push({
       name: 'active contest',
       status: 'pass',
-      message: `Active contest found: Week ${contest.week_number || 'N/A'}`,
+      message: `Active contest found: Week ${(contest as any).week_number || 'N/A'}`,
       details: {
-        id: contest.contest_id,
-        status: contest.status,
-        end_date: contest.end_date,
+        id: (contest as any).contest_id,
+        status: (contest as any).status,
+        end_date: (contest as any).end_date,
       },
     })
     return true
@@ -215,7 +215,7 @@ async function checkArtworksForActiveContest() {
     const { data: artworks, error } = await supabase
       .from('artworks')
       .select('id, title, vote_count')
-      .eq('contest_id', contest.contest_id)
+      .eq('contest_id', (contest as any).contest_id)
 
     if (error) throw error
 

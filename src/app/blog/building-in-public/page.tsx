@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { Calendar, Clock, ArrowLeft, Eye } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import type { Metadata } from 'next';
 

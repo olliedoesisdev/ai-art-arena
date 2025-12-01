@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { CONTEST_CONFIG } from "@/lib/constants";
 import type { ContestRow } from "@/types/database";
 
 // Types
@@ -80,7 +81,7 @@ function ContestSkeleton() {
           <div className="h-6 bg-slate-800 rounded-lg w-48 mx-auto" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {Array(CONTEST_CONFIG.max_artworks_per_contest).fill(0).map((_, i) => (
             <div
               key={i}
               className="bg-slate-800/50 rounded-xl h-96 animate-pulse"

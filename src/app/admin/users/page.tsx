@@ -20,7 +20,7 @@ async function getUsersData() {
   const supabase = await createClient();
 
   // Fetch all users
-  const { data: users, error: usersError } = await supabase
+  const { data: users, error: usersError } = await (supabase as any)
     .from('public_users')
     .select('*')
     .order('created_at', { ascending: false });
@@ -36,11 +36,11 @@ async function getUsersData() {
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
   const newUsersLast7Days = users?.filter(
-    (u) => new Date(u.created_at) >= sevenDaysAgo
+    (u: User) => new Date(u.created_at) >= sevenDaysAgo
   ).length || 0;
 
   const newUsersLast30Days = users?.filter(
-    (u) => new Date(u.created_at) >= thirtyDaysAgo
+    (u: User) => new Date(u.created_at) >= thirtyDaysAgo
   ).length || 0;
 
   const stats: UserStats = {

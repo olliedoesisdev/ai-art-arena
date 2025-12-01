@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase'
 import { createHash } from 'crypto'
+import { voteSchema, validateRequest, formatZodError } from '@/lib/validation'
+import { rateLimiters, RateLimitError } from '@/lib/rate-limit'
+import { FEATURES, HTTP_STATUS, ERROR_MESSAGES } from '@/lib/constants'
 
 export const dynamic = 'force-dynamic'
 
 // Helper function to hash IP address for privacy (kept for analytics)
 function hashIP(ip: string): string {
-  return createHash('sha256').update(ip + process.env.IP_SALT || 'default-salt').digest('hex')
+  if (!process.env.IP_SALT) {
+    throw new Error('IP_SALT environment variable is required for security');
+  }
+  return createHash('sha256').update(ip + process.env.IP_SALT).digest('hex')
 }
 
 // Helper function to get client IP (kept for analytics)
@@ -27,14 +33,44 @@ function getClientIP(request: Request): string {
 
 export async function POST(request: Request) {
   try {
-    const { artworkId, contestId } = await request.json()
-
-    if (!artworkId || !contestId) {
+    // Check if voting feature is enabled
+    if (!FEATURES.VOTING) {
       return NextResponse.json(
-        { error: 'Artwork ID and Contest ID are required' },
-        { status: 400 }
+        { error: 'Voting is currently disabled' },
+        { status: HTTP_STATUS.FORBIDDEN }
       )
     }
+
+    // Get client IP for rate limiting
+    const clientIP = getClientIP(request)
+    const ipHash = hashIP(clientIP)
+
+    // Apply rate limiting: 10 requests per minute per IP
+    try {
+      await rateLimiters.vote.check(10, ipHash)
+    } catch (error) {
+      if (error instanceof RateLimitError) {
+        return NextResponse.json(
+          { error: ERROR_MESSAGES.RATE_LIMITED },
+          { status: HTTP_STATUS.TOO_MANY_REQUESTS }
+        )
+      }
+      throw error
+    }
+
+    // Validate request body
+    const body = await request.json()
+    const validation = validateRequest(voteSchema, body)
+
+    if (!validation.success) {
+      const formattedError = formatZodError(validation.error)
+      return NextResponse.json(
+        { error: formattedError.message, details: formattedError.errors },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      )
+    }
+
+    const { artworkId, contestId } = validation.data
 
     const supabase = await createServerClient()
 
@@ -43,14 +79,12 @@ export async function POST(request: Request) {
 
     if (userError || !user) {
       return NextResponse.json(
-        { error: 'You must be logged in to vote' },
-        { status: 401 }
+        { error: ERROR_MESSAGES.UNAUTHORIZED },
+        { status: HTTP_STATUS.UNAUTHORIZED }
       )
     }
 
-    // Get client IP and hash it (for analytics only)
-    const clientIP = getClientIP(request)
-    const ipHash = hashIP(clientIP)
+    // Get user agent for analytics
     const userAgent = request.headers.get('user-agent') || 'unknown'
 
     // Check if the contest is active
@@ -62,22 +96,22 @@ export async function POST(request: Request) {
 
     if (contestError || !contest) {
       return NextResponse.json(
-        { error: 'Contest not found' },
-        { status: 404 }
+        { error: ERROR_MESSAGES.CONTEST_NOT_FOUND },
+        { status: HTTP_STATUS.NOT_FOUND }
       )
     }
 
     if (contest.status !== 'active') {
       return NextResponse.json(
-        { error: 'Contest is not active' },
-        { status: 400 }
+        { error: ERROR_MESSAGES.CONTEST_ENDED },
+        { status: HTTP_STATUS.BAD_REQUEST }
       )
     }
 
     if (new Date(contest.end_date) < new Date()) {
       return NextResponse.json(
-        { error: 'Contest has ended' },
-        { status: 400 }
+        { error: ERROR_MESSAGES.CONTEST_ENDED },
+        { status: HTTP_STATUS.BAD_REQUEST }
       )
     }
 
@@ -93,8 +127,8 @@ export async function POST(request: Request) {
 
     if (!canVote) {
       return NextResponse.json(
-        { error: 'You have already voted for this artwork today. Come back tomorrow to vote again!' },
-        { status: 429 }
+        { error: ERROR_MESSAGES.ALREADY_VOTED },
+        { status: HTTP_STATUS.TOO_MANY_REQUESTS }
       )
     }
 
@@ -114,8 +148,8 @@ export async function POST(request: Request) {
       // Check if it's a duplicate vote error
       if (voteError.code === '23505') {
         return NextResponse.json(
-          { error: 'You have already voted for this artwork today. Come back tomorrow to vote again!' },
-          { status: 429 }
+          { error: ERROR_MESSAGES.ALREADY_VOTED },
+          { status: HTTP_STATUS.TOO_MANY_REQUESTS }
         )
       }
       throw voteError
@@ -138,8 +172,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error recording vote:', error)
     return NextResponse.json(
-      { error: 'Failed to record vote' },
-      { status: 500 }
+      { error: ERROR_MESSAGES.GENERIC_ERROR },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     )
   }
 }

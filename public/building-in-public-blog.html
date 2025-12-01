@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Life Insurance to Full-Stack: My Journey Building in Public | Oliver's Dev Story</title>
+    <meta name="description" content="Three years from selling insurance to deploying production apps. My journey using AI as a tool while doing the real architectural work.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: #1e1e1e;
+            color: #ffffff;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+            padding: 120px 20px 80px;
+            text-align: center;
+            border-bottom: 3px solid #0066ff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 102, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #0066ff 0%, #00ffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .hero .subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: #00ffff;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .hero .meta {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 700;
+            color: #0066ff;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: clamp(1.3rem, 2vw, 1.8rem);
+            font-weight: 600;
+            color: #00ffff;
+            margin: 40px 0 20px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            color: #e0e0e0;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.15) 0%, rgba(0, 255, 255, 0.1) 100%);
+            border-left: 4px solid #0066ff;
+            padding: 25px 30px;
+            margin: 35px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .tech-stack {
+            background: rgba(0, 102, 255, 0.1);
+            border: 1px solid #0066ff;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .tech-stack ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tech-stack li {
+            padding: 12px 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 3px solid #00ffff;
+            font-size: 0.95rem;
+            color: #ffffff;
+        }
+
+        .pull-quote {
+            font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+            font-weight: 600;
+            color: #00ffff;
+            font-style: italic;
+            margin: 50px 0;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(0, 255, 255, 0.05) 100%);
+            border-radius: 8px;
+        }
+
+        .pull-quote::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 80px;
+            color: #0066ff;
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #0066ff 0%, #00ffff 100%);
+            padding: 60px 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .cta-section h2 {
+            color: #1e1e1e;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            color: #1e1e1e;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #1e1e1e;
+            color: #00ffff;
+            border: 2px solid #1e1e1e;
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: #1e1e1e;
+            border-color: #1e1e1e;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1e1e1e;
+            border: 2px solid #1e1e1e;
+        }
+
+        .btn-secondary:hover {
+            background: #1e1e1e;
+            color: #00ffff;
+            transform: translateY(-2px);
+        }
+
+        .connection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .connection-card {
+            background: rgba(0, 102, 255, 0.1);
+            border: 1px solid #0066ff;
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .connection-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ffff;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+        }
+
+        .connection-card h3 {
+            font-size: 1.3rem;
+            margin: 0 0 15px 0;
+        }
+
+        .connection-card p {
+            font-size: 0.95rem;
+            margin: 0;
+            color: #d0d0d0;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #0066ff 50%, transparent 100%);
+            margin: 60px 0;
+        }
+
+        footer {
+            background: #151515;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 2px solid #0066ff;
+        }
+
+        footer p {
+            color: #808080;
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
+        footer a {
+            color: #00ffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #0066ff;
+        }
+
+        .accent-text {
+            color: #00ffff;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 80px 20px 60px;
+            }
+
+            .container {
+                padding: 40px 20px;
+            }
+
+            .cta-section {
+                padding: 40px 25px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection color */
+        ::selection {
+            background: #0066ff;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-content">
+            <h1>From Life Insurance to Full-Stack: My Journey Building in Public</h1>
+            <p class="subtitle">Three years from selling insurance to deploying production apps</p>
+            <p class="meta">By Oliver | Developer, Builder, Learner</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="section">
+            <p>Look, I'm not gonna pretend I knew what I was doing when I started this thing.</p>
+            
+            <p>Three years ago I was selling life insurance. Hated every second of it. I'd make upwards of 300 calls a day, trying to sell insurance to people who were actively trying to get OFF this call list. My day oscillated between hoping people wouldn't pick up the phone, then hoping they wouldn't hang up on me. I wanted to build something, create something, but I had zero coding experience. Zero.</p>
+
+            <p>So I did what everyone does when they want to skip the hard part—bought into Go High Level. Thought drag-and-drop would be enough. Spoiler: it wasn't.</p>
+
+            <p>Then WordPress with page builders. Which was... better? But I still felt like I was fighting the tools instead of actually building anything. Like trying to assemble IKEA furniture but all the pieces are for different products and none of the instructions match. So I started writing my own PHP files. Editing themes. Breaking literally everything. Fixing it. Breaking it again. Learning very slowly that I had no idea how databases worked.</p>
+
+            <p>Every time I switched platforms people probably thought I was just indecisive. But it wasn't that. It was hitting walls and realizing "oh shit I'm not doing this as well as it could be done" and that bothered me way more than starting over. Which is probably a personality flaw but here we are.</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section">
+            <h2>The Project Nobody Will Ever See</h2>
+            
+            <p>About two years ago I built this real estate website for an agent in Las Vegas. Full WordPress setup with IDX Broker integration. Listing feeds, search functionality, all of it. That was the first time I had to connect an actual API and do backend work.</p>
+
+            <p>Except I didn't even know that's what it was called. I was just trying to make the damn listings show up on his site and Googling things like "how to make WordPress talk to other website" because I didn't know the terminology.</p>
+
+            <p>The agent was brand new. And if you know anything about Las Vegas real estate you know it's absolutely brutal. Like trying to break into Hollywood level of competitive. We couldn't get any traction. Project's basically dead now. I have nothing to show for it.</p>
+
+            <div class="highlight-box">
+                <p>And that's the thing about client work when you're starting out right? Their business fails, your work disappears with it. No portfolio piece. No proof you built anything. Just you sitting there knowing you did all that work with literally nothing to point to. It's the worst.</p>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section">
+            <h2>Wait, I'm a What Now?</h2>
+            
+            <p>So I kept building stuff. Learning. Breaking things (I'm really good at that part). Using AI more and more because manually debugging was making me want to quit entirely.</p>
+
+            <p>Then like six months ago I'm talking to Claude about something code-related and I just randomly ask "hey how would you describe me and my ability to build websites" and Claude goes "you're a full-stack developer" and I'm just sitting there like... wait what?</p>
+
+            <p>So I Googled it. Full-stack developer. And I'm reading the definition and I'm realizing—oh. Oh shit. I've been doing this for over a year. APIs, databases, frontend stuff, authentication, deploying things. That's all full-stack. I just didn't know that's what you called it.</p>
+
+            <div class="pull-quote">
+                An AI had to tell me what I was before I knew it myself. Which is kind of hilarious and kind of embarrassing but also perfectly sums up this whole journey.
+            </div>
+
+            <p>But the REAL aha moment? That happened last week.</p>
+
+            <p>I finally got AI Art Arena working to the point where I could actually show people. And I'm looking at everything I built—the auth system, the database setup, the real-time voting, the cron jobs that automatically cycle contests every week, the admin dashboard—and it hits me: I actually understand how all of this works now. Like really understand it. Not just "I copied this from Stack Overflow and it works" but genuine understanding of what I'm capable of building.</p>
+
+            <p>That's why I'm doing the whole building in public thing now. This is different from that Las Vegas site or any other client project that went nowhere. This is MINE. Even if the contest completely flops, I still have this functioning application I can point to and say "I built that."</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section">
+            <h2>Okay So About AI Though</h2>
+            
+            <p>Here's what I need you to understand and I know this might be controversial but whatever: Everything you see on this site was built with AI. Every line of code. Every image. Every word. And I'm not trying to hide it—I'm straight up celebrating it.</p>
+
+            <p>Because without AI? None of this exists.</p>
+
+            <p>But also—and this is important—<span class="accent-text">I'm the architect. AI is just the builder following my blueprints.</span> There's a huge difference.</p>
+
+            <h3>The Calculator Analogy</h3>
+
+            <p>You ever see Hidden Figures? That movie about the Black women who worked at NASA doing all the calculations for the space program? I didn't realize until I watched that movie that "computers" used to be PEOPLE. Like that was their job title. "Computer." Because they performed computations.</p>
+
+            <p>Then machines came along that could compute faster than humans and we started calling the machines "computers" instead of the people. But the humans were still doing all the thinking, all the architecture, all the decision-making. The machine just did the computation faster.</p>
+
+            <div class="highlight-box">
+                <p><strong>That's what AI is.</strong> It's a calculator for code. A printer for words. A computer for computation.</p>
+                
+                <p>Calculators didn't make math obsolete—they made it faster. But you still need to know what equation to write. You still need to know if the answer makes sense or if you fat-fingered something.</p>
+                
+                <p>Printers didn't make writing obsolete. They just made it way faster to produce copies. You still have to write the thing. Edit it. Make it actually good.</p>
+                
+                <p>AI doesn't make development obsolete. It just makes execution faster. But you still need to architect the whole system. Evaluate if the code is secure. Debug when things break (which is constantly). Decide if this is even the right approach in the first place.</p>
+            </div>
+
+            <p class="accent-text" style="font-size: 1.2rem; text-align: center; margin: 40px 0;">AI is only as good as the person using it and how much work you're willing to put in.</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section">
+            <h2>The Work Nobody Sees</h2>
+            
+            <p>When I built AI Art Arena I didn't just type "build me a voting platform" and watch it magically appear like some people seem to think AI works.</p>
+
+            <p>I had to design the entire system first. Like sitting down with a notebook and figuring out: What tables does the database need? How do we prevent someone from voting 50 times? What happens when a contest ends? How do we handle people who are logged in versus anonymous voters? What security stuff do we need so we don't immediately get hacked?</p>
+
+            <p>Then I had to translate all of that into extremely specific prompts for AI.</p>
+
+            <p>I'm not asking "make a voting system." I'm asking stuff like "I need a Next.js API route that checks if a user voted in the last 24 hours by querying their last vote timestamp, validates the artwork_id actually exists in the database, hashes their IP address with SHA-256 before storing it for privacy, increments the vote count atomically in Supabase so we don't get race conditions, and returns proper error codes for rate limiting, duplicate votes, and invalid artwork IDs."</p>
+
+            <p>And even then? AI's first attempt is usually wrong. Or it's right but not optimal. Or it works but doesn't handle edge cases I didn't think to mention.</p>
+
+            <div class="highlight-box">
+                <p>So I read through the code. Test it. Break it. Realize it's not handling something properly. Regenerate with more specific requirements. Test again. Refactor because it doesn't fit with the rest of my architecture. Repeat this like 10-20 times per feature.</p>
+                
+                <p><strong>Every single feature in this app went through that process. Every. Single. One.</strong></p>
+            </div>
+
+            <h3>The Mental Work is All Mine</h3>
+
+            <p>When AI generates code I have to read every line and actually understand what it's doing. Not just copy-paste and hope. I need to:</p>
+
+            <ul style="list-style: none; padding-left: 0;">
+                <li style="padding: 10px 0; border-left: 3px solid #00ffff; padding-left: 20px; margin: 10px 0; background: rgba(0, 255, 255, 0.05);">Evaluate if it's secure (is this vulnerable to SQL injection?)</li>
+                <li style="padding: 10px 0; border-left: 3px solid #00ffff; padding-left: 20px; margin: 10px 0; background: rgba(0, 255, 255, 0.05);">Check if it handles errors properly</li>
+                <li style="padding: 10px 0; border-left: 3px solid #00ffff; padding-left: 20px; margin: 10px 0; background: rgba(0, 255, 255, 0.05);">Test edge cases AI didn't consider</li>
+                <li style="padding: 10px 0; border-left: 3px solid #00ffff; padding-left: 20px; margin: 10px 0; background: rgba(0, 255, 255, 0.05);">Refactor it to fit my existing code</li>
+                <li style="padding: 10px 0; border-left: 3px solid #00ffff; padding-left: 20px; margin: 10px 0; background: rgba(0, 255, 255, 0.05);">Debug when it inevitably breaks</li>
+                <li style="padding: 10px 0; border-left: 3px solid #00ffff; padding-left: 20px; margin: 10px 0; background: rgba(0, 255, 255, 0.05);">Decide if this is even the right approach</li>
+            </ul>
+
+            <p>The mental work is all mine. The architecture, the decision-making, the vision, the hundreds of iterations, all the evaluation and refinement. AI just speeds up the actual typing part.</p>
+
+            <p>You know how before AI I mentioned getting frustrated with debugging? Manually hunting for a missing semicolon in C++ was enough to make me want to quit programming entirely. I think that's why I barely use punctuation in half my messages now—somewhere in my brain I'm still traumatized from hunting for that one missing comma that broke everything and I just... never put them back.</p>
+
+            <p>But with AI I can focus on the logic. The architecture. The design. The stuff my brain is actually good at. And when I screw something up (which is often) AI helps me debug way faster than I could alone.</p>
+
+            <p class="accent-text" style="font-size: 1.15rem; margin-top: 30px;">The tool changed. The work is still there. Just like calculators, printers, and those NASA computers.</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section">
+            <h2>What I Actually Built</h2>
+            
+            <p>This portfolio site you're on? AI Art Arena? I designed every piece of it. Then used AI to help me build what I designed.</p>
+
+            <div class="tech-stack">
+                <h3 style="margin-top: 0; color: #0066ff;">The Tech Stack</h3>
+                <ul>
+                    <li>Next.js 14 with TypeScript - my choice, not AI's suggestion</li>
+                    <li>Supabase for backend - looked at like five different options and picked this one</li>
+                    <li>NextAuth - GitHub, Google, and email magic links (designed the whole auth flow)</li>
+                    <li>Real-time voting - 24-hour cooldowns (had to architect all that logic myself)</li>
+                    <li>Automated weekly cycles - Vercel cron jobs (took me forever to figure out the scheduling)</li>
+                    <li>Admin dashboard - role-based access control (designed the entire permissions system)</li>
+                    <li>Security measures - rate limiting, IP hashing (went down a rabbit hole researching best practices)</li>
+                </ul>
+            </div>
+
+            <p>For every feature I had to know:</p>
+            
+            <ul style="list-style: none; padding-left: 0;">
+                <li style="padding: 15px 0; border-left: 4px solid #0066ff; padding-left: 25px; margin: 15px 0; background: rgba(0, 102, 255, 0.1);"><strong style="color: #00ffff;">WHAT</strong> to build (the requirements)</li>
+                <li style="padding: 15px 0; border-left: 4px solid #0066ff; padding-left: 25px; margin: 15px 0; background: rgba(0, 102, 255, 0.1);"><strong style="color: #00ffff;">WHY</strong> it needs to work this way (the logic)</li>
+                <li style="padding: 15px 0; border-left: 4px solid #0066ff; padding-left: 25px; margin: 15px 0; background: rgba(0, 102, 255, 0.1);"><strong style="color: #00ffff;">HOW</strong> to structure it (the architecture)</li>
+                <li style="padding: 15px 0; border-left: 4px solid #0066ff; padding-left: 25px; margin: 15px 0; background: rgba(0, 102, 255, 0.1);"><strong style="color: #00ffff;">WHEN</strong> AI's solution is actually wrong (evaluation)</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p>Could I have built this without AI? Honestly no. The manual typing, the semicolon debugging, the endless documentation reading—it would have broken me. I would have given up.</p>
+                
+                <p>But did AI "build" this? Also no.</p>
+                
+                <p><strong>I built this. AI was my tool.</strong></p>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section">
+            <h2>Why I'm Doing This Publicly Instead of Just Building in Private</h2>
+            
+            <p>Client projects disappear. The Las Vegas site? Gone. All that work—the API integration, the custom functionality, the problem-solving—just gone. Building in public means I always have proof of what I built regardless of whether the actual project succeeds. Which feels important when you're trying to prove you can do this work.</p>
+
+            <h3>What Building in Public Gives You</h3>
+
+            <p><strong style="color: #00ffff;">You learn way more when people can see your work.</strong> If I'm building in private and making architectural mistakes I'll never know. Building in public means someone with more expertise can tell me "hey here's a better way to do that" and I actually want that feedback. I need it honestly.</p>
+
+            <p><strong style="color: #00ffff;">It creates a portfolio as you go.</strong> I'm not waiting until everything is perfect to show people because perfect never happens. Every commit, every feature, every iteration is visible. That feels more valuable than a polished final product with zero context about how you got there.</p>
+
+            <p><strong style="color: #00ffff;">It holds you accountable in a weird way.</strong> When you publicly say "I'm building this" people kind of expect to see progress. Which keeps you moving forward instead of abandoning projects when they get hard (which I've definitely done before).</p>
+
+            <p><strong style="color: #00ffff;">It shows the reality.</strong> If you're switching careers into development you need to see that it's not a straight line. That people rebuild stuff multiple times. That you don't need to understand everything before you start. Building in public shows the messy reality instead of just the highlight reel.</p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section">
+            <h2>I Still Don't Know What I'm Doing (Sometimes)</h2>
+            
+            <p>Full transparency: I've built a functional full-stack app and I'm proud of it. But I know there are people who could look at my code architecture and immediately spot like ten things I could do better. Probably more than ten honestly.</p>
+
+            <p class="accent-text" style="font-size: 1.15rem;">And I want that feedback.</p>
+
+            <p>If you're a developer with way more expertise than me (which let's be real is probably most developers) I'd love to connect. Not because I want you to fix my code for free—that's not what I'm asking. But having a few people I can learn from, who can look at my architectural decisions and tell me "here's a better approach" or "this works but here's why it might cause problems later"—that would be incredibly valuable.</p>
+
+            <p>I'm building in public which means showing the messy parts. The stuff I don't know. The places where I'm probably doing it wrong but it works so I shipped it anyway because done is better than perfect.</p>
+
+            <p><strong>If you see something that could be better—code architecture, database design, security practices, deployment strategies, whatever—tell me. I legitimately want to learn.</strong></p>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section">
+            <h2>What Actually Happens Next</h2>
+            
+            <p>AI Art Arena is live at <a href="https://olliedoesis.dev" style="color: #00ffff; text-decoration: none; border-bottom: 2px solid #00ffff;">olliedoesis.dev</a>. It's a weekly voting contest for AI-generated art but it's also proof that I can architect and build a full-stack application from scratch.</p>
+
+            <div class="tech-stack">
+                <h3 style="margin-top: 0; color: #0066ff;">What the Site Includes</h3>
+                <ul>
+                    <li>Multi-provider authentication (GitHub, Google, email magic links)</li>
+                    <li>Real-time database subscriptions</li>
+                    <li>Automated weekly workflows</li>
+                    <li>Admin dashboard with role-based permissions</li>
+                    <li>Security measures (rate limiting, IP hashing, SQL injection prevention)</li>
+                    <li>Responsive design</li>
+                    <li>Custom domain with SSL</li>
+                </ul>
+            </div>
+
+            <p style="text-align: center; margin-top: 40px;"><strong style="color: #00ffff; font-size: 1.2rem;">All built using AI as a tool. But architected, evaluated, and refined by me through hundreds of iterations.</strong></p>
+        </section>
+
+        <div class="cta-section">
+            <h2>Let's Connect</h2>
+            <p>Whether you're a seasoned developer, switching careers, or building with AI—I want to hear from you.</p>
+            
+            <div class="connection-grid" style="text-align: left; max-width: 900px; margin: 40px auto;">
+                <div class="connection-card">
+                    <h3>Developers</h3>
+                    <p>Especially if you know more than I do (likely). I want to learn from people better than me. Look at my code. Tell me what I'm doing wrong. Let's share knowledge.</p>
+                </div>
+                
+                <div class="connection-card">
+                    <h3>Career Switchers</h3>
+                    <p>Reach out. I want to know what you're building. What tools you're using. How you're using AI to speed up execution while you handle architecture. Let's share what we're learning.</p>
+                </div>
+                
+                <div class="connection-card">
+                    <h3>Non-Tech Background</h3>
+                    <p>This is proof it's possible. Three years from selling insurance I hated to deploying production apps. But know this: it's not a straight line. Just keep building.</p>
+                </div>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="https://olliedoesis.dev" class="btn btn-primary">View AI Art Arena</a>
+                <a href="https://github.com/olliedoesisdev" class="btn btn-secondary">Check Out My GitHub</a>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>The Actual Story Here</h2>
+            
+            <p>This isn't about AI building things for people. It's about using the right tool to remove barriers while still putting in the real work to architect, evaluate, and refine.</p>
+
+            <p>Calculators didn't make mathematicians obsolete. Printers didn't make writers obsolete. Machine computers didn't make NASA's thinking obsolete. The tools changed. The work evolved. Humans still do the thinking.</p>
+
+            <div class="pull-quote">
+                AI is the latest tool in that evolution. And like every tool before it, it's only as good as the person using it.
+            </div>
+
+            <p>I'm the architect. AI is my builder. But I'm drawing detailed blueprints, checking every measurement, iterating until it's right.</p>
+
+            <p>That's building in public. That's using AI as a tool. That's what I'm doing at olliedoesis.dev.</p>
+
+            <p class="accent-text" style="font-size: 1.2rem; text-align: center; margin-top: 50px;">Come check it out. Tell me what I'm doing wrong. Let's build something together.</p>
+
+            <p style="text-align: center; margin-top: 40px; color: #00ffff; font-weight: 600; font-size: 1.1rem;">Follow along: #buildinpublic</p>
+
+            <p style="text-align: center; margin-top: 20px; font-size: 1.2rem; font-weight: 700; color: #0066ff;">This is just the beginning.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Oliver | Building in Public</p>
+        <p><a href="https://olliedoesis.dev">olliedoesis.dev</a> | <a href="https://github.com/olliedoesisdev">GitHub</a></p>
+        <p style="margin-top: 20px; font-size: 0.85rem; color: #606060;">Designed with passion. Built with AI as a tool. Architected by a human.</p>
+    </footer>
+</body>
+</html>

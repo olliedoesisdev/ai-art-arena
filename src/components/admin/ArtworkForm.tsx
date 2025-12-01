@@ -14,10 +14,10 @@ interface Artwork {
   id?: string;
   contest_id: string;
   title: string;
-  artist_name: string;
-  description: string;
+  artist_name: string | null;
+  description: string | null;
   image_url: string;
-  prompt: string;
+  prompt: string | null;
   position: number;
 }
 
@@ -137,7 +137,7 @@ export default function ArtworkForm({ artwork, mode }: ArtworkFormProps) {
           <input
             id="artist_name"
             type="text"
-            value={formData.artist_name}
+            value={formData.artist_name || ''}
             onChange={(e) =>
               setFormData({ ...formData, artist_name: e.target.value })
             }
@@ -173,7 +173,7 @@ export default function ArtworkForm({ artwork, mode }: ArtworkFormProps) {
         </label>
         <textarea
           id="description"
-          value={formData.description}
+          value={formData.description || ''}
           onChange={(e) =>
             setFormData({ ...formData, description: e.target.value })
           }
@@ -190,7 +190,7 @@ export default function ArtworkForm({ artwork, mode }: ArtworkFormProps) {
         </label>
         <textarea
           id="prompt"
-          value={formData.prompt}
+          value={formData.prompt || ''}
           onChange={(e) => setFormData({ ...formData, prompt: e.target.value })}
           rows={3}
           className="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
