@@ -38,7 +38,15 @@ export async function POST(request: Request) {
 
     // 4. Upstash rate limit check
     const rateLimitKey = `vote:${ipHash}:${contest_id}`
-    const { success: allowed, reset } = await voteRateLimit.limit(rateLimitKey)
+    let allowed: boolean, reset: number
+    try {
+      const rl = await voteRateLimit.limit(rateLimitKey)
+      allowed = rl.success
+      reset = rl.reset
+    } catch (rlError) {
+      logger.error({ requestId, rlError }, 'rate limit check failed')
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    }
     if (!allowed) {
       logger.warn({ requestId, rateLimitKey }, 'vote rate limited')
       return NextResponse.json(

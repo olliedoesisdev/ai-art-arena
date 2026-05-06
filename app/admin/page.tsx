@@ -3,416 +3,148 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Admin Dashboard - AI Art Arena",
+export const metadata = { title: "Admin — AI Art Arena" };
+
+const card: React.CSSProperties = {
+  background: "#111119",
+  border: "1px solid rgba(139,92,246,0.12)",
+  borderRadius: "14px",
+  padding: "24px",
 };
 
 export default async function AdminPage() {
   const session = await auth();
+  if (!session?.user || session.user.role !== "admin") redirect("/signin");
+
   const supabase = await createClient();
 
-  // Check if user is admin
-  if (!session?.user) {
-    redirect("/signin");
-  }
+  const [contestsResult, artworksResult, votesResult, recentContests, recentVotes] =
+    await Promise.all([
+      supabase.from("contests").select("id, status"),
+      supabase.from("artworks").select("id", { count: "exact", head: true }),
+      supabase.from("votes").select("id, created_at"),
+      supabase.from("contests").select("id, week_number, status, start_date, end_date").order("week_number", { ascending: false }).limit(5),
+      supabase.from("votes").select("id, created_at, artworks(title, contests(week_number))").order("created_at", { ascending: false }).limit(8),
+    ]);
 
-  const { data: user } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", session.user.id)
-    .single();
+  const activeContests = contestsResult.data?.filter((c) => c.status === "active").length ?? 0;
+  const totalContests = contestsResult.data?.length ?? 0;
+  const totalArtworks = artworksResult.count ?? 0;
+  const totalVotes = votesResult.data?.length ?? 0;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const votesToday = votesResult.data?.filter((v) => new Date(v.created_at) >= today).length ?? 0;
 
-  if (user?.role !== "admin") {
-    redirect("/signin");
-  }
-
-  // Get comprehensive stats
-  const [
-    contestsResult,
-    artworksResult,
-    votesResult,
-    recentContestsResult,
-    recentVotesResult,
-  ] = await Promise.all([
-    supabase.from("contests").select("id, status", { count: "exact" }),
-    supabase.from("artworks").select("id", { count: "exact" }),
-    supabase.from("votes").select("id, created_at", { count: "exact" }),
-    supabase
-      .from("contests")
-      .select(
-        `
-        id,
-        week_number,
-        status,
-        start_date,
-        end_date,
-        artworks (count)
-      `
-      )
-      .order("week_number", { ascending: false })
-      .limit(5),
-    supabase
-      .from("votes")
-      .select(
-        `
-        id,
-        created_at,
-        artworks (
-          title,
-          contests (
-            week_number
-          )
-        )
-      `
-      )
-      .order("created_at", { ascending: false })
-      .limit(10),
-  ]);
-
-  const activeContests =
-    contestsResult.data?.filter((c) => c.status === "active").length || 0;
-  const totalContests = contestsResult.count || 0;
-  const totalArtworks = artworksResult.count || 0;
-  const totalVotes = votesResult.count || 0;
-
-  // Calculate votes today
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const votesToday =
-    votesResult.data?.filter(
-      (v) => new Date(v.created_at) >= today
-    ).length || 0;
-
-  // Calculate votes this week
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
-  const votesThisWeek =
-    votesResult.data?.filter(
-      (v) => new Date(v.created_at) >= weekAgo
-    ).length || 0;
-
-  const recentContests = recentContestsResult.data || [];
-  const recentVotes = recentVotesResult.data || [];
+  const STATS = [
+    { label: "Active contests", value: activeContests, sub: `${totalContests - activeContests} archived` },
+    { label: "Total artworks", value: totalArtworks, sub: "across all contests" },
+    { label: "Total votes", value: totalVotes, sub: `${votesToday} today` },
+    { label: "Total contests", value: totalContests, sub: activeContests > 0 ? "currently active" : "none active" },
+  ];
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Dashboard Overview
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Welcome back! Here's what's happening with your AI Art Arena.
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8b5cf6", marginBottom: "8px" }}>
+          Overview
         </p>
+        <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "#eeeeff", letterSpacing: "-0.03em" }}>
+          Dashboard
+        </h1>
+      </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-5xl font-bold">{activeContests}</div>
-              <div className="bg-white/20 p-3 rounded-lg">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1px", background: "rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden", border: "1px solid rgba(139,92,246,0.12)" }}>
+        {STATS.map(({ label, value, sub }) => (
+          <div key={label} style={{ background: "#111119", padding: "24px" }}>
+            <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "2rem", fontWeight: 500, color: "#eeeeff", letterSpacing: "-0.02em", marginBottom: "4px" }}>
+              {value}
             </div>
-            <div className="text-blue-100">Active Contests</div>
-            <div className="mt-2 text-sm text-blue-200">
-              {totalContests - activeContests} archived
-            </div>
+            <div style={{ fontSize: "0.8125rem", color: "#7878a0", marginBottom: "2px" }}>{label}</div>
+            <div style={{ fontSize: "0.75rem", color: "#3a3a58" }}>{sub}</div>
           </div>
+        ))}
+      </div>
 
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-5xl font-bold">{totalArtworks}</div>
-              <div className="bg-white/20 p-3 rounded-lg">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div className="text-purple-100">Total Artworks</div>
-            <div className="mt-2 text-sm text-purple-200">
-              {totalContests > 0
-                ? `${Math.round(totalArtworks / totalContests)} per contest`
-                : "No contests yet"}
-            </div>
+      {/* Quick actions */}
+      <div style={card}>
+        <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Quick actions</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
+          {[
+            { href: "/admin/contests/new", label: "New Contest", color: "#8b5cf6" },
+            { href: "/admin/artworks/upload", label: "Upload Artworks", color: "#34d399" },
+            { href: "/admin/analytics", label: "Analytics", color: "#a78bfa" },
+            { href: "/admin/contests", label: "Manage Contests", color: "#fbbf24" },
+          ].map(({ href, label, color }) => (
+            <Link key={href} href={href} style={{
+              display: "block", padding: "14px 18px", borderRadius: "10px",
+              border: `1px solid ${color}30`, background: `${color}08`,
+              color, fontSize: "0.875rem", fontWeight: 600, textDecoration: "none",
+            }}>
+              {label} →
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
+        {/* Recent contests */}
+        <div style={card}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+            <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em" }}>Recent Contests</p>
+            <Link href="/admin/contests" style={{ fontSize: "0.75rem", color: "#8b5cf6", textDecoration: "none" }}>View all</Link>
           </div>
-
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-5xl font-bold">{totalVotes}</div>
-              <div className="bg-white/20 p-3 rounded-lg">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                  />
-                </svg>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {(recentContests.data ?? []).length === 0 ? (
+              <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No contests yet</p>
+            ) : (recentContests.data ?? []).map((c) => (
+              <div key={c.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "#181820", borderRadius: "8px" }}>
+                <div>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "#eeeeff" }}>Week {c.week_number}</div>
+                  <div style={{ fontSize: "0.75rem", color: "#7878a0" }}>
+                    {new Date(c.start_date).toLocaleDateString()} — {new Date(c.end_date).toLocaleDateString()}
+                  </div>
+                </div>
+                <span style={{
+                  fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+                  padding: "3px 8px", borderRadius: "100px",
+                  background: c.status === "active" ? "rgba(52,211,153,0.12)" : "rgba(139,92,246,0.08)",
+                  color: c.status === "active" ? "#34d399" : "#7878a0",
+                }}>
+                  {c.status}
+                </span>
               </div>
-            </div>
-            <div className="text-green-100">Total Votes</div>
-            <div className="mt-2 text-sm text-green-200">
-              {votesToday} today, {votesThisWeek} this week
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-5xl font-bold">{totalContests}</div>
-              <div className="bg-white/20 p-3 rounded-lg">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div className="text-orange-100">Total Contests</div>
-            <div className="mt-2 text-sm text-orange-200">
-              {activeContests > 0 ? "Currently active" : "None active"}
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link
-              href="/admin/contests/new"
-              className="flex items-center gap-3 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 text-blue-700 px-6 py-4 rounded-lg font-semibold transition-all hover:scale-105"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              <span>Create Contest</span>
-            </Link>
-            <Link
-              href="/admin/artworks/upload"
-              className="flex items-center gap-3 bg-green-50 hover:bg-green-100 border-2 border-green-200 text-green-700 px-6 py-4 rounded-lg font-semibold transition-all hover:scale-105"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
-              <span>Upload Artworks</span>
-            </Link>
-            <Link
-              href="/admin/analytics"
-              className="flex items-center gap-3 bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 text-purple-700 px-6 py-4 rounded-lg font-semibold transition-all hover:scale-105"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
-              <span>View Analytics</span>
-            </Link>
-            <Link
-              href="/admin/contests"
-              className="flex items-center gap-3 bg-orange-50 hover:bg-orange-100 border-2 border-orange-200 text-orange-700 px-6 py-4 rounded-lg font-semibold transition-all hover:scale-105"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                />
-              </svg>
-              <span>Manage Contests</span>
-            </Link>
+        {/* Recent votes */}
+        <div style={card}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+            <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em" }}>Recent Votes</p>
+            <Link href="/admin/analytics" style={{ fontSize: "0.75rem", color: "#8b5cf6", textDecoration: "none" }}>Analytics</Link>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Recent Contests */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">
-                Recent Contests
-              </h3>
-              <Link
-                href="/admin/contests"
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-              >
-                View All →
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {recentContests.length > 0 ? (
-                recentContests.map((contest) => {
-                  const artworkCount = Array.isArray(contest.artworks)
-                    ? contest.artworks.length
-                    : (contest.artworks as any)?.count || 0;
-
-                  return (
-                    <div
-                      key={contest.id}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div>
-                        <div className="font-semibold text-gray-900">
-                          Week {contest.week_number}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {new Date(contest.start_date).toLocaleDateString()} -{" "}
-                          {new Date(contest.end_date).toLocaleDateString()}
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {artworkCount} artwork{artworkCount !== 1 ? "s" : ""}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            contest.status === "active"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {contest.status}
-                        </span>
-                        <Link
-                          href={`/contest/${contest.id}`}
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                        >
-                          View →
-                        </Link>
-                      </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {(recentVotes.data ?? []).length === 0 ? (
+              <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No votes yet</p>
+            ) : (recentVotes.data ?? []).map((v, i) => {
+              const artwork = v.artworks as any;
+              return (
+                <div key={v.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "8px 14px", background: "#181820", borderRadius: "8px" }}>
+                  <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "#3a3a58", minWidth: "20px" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "0.8125rem", color: "#eeeeff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {artwork?.title ?? "Unknown"}
                     </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p className="mb-2">No contests yet</p>
-                  <Link
-                    href="/admin/contests/new"
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                  >
-                    Create your first contest →
-                  </Link>
+                    <div style={{ fontSize: "0.75rem", color: "#7878a0" }}>Week {(artwork?.contests as any)?.week_number ?? "?"}</div>
+                  </div>
+                  <div style={{ fontSize: "0.6875rem", color: "#3a3a58" }}>
+                    {new Date(v.created_at).toLocaleDateString()}
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">
-                Recent Votes
-              </h3>
-              <Link
-                href="/admin/analytics"
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-              >
-                Analytics →
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {recentVotes.length > 0 ? (
-                recentVotes.slice(0, 8).map((vote: any, index) => {
-                  const artwork = vote.artworks;
-                  const contest = artwork?.contests;
-
-                  return (
-                    <div
-                      key={vote.id}
-                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium text-gray-900 truncate">
-                          {artwork?.title || "Unknown Artwork"}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          Week {contest?.week_number || "?"}
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        {new Date(vote.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p>No votes yet</p>
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

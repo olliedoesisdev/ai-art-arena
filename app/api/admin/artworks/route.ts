@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { logger, generateRequestId } from "@/lib/logger";
 
@@ -11,11 +11,11 @@ const UploadArtworksSchema = z.object({
         contest_id: z.string().uuid(),
         image_url: z.string().url(),
         title: z.string().min(1).max(100),
-        artist_prompt: z.string().max(500).nullable().optional(),
+        prompt: z.string().max(500).nullable().optional(),
       })
     )
     .min(1)
-    .max(12),
+    .max(50),
 });
 
 export async function POST(request: Request) {
@@ -40,11 +40,11 @@ export async function POST(request: Request) {
     const { artworks } = result.data;
     const contest_id = artworks[0]?.contest_id;
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { data: contest, error: contestError } = await supabase
       .from("contests")
-      .select("id")
+      .select("id, artwork_count")
       .eq("id", contest_id)
       .single();
 
@@ -52,11 +52,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Contest not found" }, { status: 404 });
     }
 
+    if (artworks.length > contest.artwork_count) {
+      return NextResponse.json(
+        { error: `This contest allows at most ${contest.artwork_count} artworks` },
+        { status: 400 }
+      );
+    }
+
     const artworksToInsert = artworks.map((artwork) => ({
       contest_id: artwork.contest_id,
       image_url: artwork.image_url,
       title: artwork.title,
-      artist_prompt: artwork.artist_prompt || null,
+      prompt: artwork.prompt || null,
     }));
 
     const { data: insertedArtworks, error: insertError } = await supabase

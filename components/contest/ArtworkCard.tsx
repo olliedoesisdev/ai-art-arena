@@ -1,22 +1,25 @@
-import Image from 'next/image'
-import { Artwork } from '@/lib/types'
-import { VoteButton } from './VoteButton'
-import { LiveVoteCount } from './LiveVoteCount'
-import { cn } from '@/lib/utils'
-
-const RANK_LABELS: Record<number, string> = { 0: '🥇 1st Place', 1: '🥈 2nd Place', 2: '🥉 3rd Place' }
+import Image from "next/image";
+import { Artwork } from "@/lib/types";
+import { VoteButton } from "./VoteButton";
+import { LiveVoteCount } from "./LiveVoteCount";
 
 interface ArtworkCardProps {
-  artwork: Artwork
-  contestId: string
-  index: number
-  isLeading: boolean
-  isUserVote: boolean
-  hasVoted: boolean
-  totalVotes: number
-  contestEnded: boolean
-  isAuthenticated: boolean
+  artwork: Artwork;
+  contestId: string;
+  index: number;
+  isLeading: boolean;
+  isUserVote: boolean;
+  hasVoted: boolean;
+  totalVotes: number;
+  contestEnded: boolean;
+  isAuthenticated: boolean;
 }
+
+const RANK_COLORS: Record<number, string> = {
+  0: "#fbbf24",
+  1: "#b0b0c8",
+  2: "#c07840",
+};
 
 export function ArtworkCard({
   artwork,
@@ -30,80 +33,194 @@ export function ArtworkCard({
   isAuthenticated,
 }: ArtworkCardProps) {
   const votePercentage =
-    totalVotes > 0 ? ((artwork.vote_count / totalVotes) * 100).toFixed(1) : '0'
-  const showResults = hasVoted || contestEnded
+    totalVotes > 0 ? ((artwork.vote_count / totalVotes) * 100).toFixed(1) : "0";
+  const showResults = hasVoted || contestEnded;
+  const rankColor = RANK_COLORS[index] ?? "#3a3a58";
 
   return (
     <article
-      className={cn(
-        'overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl',
-        isUserVote && 'ring-4 ring-status-success',
-        isLeading && showResults && 'ring-4 ring-brand-accent'
-      )}
+      className="animate-card"
+      style={
+        {
+          "--card-delay": `${index * 60}ms`,
+          background: "#111119",
+          border: `1px solid ${isUserVote ? "rgba(52,211,153,0.4)" : isLeading && showResults ? "rgba(251,191,36,0.3)" : "rgba(139,92,246,0.12)"}`,
+          borderRadius: "14px",
+          overflow: "hidden",
+          transition: "transform 0.2s, border-color 0.2s",
+        } as React.CSSProperties
+      }
     >
-      <div className="relative aspect-square bg-gray-100">
+      {/* Image */}
+      <div className="group" style={{ position: "relative", aspectRatio: "1" }}>
         <Image
           src={artwork.image_url}
           alt={artwork.title}
           fill
           sizes="(max-width: 768px) 50vw, 33vw"
           priority={index < 2}
-          className="object-cover"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
+        {/* Overlay badges */}
         {isLeading && showResults && (
-          <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-brand-accent px-3 py-1 text-sm font-bold text-yellow-900 shadow-lg">
-            <span className="text-lg">🏆</span>
-            {contestEnded ? 'Winner' : 'Leading'}
+          <div
+            style={{
+              position: "absolute",
+              top: "12px",
+              right: "12px",
+              background: "rgba(251,191,36,0.9)",
+              color: "#08080e",
+              fontSize: "10px",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              padding: "4px 10px",
+              borderRadius: "100px",
+            }}
+          >
+            {contestEnded ? "Winner" : "Leading"}
           </div>
         )}
         {isUserVote && (
-          <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-status-success px-3 py-1 text-sm font-bold text-white shadow-lg">
-            ✓ Your Vote
+          <div
+            style={{
+              position: "absolute",
+              top: "12px",
+              left: "12px",
+              background: "rgba(52,211,153,0.9)",
+              color: "#08080e",
+              fontSize: "10px",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              padding: "4px 10px",
+              borderRadius: "100px",
+            }}
+          >
+            Your vote
           </div>
         )}
       </div>
 
-      <div className="p-6">
-        <h3 className="mb-2 text-xl font-bold text-brand-dark">{artwork.title}</h3>
+      {/* Content */}
+      <div style={{ padding: "20px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: "8px",
+            marginBottom: "12px",
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: "var(--font-syne)",
+              fontWeight: 700,
+              fontSize: "1rem",
+              color: "#eeeeff",
+              lineHeight: 1.3,
+              flex: 1,
+              minWidth: 0,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {artwork.title}
+          </h3>
 
-        {artwork.artist_prompt && (
-          <p className="mb-4 line-clamp-2 text-sm text-gray-600">
-            &ldquo;{artwork.artist_prompt}&rdquo;
+          {/* Rank badge */}
+          <span
+            style={{
+              fontFamily: "var(--font-dm-mono)",
+              fontSize: "0.6875rem",
+              fontWeight: 700,
+              color: rankColor,
+              flexShrink: 0,
+            }}
+          >
+            #{index + 1}
+          </span>
+        </div>
+
+        {artwork.prompt && (
+          <p
+            style={{
+              fontSize: "0.8125rem",
+              color: "#7878a0",
+              lineHeight: 1.5,
+              marginBottom: "14px",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            &ldquo;{artwork.prompt}&rdquo;
           </p>
         )}
 
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <svg className="h-6 w-6 text-brand-primary" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-            </svg>
-            <span className="text-2xl font-bold text-gray-900">
-              <LiveVoteCount artworkId={artwork.id} initialCount={artwork.vote_count} />
+        {/* Vote count + percentage */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "10px",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-dm-mono)",
+              fontWeight: 500,
+              fontSize: "1rem",
+              color: "#eeeeff",
+            }}
+          >
+            <LiveVoteCount artworkId={artwork.id} initialCount={artwork.vote_count} />
+            <span style={{ fontSize: "0.75rem", color: "#7878a0", marginLeft: "4px" }}>
+              votes
             </span>
-          </div>
+          </span>
           {showResults && totalVotes > 0 && (
-            <div className="text-right">
-              <div className="text-lg font-bold text-gray-700">{votePercentage}%</div>
-              <div className="text-xs text-gray-500">of votes</div>
-            </div>
+            <span
+              style={{
+                fontFamily: "var(--font-dm-mono)",
+                fontSize: "0.8125rem",
+                color: "#7878a0",
+              }}
+            >
+              {votePercentage}%
+            </span>
           )}
         </div>
 
+        {/* Progress bar */}
         {showResults && totalVotes > 0 && (
-          <div className="mb-4">
-            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
-              <div
-                className={cn(
-                  'h-2 rounded-full transition-all duration-500',
-                  isLeading ? 'bg-brand-accent' : isUserVote ? 'bg-status-success' : 'bg-brand-primary'
-                )}
-                style={{ width: `${votePercentage}%` }}
-              />
-            </div>
+          <div
+            style={{
+              height: "3px",
+              background: "#1f1f2a",
+              borderRadius: "100px",
+              overflow: "hidden",
+              marginBottom: "14px",
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${votePercentage}%`,
+                background: isLeading ? "#fbbf24" : isUserVote ? "#34d399" : "#8b5cf6",
+                borderRadius: "100px",
+                transition: "width 0.5s ease",
+              }}
+            />
           </div>
         )}
 
+        {/* Vote button */}
         {!hasVoted && !contestEnded && (
           <VoteButton
             artworkId={artwork.id}
@@ -111,15 +228,7 @@ export function ArtworkCard({
             isAuthenticated={isAuthenticated}
           />
         )}
-
-        {showResults && (
-          <div className="mt-4 text-center">
-            <span className="inline-block rounded-full bg-brand-surface px-3 py-1 text-sm font-semibold text-brand-dark">
-              {RANK_LABELS[index] ?? `#${index + 1}`}
-            </span>
-          </div>
-        )}
       </div>
     </article>
-  )
+  );
 }

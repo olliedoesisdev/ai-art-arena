@@ -2,9 +2,12 @@
 export interface Contest {
   id: string;
   week_number: number;
+  title: string;
+  description?: string;
   start_date: string;
   end_date: string;
   status: "active" | "archived";
+  artwork_count: number;
   created_at: string;
   updated_at: string;
   artworks?: Artwork[];
@@ -15,7 +18,7 @@ export interface Artwork {
   contest_id: string;
   image_url: string;
   title: string;
-  artist_prompt?: string;
+  prompt?: string;
   vote_count: number;
   created_at: string;
   updated_at: string;

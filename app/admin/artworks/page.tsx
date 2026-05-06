@@ -4,183 +4,90 @@ import { auth } from "@/auth";
 import Link from "next/link";
 import Image from "next/image";
 
-export const metadata = {
-  title: "Manage Artworks - Admin",
-};
+export const metadata = { title: "Artworks — Admin" };
 
 export default async function ManageArtworksPage() {
   const session = await auth();
+  if (!session?.user || session.user.role !== "admin") redirect("/signin");
+
   const supabase = await createClient();
-
-  // Check if user is admin
-  if (!session?.user) {
-    redirect("/signin");
-  }
-
-  const { data: user } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", session.user.id)
-    .single();
-
-  if (user?.role !== "admin") {
-    redirect("/");
-  }
-
-  // Get all artworks with contest info
   const { data: artworks } = await supabase
     .from("artworks")
-    .select(
-      `
-      id,
-      title,
-      artist_prompt,
-      image_url,
-      created_at,
-      contests (
-        id,
-        week_number,
-        status
-      )
-    `
-    )
+    .select("id, title, prompt, image_url, vote_count, created_at, contests(id, week_number, status)")
     .order("created_at", { ascending: false });
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Manage Artworks
-          </h2>
-          <p className="text-gray-600">
-            View all uploaded artworks and upload new ones to contests.
-          </p>
+          <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8b5cf6", marginBottom: "8px" }}>Manage</p>
+          <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "#eeeeff", letterSpacing: "-0.03em" }}>
+            Artworks
+          </h1>
         </div>
-        <Link
-          href="/admin/artworks/upload"
-          className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-        >
-          🖼️ Upload Artworks
+        <Link href="/admin/artworks/upload" style={{
+          fontSize: "0.875rem", fontWeight: 700, color: "#08080e",
+          background: "#8b5cf6", padding: "10px 20px", borderRadius: "8px",
+          textDecoration: "none",
+        }}>
+          + Upload Artworks
         </Link>
       </div>
 
-      {/* Artworks Grid */}
-      <div className="bg-white rounded-lg shadow p-6">
-        {artworks && artworks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {artworks.map((artwork) => {
-              const contest = artwork.contests as any;
-
-              return (
-                <div
-                  key={artwork.id}
-                  className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  {/* Image */}
-                  <div className="relative aspect-square bg-gray-100">
-                    <Image
-                      src={artwork.image_url}
-                      alt={artwork.title}
-                      fill
-                      className="object-cover"
-                    />
+      {!artworks || artworks.length === 0 ? (
+        <div style={{ background: "#111119", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", padding: "64px", textAlign: "center" }}>
+          <p style={{ color: "#7878a0", marginBottom: "12px" }}>No artworks yet</p>
+          <Link href="/admin/artworks/upload" style={{ color: "#8b5cf6", fontSize: "0.875rem", textDecoration: "none" }}>
+            Upload your first artworks →
+          </Link>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+          {artworks.map((artwork) => {
+            const contest = artwork.contests as any;
+            return (
+              <div key={artwork.id} style={{ background: "#111119", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden" }}>
+                <div style={{ position: "relative", aspectRatio: "1", background: "#181820" }}>
+                  <Image src={artwork.image_url} alt={artwork.title} fill style={{ objectFit: "cover" }} sizes="33vw" />
+                </div>
+                <div style={{ padding: "16px" }}>
+                  <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "#eeeeff", marginBottom: "4px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {artwork.title}
                   </div>
-
-                  {/* Details */}
-                  <div className="p-4 space-y-3">
-                    <h3 className="font-semibold text-gray-900 truncate">
-                      {artwork.title}
-                    </h3>
-
-                    {artwork.artist_prompt && (
-                      <p className="text-sm text-gray-600 line-clamp-2">
-                        {artwork.artist_prompt}
-                      </p>
-                    )}
-
-                    {contest && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">
-                          Week {contest.week_number}
-                        </span>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full ${
-                            contest.status === "active"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
+                  {artwork.prompt && (
+                    <div style={{ fontSize: "0.75rem", color: "#7878a0", marginBottom: "10px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                      {artwork.prompt}
+                    </div>
+                  )}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      {contest && (
+                        <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "#7878a0" }}>W{contest.week_number}</span>
+                      )}
+                      {contest && (
+                        <span style={{
+                          fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+                          padding: "2px 6px", borderRadius: "100px",
+                          background: contest.status === "active" ? "rgba(52,211,153,0.12)" : "rgba(139,92,246,0.08)",
+                          color: contest.status === "active" ? "#34d399" : "#7878a0",
+                        }}>
                           {contest.status}
                         </span>
-                      </div>
-                    )}
-
-                    <div className="text-xs text-gray-400">
-                      Uploaded{" "}
-                      {new Date(artwork.created_at).toLocaleDateString()}
+                      )}
                     </div>
-
-                    {contest && (
-                      <Link
-                        href={`/contest/${contest.id}`}
-                        className="block text-center text-sm text-blue-600 hover:text-blue-800 font-medium"
-                        target="_blank"
-                      >
-                        View Contest →
-                      </Link>
-                    )}
+                    <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "#a78bfa" }}>
+                      {artwork.vote_count ?? 0} votes
+                    </span>
                   </div>
+                  {contest && (
+                    <Link href={`/contest/${contest.id}`} target="_blank" style={{ display: "block", marginTop: "10px", fontSize: "0.75rem", color: "#8b5cf6", textDecoration: "none" }}>
+                      View contest →
+                    </Link>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="space-y-2">
-              <p className="text-lg font-medium text-gray-500">
-                No artworks yet
-              </p>
-              <p className="text-sm text-gray-400">
-                Upload your first artworks to get started
-              </p>
-              <Link
-                href="/admin/artworks/upload"
-                className="inline-block mt-4 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-              >
-                🖼️ Upload Artworks
-              </Link>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Stats */}
-      {artworks && artworks.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm font-medium text-gray-500 mb-1">
-              Total Artworks
-            </div>
-            <div className="text-3xl font-bold text-gray-900">
-              {artworks.length}
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm font-medium text-gray-500 mb-1">
-              Recent Uploads
-            </div>
-            <div className="text-3xl font-bold text-blue-600">
-              {
-                artworks.filter(
-                  (a) =>
-                    new Date(a.created_at) >
-                    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-                ).length
-              }
-            </div>
-            <p className="text-xs text-gray-500 mt-1">Last 7 days</p>
-          </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

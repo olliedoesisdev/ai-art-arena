@@ -1,7 +1,23 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { logger, generateRequestId } from "@/lib/logger";
+import { adminRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
+import { z } from "zod";
+
+const CreateContestSchema = z.object({
+  week_number: z.number().int().positive(),
+  title: z.string().min(1).max(100).optional(),
+  description: z.string().max(500).optional(),
+  start_date: z.iso.datetime(),
+  end_date: z.iso.datetime(),
+  status: z.enum(["active", "archived"]).default("active"),
+  artwork_count: z.number().int().min(1).max(50).default(6),
+}).refine(data => new Date(data.end_date) > new Date(data.start_date), {
+  message: "End date must be after start date",
+  path: ["end_date"],
+});
 
 export async function POST(request: NextRequest) {
   const requestId = generateRequestId();
@@ -15,39 +31,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    if (session.user.role !== "admin") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-    const { data: user } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", session.user.id)
-      .single();
-
-    if (user?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
+    // Rate limit admin actions
+    const ip = getClientIP(request);
+    const ipHash = hashIP(ip);
+    const { success } = await adminRateLimit.limit(`admin:${ipHash}`);
+    if (!success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const body = await request.json();
-    const { week_number, start_date, end_date, status } = body;
+    const result = CreateContestSchema.safeParse(body);
 
-    if (!week_number || !start_date || !end_date || !status) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error.issues[0].message },
+        { status: 400 }
+      );
     }
 
-    if (status !== "active" && status !== "archived") {
-      return NextResponse.json({ error: "Status must be 'active' or 'archived'" }, { status: 400 });
-    }
-
-    const startDate = new Date(start_date);
-    const endDate = new Date(end_date);
-
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
-    }
-
-    if (endDate <= startDate) {
-      return NextResponse.json({ error: "End date must be after start date" }, { status: 400 });
-    }
+    const { week_number, title, description, start_date, end_date, status, artwork_count } = result.data;
+    const supabase = createAdminClient();
 
     const { data: existingContest } = await supabase
       .from("contests")
@@ -67,7 +74,7 @@ export async function POST(request: NextRequest) {
 
       if (activeContests && activeContests.length > 0) {
         return NextResponse.json(
-          { error: `There is already an active contest (Week ${activeContests[0].week_number}). Please archive it first.` },
+          { error: `There is already an active contest (Week ${activeContests[0].week_number}). Archive it first.` },
           { status: 409 }
         );
       }
@@ -75,7 +82,15 @@ export async function POST(request: NextRequest) {
 
     const { data: newContest, error: insertError } = await supabase
       .from("contests")
-      .insert({ week_number, start_date: startDate.toISOString(), end_date: endDate.toISOString(), status })
+      .insert({
+        week_number,
+        title: title ?? `Week ${week_number}`,
+        description: description ?? null,
+        start_date: new Date(start_date).toISOString(),
+        end_date: new Date(end_date).toISOString(),
+        status,
+        artwork_count,
+      })
       .select()
       .single();
 

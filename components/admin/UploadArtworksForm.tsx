@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -10,344 +10,301 @@ interface Contest {
   status: string;
   start_date: string;
   end_date: string;
+  artwork_count: number;
 }
 
-interface ArtworkData {
+interface ArtworkSlot {
   id: string;
   title: string;
-  artist_prompt: string;
-  image_url: string;
-  file?: File;
+  prompt: string;
+  file: File | null;
+  previewUrl: string;
+  uploading: boolean;
+  uploadedUrl: string;
+  error: string;
+}
+
+function emptySlot(): ArtworkSlot {
+  return {
+    id: crypto.randomUUID(),
+    title: "",
+    prompt: "",
+    file: null,
+    previewUrl: "",
+    uploading: false,
+    uploadedUrl: "",
+    error: "",
+  };
 }
 
 interface UploadArtworksFormProps {
   contests: Contest[];
   defaultContestId?: string;
+  defaultArtworkCount?: number;
 }
 
-export function UploadArtworksForm({
-  contests,
-  defaultContestId,
-}: UploadArtworksFormProps) {
+export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkCount = 6 }: UploadArtworksFormProps) {
   const router = useRouter();
   const [selectedContestId, setSelectedContestId] = useState(
     defaultContestId || contests[0]?.id || ""
   );
-  const [artworks, setArtworks] = useState<ArtworkData[]>([]);
+  const [slots, setSlots] = useState<ArtworkSlot[]>(() =>
+    Array.from({ length: defaultArtworkCount }, emptySlot)
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [formError, setFormError] = useState<string | null>(null);
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  // Add new artwork slot
-  function addArtwork() {
-    const newArtwork: ArtworkData = {
-      id: crypto.randomUUID(),
-      title: "",
-      artist_prompt: "",
-      image_url: "",
-    };
-    setArtworks([...artworks, newArtwork]);
+  function updateSlot(id: string, patch: Partial<ArtworkSlot>) {
+    setSlots((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
   }
 
-  // Remove artwork
-  function removeArtwork(id: string) {
-    setArtworks(artworks.filter((a) => a.id !== id));
+  function addSlot() {
+    setSlots((prev) => [...prev, emptySlot()]);
   }
 
-  // Update artwork field
-  function updateArtwork(id: string, field: keyof ArtworkData, value: string) {
-    setArtworks(
-      artworks.map((a) => (a.id === id ? { ...a, [field]: value } : a))
-    );
+  function removeSlot(id: string) {
+    setSlots((prev) => {
+      const next = prev.filter((s) => s.id !== id);
+      return next.length === 0 ? [emptySlot()] : next;
+    });
   }
 
-  // Handle file selection
-  function handleFileSelect(id: string, file: File | null) {
+  async function handleFileChange(id: string, file: File | null) {
     if (!file) return;
 
-    // Validate file type
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!validTypes.includes(file.type)) {
-      setError("Invalid file type. Please upload JPG, PNG, WebP, or GIF.");
+      updateSlot(id, { error: "Invalid file type. Use JPG, PNG, WebP, or GIF." });
       return;
     }
-
-    // Validate file size (10MB)
     if (file.size > 10 * 1024 * 1024) {
-      setError("File too large. Maximum size is 10MB.");
+      updateSlot(id, { error: "File too large. Max 10MB." });
       return;
     }
 
-    // Create preview URL
     const previewUrl = URL.createObjectURL(file);
-
-    setArtworks(
-      artworks.map((a) =>
-        a.id === id ? { ...a, image_url: previewUrl, file } : a
-      )
-    );
-    setError(null);
-  }
-
-  // Handle form submission
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
-    setUploadProgress(0);
-
-    // Validate
-    if (!selectedContestId) {
-      setError("Please select a contest");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (artworks.length === 0) {
-      setError("Please add at least one artwork");
-      setIsSubmitting(false);
-      return;
-    }
-
-    // Validate all artworks have required fields
-    for (const artwork of artworks) {
-      if (!artwork.title.trim()) {
-        setError("All artworks must have a title");
-        setIsSubmitting(false);
-        return;
-      }
-      if (!artwork.image_url && !artwork.file) {
-        setError("All artworks must have an image");
-        setIsSubmitting(false);
-        return;
-      }
-    }
+    updateSlot(id, { file, previewUrl, uploading: true, error: "", uploadedUrl: "" });
 
     try {
-      // Prepare artworks data
-      const artworksToUpload = artworks.map((artwork) => ({
-        contest_id: selectedContestId,
-        title: artwork.title.trim(),
-        artist_prompt: artwork.artist_prompt.trim() || null,
-        image_url: artwork.image_url, // For now, we'll use URLs directly
-      }));
-
-      // Send to API
-      const response = await fetch("/api/admin/artworks", {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/artworks/upload-image", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+      updateSlot(id, { uploading: false, uploadedUrl: data.url });
+    } catch (err) {
+      updateSlot(id, {
+        uploading: false,
+        error: err instanceof Error ? err.message : "Upload failed",
+      });
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setFormError(null);
+
+    if (!selectedContestId) {
+      setFormError("Please select a contest");
+      return;
+    }
+
+    const filled = slots.filter((s) => s.uploadedUrl || s.title);
+    if (filled.length === 0) {
+      setFormError("Add at least one artwork with an image and title");
+      return;
+    }
+
+    for (const s of filled) {
+      if (!s.title.trim()) {
+        setFormError("All artworks need a title");
+        return;
+      }
+      if (!s.uploadedUrl) {
+        setFormError(`"${s.title}" doesn't have a successfully uploaded image yet`);
+        return;
+      }
+      if (s.uploading) {
+        setFormError("Wait for all images to finish uploading");
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/admin/artworks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          artworks: artworksToUpload,
+          artworks: filled.map((s) => ({
+            contest_id: selectedContestId,
+            title: s.title.trim(),
+            prompt: s.prompt.trim() || null,
+            image_url: s.uploadedUrl,
+          })),
         }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to save artworks");
 
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to upload artworks");
-      }
-
-      // Success! Redirect to contests page
       router.push("/admin/contests");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setFormError(err instanceof Error ? err.message : "An error occurred");
       setIsSubmitting(false);
     }
   }
 
-  // Initialize with one empty artwork
-  if (artworks.length === 0 && !isSubmitting) {
-    addArtwork();
-  }
+  const filledCount = slots.filter((s) => s.uploadedUrl).length;
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "10px 14px", background: "#181820",
+    border: "1px solid rgba(139,92,246,0.25)", borderRadius: "8px",
+    color: "#eeeeff", fontSize: "0.875rem", outline: "none",
+    boxSizing: "border-box", colorScheme: "dark" as const,
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Contest Selection */}
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      {/* Contest selector */}
       <div>
-        <label
-          htmlFor="contest"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Select Contest *
+        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 500, color: "#7878a0", marginBottom: "6px" }}>
+          Contest *
         </label>
         <select
-          id="contest"
           required
           value={selectedContestId}
-          onChange={(e) => setSelectedContestId(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          onChange={(e) => {
+            const id = e.target.value;
+            setSelectedContestId(id);
+            const contest = contests.find((c) => c.id === id);
+            if (contest) {
+              setSlots(Array.from({ length: contest.artwork_count }, emptySlot));
+            }
+          }}
+          style={inputStyle}
         >
-          <option value="">-- Select a contest --</option>
-          {contests.map((contest) => (
-            <option key={contest.id} value={contest.id}>
-              Week {contest.week_number} ({contest.status}) -{" "}
-              {new Date(contest.start_date).toLocaleDateString()}
+          <option value="">— Select a contest —</option>
+          {contests.map((c) => (
+            <option key={c.id} value={c.id}>
+              Week {c.week_number} ({c.status}) — {new Date(c.start_date).toLocaleDateString()}
             </option>
           ))}
         </select>
-        <p className="mt-1 text-sm text-gray-500">
-          Choose which contest these artworks belong to
-        </p>
       </div>
 
-      {/* Artworks List */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Artworks ({artworks.length})
-          </h3>
-          <button
-            type="button"
-            onClick={addArtwork}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors text-sm"
-          >
-            ➕ Add Artwork
+      {/* Artwork slots */}
+      <div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+          <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0" }}>
+            Artworks ({filledCount}/{slots.length} ready)
+          </p>
+          <button type="button" onClick={addSlot} style={{
+            fontSize: "0.8125rem", fontWeight: 600, color: "#8b5cf6",
+            background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.25)",
+            borderRadius: "6px", padding: "6px 12px", cursor: "pointer",
+          }}>
+            + Add slot
           </button>
         </div>
 
-        {artworks.map((artwork, index) => (
-          <div
-            key={artwork.id}
-            className="border border-gray-300 rounded-lg p-6 space-y-4 bg-gray-50"
-          >
-            <div className="flex items-center justify-between">
-              <h4 className="font-semibold text-gray-900">
-                Artwork #{index + 1}
-              </h4>
-              {artworks.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeArtwork(artwork.id)}
-                  className="text-red-600 hover:text-red-800 font-medium text-sm"
-                >
-                  ✕ Remove
-                </button>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+          {slots.map((slot, i) => (
+            <div key={slot.id} style={{ background: "#181820", border: "1px solid rgba(139,92,246,0.15)", borderRadius: "12px", overflow: "hidden" }}>
+              {/* Image zone */}
+              <div
+                style={{ position: "relative", aspectRatio: "1", background: "#111119", cursor: "pointer" }}
+                onClick={() => fileInputRefs.current[slot.id]?.click()}
+              >
+                {slot.previewUrl ? (
+                  <>
+                    <Image src={slot.previewUrl} alt={slot.title || `Artwork ${i + 1}`} fill style={{ objectFit: "cover" }} unoptimized />
+                    {slot.uploading && (
+                      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: "0.8125rem", color: "#eeeeff", fontWeight: 500 }}>Uploading...</span>
+                      </div>
+                    )}
+                    {slot.uploadedUrl && !slot.uploading && (
+                      <div style={{ position: "absolute", top: "8px", right: "8px", background: "#34d399", color: "#08080e", fontSize: "0.6875rem", fontWeight: 700, padding: "2px 8px", borderRadius: "100px" }}>
+                        Ready
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "#3a3a58" }}>
+                    <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 16v-8m-4 4h8M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span style={{ fontSize: "0.75rem", fontWeight: 500 }}>Click to upload</span>
+                    <span style={{ fontSize: "0.6875rem" }}>JPG PNG WebP — 10MB max</span>
+                  </div>
+                )}
+                <input
+                  ref={(el) => { fileInputRefs.current[slot.id] = el; }}
+                  type="file" accept="image/jpeg,image/png,image/webp,image/gif"
+                  style={{ display: "none" }}
+                  onChange={(e) => handleFileChange(slot.id, e.target.files?.[0] ?? null)}
+                />
+              </div>
+
+              {slot.error && (
+                <p style={{ fontSize: "0.75rem", color: "#f87171", padding: "6px 12px 0" }}>{slot.error}</p>
               )}
+
+              <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                <input
+                  type="text"
+                  placeholder={`Title ${i + 1} *`}
+                  value={slot.title}
+                  onChange={(e) => updateSlot(slot.id, { title: e.target.value })}
+                  style={{ ...inputStyle, fontSize: "0.8125rem", padding: "8px 12px" }}
+                />
+                <textarea
+                  rows={2}
+                  placeholder="AI prompt (optional)"
+                  value={slot.prompt}
+                  onChange={(e) => updateSlot(slot.id, { prompt: e.target.value })}
+                  style={{ ...inputStyle, fontSize: "0.8125rem", padding: "8px 12px", resize: "none" }}
+                />
+                {slots.length > 1 && (
+                  <button type="button" onClick={() => removeSlot(slot.id)}
+                    style={{ fontSize: "0.75rem", color: "#f87171", background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: 0 }}>
+                    Remove
+                  </button>
+                )}
+              </div>
             </div>
-
-            {/* Image Upload/URL */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image *
-              </label>
-
-              {/* Image Preview */}
-              {artwork.image_url && (
-                <div className="mb-4 relative w-full aspect-square max-w-xs bg-gray-100 rounded-lg overflow-hidden">
-                  <Image
-                    src={artwork.image_url}
-                    alt={artwork.title || "Preview"}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-
-              {/* URL Input */}
-              <input
-                type="url"
-                placeholder="https://example.com/image.jpg"
-                value={artwork.image_url}
-                onChange={(e) =>
-                  updateArtwork(artwork.id, "image_url", e.target.value)
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Paste an image URL (e.g., from Unsplash, Imgur, or your own
-                hosting)
-              </p>
-            </div>
-
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title *
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g., Cyberpunk City at Night"
-                value={artwork.title}
-                onChange={(e) =>
-                  updateArtwork(artwork.id, "title", e.target.value)
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            {/* Artist Prompt */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                AI Prompt (Optional)
-              </label>
-              <textarea
-                rows={3}
-                placeholder="e.g., A futuristic cyberpunk cityscape at night with neon lights and flying cars"
-                value={artwork.artist_prompt}
-                onChange={(e) =>
-                  updateArtwork(artwork.id, "artist_prompt", e.target.value)
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                The prompt used to generate this artwork
-              </p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-          <p className="font-medium">Error uploading artworks:</p>
-          <p className="text-sm">{error}</p>
+      {formError && (
+        <div style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.875rem", color: "#f87171" }}>
+          {formError}
         </div>
       )}
 
-      {/* Upload Progress */}
-      {isSubmitting && uploadProgress > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-blue-900">
-              Uploading artworks...
-            </span>
-            <span className="text-sm font-medium text-blue-900">
-              {uploadProgress}%
-            </span>
-          </div>
-          <div className="w-full bg-blue-200 rounded-full h-2">
-            <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${uploadProgress}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Action Buttons */}
-      <div className="flex gap-4 pt-4">
-        <button
-          type="submit"
-          disabled={isSubmitting || artworks.length === 0}
-          className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          {isSubmitting
-            ? "Uploading Artworks..."
-            : `Upload ${artworks.length} Artwork${
-                artworks.length !== 1 ? "s" : ""
-              }`}
+      <div style={{ display: "flex", gap: "12px" }}>
+        <button type="submit" disabled={isSubmitting || filledCount === 0} style={{
+          flex: 1, padding: "11px",
+          background: isSubmitting || filledCount === 0 ? "#3a3a58" : "#8b5cf6",
+          border: "none", borderRadius: "8px", color: "#fff",
+          fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "0.9375rem",
+          cursor: isSubmitting || filledCount === 0 ? "not-allowed" : "pointer",
+        }}>
+          {isSubmitting ? "Saving..." : `Save ${filledCount} artwork${filledCount !== 1 ? "s" : ""}`}
         </button>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          disabled={isSubmitting}
-          className="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
+        <button type="button" onClick={() => router.back()} disabled={isSubmitting} style={{
+          padding: "11px 20px", background: "transparent",
+          border: "1px solid rgba(139,92,246,0.25)", borderRadius: "8px",
+          color: "#7878a0", fontSize: "0.875rem", cursor: "pointer",
+        }}>
           Cancel
         </button>
       </div>

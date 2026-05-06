@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import bcrypt from "bcryptjs";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -21,81 +22,87 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const supabase = await createClient();
+        // Service role bypasses RLS — authorize runs outside a user session
+        const supabase = createAdminClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
 
-        // Find user by email
         const { data: user } = await supabase
           .from("users")
           .select("id, email, name, avatar_url, password_hash, role")
           .eq("email", credentials.email as string)
           .single();
 
-        if (!user || !user.password_hash) {
-          return null;
-        }
+        if (!user || !user.password_hash) return null;
 
-        // Verify password
         const passwordMatch = await bcrypt.compare(
           credentials.password as string,
           user.password_hash
         );
 
-        if (!passwordMatch) {
-          return null;
-        }
+        if (!passwordMatch) return null;
 
         return {
           id: user.id,
           email: user.email,
           name: user.name,
           image: user.avatar_url,
+          role: user.role,
         };
       },
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       if (account?.provider === "github") {
-        const supabase = await createClient();
+        const supabase = createAdminClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
 
-        // Check if user exists
-        const { data: existingUser } = await supabase
-          .from("users")
-          .select("id")
-          .eq("email", user.email!)
-          .single();
-
-        // If user doesn't exist, create them
-        if (!existingUser) {
-          await supabase.from("users").insert({
+        // ON CONFLICT prevents race condition on concurrent OAuth logins
+        await supabase.from("users").upsert(
+          {
             id: user.id,
             email: user.email!,
             name: user.name || null,
             avatar_url: user.image || null,
             role: "user",
-          });
-        }
+          },
+          { onConflict: "email", ignoreDuplicates: true }
+        );
       }
 
       return true;
     },
-    async session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
 
-        // Get user role from database
-        const supabase = await createClient();
-        const { data: user } = await supabase
+    async jwt({ token, user }) {
+      // On first sign-in `user` is populated — fetch DB row by email to get
+      // the correct Supabase UUID and role for both GitHub and Credentials
+      if (user?.email) {
+        const supabase = createAdminClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        const { data } = await supabase
           .from("users")
-          .select("role")
-          .eq("id", token.sub)
+          .select("id, role")
+          .eq("email", user.email)
           .single();
-
-        if (user) {
-          session.user.role = user.role;
-        }
+        // Store in custom fields — never overwrite token.sub (NextAuth owns that)
+        token.dbId = data?.id ?? user.id;
+        token.role = data?.role ?? "user";
       }
 
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = (token.dbId as string) ?? token.sub ?? "";
+        session.user.role = (token.role as "user" | "admin") ?? "user";
+      }
       return session;
     },
   },

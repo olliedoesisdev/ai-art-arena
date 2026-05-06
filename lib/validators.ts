@@ -9,9 +9,10 @@ export const VoteSchema = z.object({
 // Contest creation validation (admin only)
 export const CreateContestSchema = z.object({
   week_number: z.number().int().positive(),
-  start_date: z.string().datetime(),
-  end_date: z.string().datetime(),
+  start_date: z.iso.datetime(),
+  end_date: z.iso.datetime(),
   status: z.enum(["active", "archived"]).default("active"),
+  artwork_count: z.number().int().min(1).max(50).default(6),
 });
 
 // Artwork creation validation (admin only)
@@ -19,7 +20,7 @@ export const CreateArtworkSchema = z.object({
   contest_id: z.string().uuid(),
   image_url: z.string().url(),
   title: z.string().min(1).max(100),
-  artist_prompt: z.string().max(500).optional(),
+  prompt: z.string().max(500).optional(),
 });
 
 // User profile update validation

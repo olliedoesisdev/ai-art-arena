@@ -5,21 +5,26 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS contests (
   id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   week_number  INTEGER NOT NULL,
+  title        TEXT NOT NULL,
+  description  TEXT,
   start_date   TIMESTAMPTZ NOT NULL,
   end_date     TIMESTAMPTZ NOT NULL,
   status       TEXT NOT NULL CHECK (status IN ('active', 'archived')),
-  created_at   TIMESTAMPTZ DEFAULT NOW()
+  created_at   TIMESTAMPTZ DEFAULT NOW(),
+  updated_at   TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- artworks
 CREATE TABLE IF NOT EXISTS artworks (
-  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  contest_id   UUID NOT NULL REFERENCES contests(id) ON DELETE CASCADE,
-  image_url    TEXT NOT NULL,
-  title        TEXT NOT NULL,
-  artist_prompt TEXT,
-  vote_count   INTEGER NOT NULL DEFAULT 0,
-  created_at   TIMESTAMPTZ DEFAULT NOW()
+  id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  contest_id    UUID NOT NULL REFERENCES contests(id) ON DELETE CASCADE,
+  image_url     TEXT NOT NULL,
+  title         TEXT NOT NULL,
+  prompt        TEXT,
+  vote_count    INTEGER NOT NULL DEFAULT 0,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- votes

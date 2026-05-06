@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { logger, generateRequestId } from "@/lib/logger";
@@ -19,17 +19,11 @@ export async function POST(_request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
-
-    const { data: user } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", session.user.id)
-      .single();
-
-    if (user?.role !== "admin") {
+    if (session.user.role !== "admin") {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
     }
+
+    const supabase = createAdminClient();
 
     const { id } = await context.params;
 

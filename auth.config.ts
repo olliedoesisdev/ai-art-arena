@@ -6,12 +6,16 @@ export const authConfig = {
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith("/admin");
+      const isOnAdmin = nextUrl.pathname.startsWith("/admin");
 
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect to login
+      if (isOnAdmin) {
+        const isAdmin = auth?.user?.role === "admin";
+        if (isAdmin) return true;
+        // Not logged in → redirect to signin; logged in but not admin → 403-ish redirect to home
+        const isLoggedIn = !!auth?.user;
+        return isLoggedIn
+          ? Response.redirect(new URL("/", nextUrl))
+          : false;
       }
 
       return true;

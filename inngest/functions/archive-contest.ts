@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 
 export const archiveContest = inngest.createFunction(
-  { id: 'archive-contest', name: 'Archive Ended Contest', triggers: [{ cron: '0 * * * *' }] },
+  { id: 'archive-contest', name: 'Archive Ended Contest', triggers: [{ cron: '*/5 * * * *' }] },
   async ({ step }) => {
     const resend = new Resend(process.env.RESEND_API_KEY)
     const supabase = createClient(
@@ -35,7 +35,7 @@ export const archiveContest = inngest.createFunction(
       await step.run(`notify-archived-${contest.id}`, async () => {
         await resend.emails.send({
           from: 'AI Art Arena <no-reply@olliedoesis.dev>',
-          to: ['orwhite1983@gmail.com'],
+          to: [process.env.ADMIN_EMAIL ?? 'orwhite1983@gmail.com'],
           subject: `Week ${contest.week_number} contest archived`,
           html: `<p>Week ${contest.week_number} has ended and has been archived. A new contest will be created shortly.</p>`,
         })

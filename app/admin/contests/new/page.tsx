@@ -3,82 +3,40 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { CreateContestForm } from "@/components/admin/CreateContestForm";
 
-export const metadata = {
-  title: "Create New Contest - Admin",
-};
+export const metadata = { title: "New Contest — Admin" };
 
 export default async function NewContestPage() {
   const session = await auth();
+  if (!session?.user || session.user.role !== "admin") redirect("/signin");
+
   const supabase = await createClient();
-
-  // Check if user is admin
-  if (!session?.user) {
-    redirect("/signin");
-  }
-
-  const { data: user } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", session.user.id)
-    .single();
-
-  if (user?.role !== "admin") {
-    redirect("/");
-  }
-
-  // Get the latest contest to suggest next week number
-  const { data: latestContest } = await supabase
+  const { data: latest } = await supabase
     .from("contests")
     .select("week_number")
     .order("week_number", { ascending: false })
     .limit(1)
     .single();
 
-  const suggestedWeekNumber = latestContest ? latestContest.week_number + 1 : 1;
+  const suggestedWeekNumber = latest ? latest.week_number + 1 : 1;
 
   return (
-    <div className="space-y-8">
+    <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
       <div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Create New Contest
-        </h2>
-        <p className="text-gray-600">
-          Set up a new weekly art battle for your community to vote on.
-        </p>
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8b5cf6", marginBottom: "8px" }}>Contests</p>
+        <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "#eeeeff", letterSpacing: "-0.03em" }}>New Contest</h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl">
+      <div style={{ background: "#111119", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", padding: "32px", maxWidth: "560px" }}>
         <CreateContestForm suggestedWeekNumber={suggestedWeekNumber} />
       </div>
 
-      {/* Quick Reference */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-2xl">
-        <h3 className="text-lg font-bold text-blue-900 mb-3">
-          📝 Contest Setup Guide
-        </h3>
-        <ul className="space-y-2 text-blue-800 text-sm">
-          <li>
-            • <strong>Week Number:</strong> Unique identifier for this contest
-            (auto-incremented)
-          </li>
-          <li>
-            • <strong>Start Date:</strong> When voting begins
-          </li>
-          <li>
-            • <strong>End Date:</strong> When voting closes (typically 7 days
-            later)
-          </li>
-          <li>
-            • <strong>Status:</strong> Set to "active" to make it live
-            immediately
-          </li>
+      <div style={{ background: "rgba(139,92,246,0.05)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "12px", padding: "20px 24px", maxWidth: "560px" }}>
+        <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#a78bfa", marginBottom: "10px" }}>Setup checklist</p>
+        <ul style={{ fontSize: "0.8125rem", color: "#7878a0", lineHeight: 1.8, paddingLeft: "16px", margin: 0 }}>
+          <li>Set status to Active to make it live immediately</li>
+          <li>Upload 6 artworks after creating the contest</li>
+          <li>End date is typically 7 days after start</li>
         </ul>
-        <div className="mt-4 p-3 bg-blue-100 rounded-lg">
-          <p className="text-blue-900 text-sm font-medium">
-            💡 After creating the contest, you'll need to upload artworks for
-            users to vote on!
-          </p>
-        </div>
       </div>
     </div>
   );

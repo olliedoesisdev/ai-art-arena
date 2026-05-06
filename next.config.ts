@@ -9,6 +9,24 @@ const nextConfig: NextConfig = {
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      // GitHub avatars — for auth user profile images
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+      // Placeholder domains — for local testing only, remove before launch
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "fastly.picsum.photos",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000,
