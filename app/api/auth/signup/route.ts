@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import { logger, generateRequestId } from "@/lib/logger";
+import { authRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
 const SignUpSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters").max(72),
   name: z.string().max(100).optional(),
 });
 
@@ -15,6 +17,12 @@ export async function POST(request: Request) {
   logger.info({ requestId }, "signup request received");
 
   try {
+    const ipHash = hashIP(getClientIP(request));
+    const { success } = await authRateLimit.limit(`signup:${ipHash}`);
+    if (!success) {
+      return NextResponse.json({ error: "Too many requests — try again later" }, { status: 429 });
+    }
+
     const body = await request.json();
     const result = SignUpSchema.safeParse(body);
 

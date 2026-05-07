@@ -68,6 +68,7 @@ export function ContestTimer({ endDate }: { endDate: string }) {
   if (t.ended) {
     return (
       <span
+        aria-live="polite"
         style={{
           fontFamily: "var(--font-dm-mono)",
           fontSize: "0.8125rem",

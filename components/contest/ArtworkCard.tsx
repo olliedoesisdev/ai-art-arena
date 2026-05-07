@@ -118,8 +118,15 @@ export function ArtworkCard({
   return (
     <article
       onClick={clickable ? handleVote : undefined}
+      onKeyDown={clickable ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleVote(); } } : undefined}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      aria-label={clickable ? `Vote for ${artwork.title}` : undefined}
+      aria-pressed={isUserVote ? true : undefined}
       style={{
         background: "rgba(255,255,255,0.03)",
         border: isUserVote

@@ -24,3 +24,11 @@ export const adminUploadRateLimit = new Ratelimit({
   analytics: true,
   prefix: 'admin_upload',
 })
+
+// 5 auth actions (signup, magic-link) per IP per 15 minutes
+export const authRateLimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, '15 m'),
+  analytics: true,
+  prefix: 'auth',
+})

@@ -133,7 +133,7 @@ export function MobileMenu({ navLinks, contestHref }: Props) {
             </div>
 
             {userName && (
-              <p style={{ fontSize: "0.75rem", color: "#3a3a58", textAlign: "center", marginTop: "12px" }}>
+              <p style={{ fontSize: "0.75rem", color: "#7878a0", textAlign: "center", marginTop: "12px" }}>
                 Signed in as {userName}
               </p>
             )}
