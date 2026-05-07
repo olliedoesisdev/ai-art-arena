@@ -48,6 +48,7 @@ export function ArtworkCard({
   const [isVoting, setIsVoting] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [localVoted, setLocalVoted] = useState(false);
+  const [copied, setCopied] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -98,6 +99,17 @@ export function ArtworkCard({
     } catch {
       toast.error("Network error — try again");
       setIsVoting(false);
+    }
+  }
+
+  async function handleShare() {
+    const url = `${window.location.origin}/contest/${contestId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Could not copy link");
     }
   }
 
@@ -261,6 +273,34 @@ export function ArtworkCard({
               </span>
             </div>
           </div>
+        )}
+
+        {/* Share button — shown on the card the user voted for */}
+        {isUserVote && (
+          <button
+            onClick={(e) => { e.stopPropagation(); handleShare(); }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "6px",
+              width: "100%",
+              padding: "9px",
+              background: copied ? `${accent}20` : "rgba(255,255,255,0.04)",
+              border: `1px solid ${copied ? accent : "rgba(255,255,255,0.1)"}`,
+              borderRadius: "8px",
+              color: copied ? accent : "rgba(255,255,255,0.4)",
+              fontFamily: "var(--font-dm-mono)",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              cursor: "pointer",
+              transition: "background 0.2s, border-color 0.2s, color 0.2s",
+              marginTop: "8px",
+            }}
+          >
+            {copied ? "LINK COPIED ✓" : "SHARE →"}
+          </button>
         )}
 
         {/* Vote button — only shown before voting */}
