@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient as createClient } from "@/lib/supabase/server";
 import { ArtMosaic } from "@/components/home/ArtMosaic";
 import { LastWinner } from "@/components/home/LastWinner";
 
 export const revalidate = 60;
 
 async function getHomeData() {
-  const supabase = await createClient();
+  const supabase = createClient();
 
   const [statsResult, mosaicResult, lastWinnerResult] = await Promise.all([
     supabase.rpc("get_homepage_stats"),

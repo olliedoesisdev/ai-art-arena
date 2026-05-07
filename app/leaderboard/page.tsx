@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { LeaderboardList } from "@/components/leaderboard/LeaderboardList";
 import { LeaderboardFeatured } from "@/components/leaderboard/LeaderboardFeatured";
 
@@ -24,7 +24,7 @@ export const metadata = {
 };
 
 export default async function LeaderboardPage() {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: artworks } = await supabase
     .from("artworks")
@@ -41,7 +41,16 @@ export default async function LeaderboardPage() {
     contests: { week_number: number } | null;
   };
 
-  const entries: LeaderboardEntry[] = (artworks ?? []).map((a) => ({
+  type RawRow = {
+    id: string;
+    title: string;
+    image_url: string;
+    vote_count: number;
+    contest_id: string;
+    contests: { week_number: number } | { week_number: number }[] | null;
+  };
+
+  const entries: LeaderboardEntry[] = ((artworks ?? []) as RawRow[]).map((a) => ({
     id: a.id,
     title: a.title,
     image_url: a.image_url,

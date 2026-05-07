@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { MobileMenu } from "./MobileMenu";
 import { HeaderAuth } from "./HeaderAuth";
 
 async function getActiveContestId(): Promise<string | null> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("contests")
     .select("id")

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,7 +19,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
   const week = parseInt(params.week, 10);
   if (isNaN(week)) notFound();
 
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: contest, error } = await supabase
     .from("contests")

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import { ArchiveCard } from "@/components/archive/ArchiveCard";
 import { Contest, Artwork } from "@/lib/types";
 
@@ -24,7 +24,7 @@ export const metadata = {
 };
 
 export default async function ArchivePage() {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: contests } = await supabase
     .from("contests")
