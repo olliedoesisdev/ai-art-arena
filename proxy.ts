@@ -54,9 +54,22 @@ export default async function middleware(request: NextRequest) {
   }
 
   // All other routes: security headers only, no auth check.
-  // This keeps public pages CDN-cacheable (no Set-Cookie header from JWT validation).
   const response = NextResponse.next();
   applySecurityHeaders(response, isDev);
+
+  // Vercel strips ISR cache headers from middleware responses by default.
+  // Restore them explicitly so the CDN edge caches public pages correctly.
+  // These values mirror the revalidate exports on each page.
+  if (!isDev) {
+    if (pathname === "/" || pathname.startsWith("/contest/")) {
+      response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=600");
+    } else if (pathname.startsWith("/archive") || pathname === "/about" || pathname === "/privacy" || pathname === "/terms") {
+      response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
+    } else if (pathname === "/leaderboard") {
+      response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=3600");
+    }
+  }
+
   return response;
 }
 
