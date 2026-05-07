@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -18,6 +18,10 @@ interface ArtworkCardProps {
   totalVotes: number;
   contestEnded: boolean;
   isAuthenticated: boolean;
+}
+
+function localVoteKey(contestId: string) {
+  return `voted:${contestId}`;
 }
 
 // Each card gets a unique accent colour cycling through the palette
@@ -43,15 +47,25 @@ export function ArtworkCard({
 }: ArtworkCardProps) {
   const [isVoting, setIsVoting] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [localVoted, setLocalVoted] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
+    try {
+      setLocalVoted(!!localStorage.getItem(localVoteKey(contestId)));
+    } catch {
+      // localStorage blocked (private browsing)
+    }
+  }, [contestId]);
+
   const accent = ACCENT_COLORS[index % ACCENT_COLORS.length];
-  const showResults = hasVoted || contestEnded;
+  const effectivelyVoted = hasVoted || localVoted;
+  const showResults = effectivelyVoted || contestEnded;
   const voteCount = artwork.vote_count;
   const pct = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
 
   async function handleVote() {
-    if (hasVoted || isVoting || contestEnded) return;
+    if (effectivelyVoted || isVoting || contestEnded) return;
 
     if (!isAuthenticated) {
       toast.error("Sign in to vote");
@@ -68,6 +82,8 @@ export function ArtworkCard({
       const data = await res.json();
 
       if (res.ok) {
+        try { localStorage.setItem(localVoteKey(contestId), "1"); } catch { /* blocked */ }
+        setLocalVoted(true);
         toast.success(`Voted for "${artwork.title}"`);
         router.refresh();
       } else {
@@ -85,7 +101,7 @@ export function ArtworkCard({
     }
   }
 
-  const clickable = !hasVoted && !contestEnded && isAuthenticated;
+  const clickable = !effectivelyVoted && !contestEnded && isAuthenticated;
 
   return (
     <article
@@ -248,7 +264,7 @@ export function ArtworkCard({
         )}
 
         {/* Vote button — only shown before voting */}
-        {!hasVoted && !contestEnded && (
+        {!effectivelyVoted && !contestEnded && (
           isAuthenticated ? (
             <VoteButtonInline
               isVoting={isVoting}
@@ -282,7 +298,7 @@ export function ArtworkCard({
         )}
 
         {/* Quiet vote count when voted but this isn't the user's pick */}
-        {hasVoted && !isUserVote && !showResults && (
+        {effectivelyVoted && !isUserVote && !showResults && (
           <div
             style={{
               textAlign: "center",
