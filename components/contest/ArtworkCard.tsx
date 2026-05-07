@@ -1,7 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
-import { Artwork } from "@/lib/types";
-import { VoteButton } from "./VoteButton";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Link from "next/link";
 import { LiveVoteCount } from "./LiveVoteCount";
+import { Artwork } from "@/lib/types";
 
 interface ArtworkCardProps {
   artwork: Artwork;
@@ -15,11 +20,15 @@ interface ArtworkCardProps {
   isAuthenticated: boolean;
 }
 
-const RANK_COLORS: Record<number, string> = {
-  0: "#fbbf24",
-  1: "#b0b0c8",
-  2: "#c07840",
-};
+// Each card gets a unique accent colour cycling through the palette
+const ACCENT_COLORS = [
+  "#7c3aed",
+  "#ff6b35",
+  "#06b6d4",
+  "#84cc16",
+  "#f59e0b",
+  "#f472b6",
+];
 
 export function ArtworkCard({
   artwork,
@@ -32,27 +41,79 @@ export function ArtworkCard({
   contestEnded,
   isAuthenticated,
 }: ArtworkCardProps) {
-  const votePercentage =
-    totalVotes > 0 ? ((artwork.vote_count / totalVotes) * 100).toFixed(1) : "0";
+  const [isVoting, setIsVoting] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const router = useRouter();
+
+  const accent = ACCENT_COLORS[index % ACCENT_COLORS.length];
   const showResults = hasVoted || contestEnded;
-  const rankColor = RANK_COLORS[index] ?? "#3a3a58";
+  const voteCount = artwork.vote_count;
+  const pct = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
+
+  async function handleVote() {
+    if (hasVoted || isVoting || contestEnded) return;
+
+    if (!isAuthenticated) {
+      toast.error("Sign in to vote");
+      return;
+    }
+
+    setIsVoting(true);
+    try {
+      const res = await fetch("/api/v1/vote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ artwork_id: artwork.id, contest_id: contestId }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success(`Voted for "${artwork.title}"`);
+        router.refresh();
+      } else {
+        const messages: Record<number, string> = {
+          409: "Already voted in this contest",
+          429: "One vote per day",
+          401: "Sign in to vote",
+        };
+        toast.error(messages[res.status] ?? data.error ?? "Vote failed");
+        setIsVoting(false);
+      }
+    } catch {
+      toast.error("Network error — try again");
+      setIsVoting(false);
+    }
+  }
+
+  const clickable = !hasVoted && !contestEnded && isAuthenticated;
 
   return (
     <article
-      className="animate-card"
-      style={
-        {
-          "--card-delay": `${index * 60}ms`,
-          background: "#111119",
-          border: `1px solid ${isUserVote ? "rgba(52,211,153,0.4)" : isLeading && showResults ? "rgba(251,191,36,0.3)" : "rgba(139,92,246,0.12)"}`,
-          borderRadius: "14px",
-          overflow: "hidden",
-          transition: "transform 0.2s, border-color 0.2s",
-        } as React.CSSProperties
-      }
+      onClick={clickable ? handleVote : undefined}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: isUserVote
+          ? `1.5px solid ${accent}`
+          : hovered && clickable
+          ? `1.5px solid ${accent}60`
+          : "1.5px solid rgba(255,255,255,0.08)",
+        borderRadius: "16px",
+        overflow: "hidden",
+        transition: "border-color 0.25s, transform 0.2s, box-shadow 0.3s",
+        transform: isUserVote ? "translateY(-4px)" : hovered && clickable ? "translateY(-2px)" : "none",
+        boxShadow: isUserVote
+          ? `0 12px 40px ${accent}28`
+          : hovered && clickable
+          ? `0 8px 24px ${accent}16`
+          : "none",
+        cursor: clickable ? "pointer" : "default",
+        position: "relative",
+      }}
     >
       {/* Image */}
-      <div className="group" style={{ position: "relative", aspectRatio: "1" }}>
+      <div className="group" style={{ position: "relative", aspectRatio: "1", overflow: "hidden" }}>
         <Image
           src={artwork.image_url}
           alt={artwork.title}
@@ -62,95 +123,77 @@ export function ArtworkCard({
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Overlay badges */}
-        {isLeading && showResults && (
-          <div
-            style={{
-              position: "absolute",
-              top: "12px",
-              right: "12px",
-              background: "rgba(251,191,36,0.9)",
-              color: "#08080e",
-              fontSize: "10px",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              padding: "4px 10px",
-              borderRadius: "100px",
-            }}
-          >
-            {contestEnded ? "Winner" : "Leading"}
-          </div>
-        )}
+        {/* YOUR VOTE badge */}
         {isUserVote && (
           <div
             style={{
               position: "absolute",
-              top: "12px",
-              left: "12px",
-              background: "rgba(52,211,153,0.9)",
-              color: "#08080e",
+              top: "10px",
+              right: "10px",
+              background: accent,
+              color: "#000",
               fontSize: "10px",
+              fontFamily: "var(--font-dm-mono)",
               fontWeight: 700,
+              padding: "3px 8px",
+              borderRadius: "4px",
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              padding: "4px 10px",
-              borderRadius: "100px",
             }}
           >
             Your vote
           </div>
         )}
+
+        {/* LEADING / WINNER badge */}
+        {isLeading && showResults && !isUserVote && (
+          <div
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              background: "rgba(251,191,36,0.92)",
+              color: "#08080e",
+              fontSize: "10px",
+              fontFamily: "var(--font-dm-mono)",
+              fontWeight: 700,
+              padding: "3px 8px",
+              borderRadius: "4px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+            }}
+          >
+            {contestEnded ? "Winner" : "Leading"}
+          </div>
+        )}
       </div>
 
-      {/* Content */}
-      <div style={{ padding: "20px" }}>
+      {/* Body */}
+      <div style={{ padding: "16px" }}>
+        {/* Title */}
         <div
           style={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: "8px",
-            marginBottom: "12px",
+            fontFamily: "var(--font-syne)",
+            fontSize: "1rem",
+            fontWeight: 700,
+            color: "#eeeeff",
+            marginBottom: "4px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
-          <h3
-            style={{
-              fontFamily: "var(--font-syne)",
-              fontWeight: 700,
-              fontSize: "1rem",
-              color: "#eeeeff",
-              lineHeight: 1.3,
-              flex: 1,
-              minWidth: 0,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {artwork.title}
-          </h3>
-
-          {/* Rank badge */}
-          <span
-            style={{
-              fontFamily: "var(--font-dm-mono)",
-              fontSize: "0.6875rem",
-              fontWeight: 700,
-              color: rankColor,
-              flexShrink: 0,
-            }}
-          >
-            #{index + 1}
-          </span>
+          {artwork.title}
         </div>
 
+        {/* Prompt */}
         {artwork.prompt && (
-          <p
+          <div
             style={{
-              fontSize: "0.8125rem",
-              color: "#7878a0",
-              lineHeight: 1.5,
+              fontSize: "11px",
+              fontFamily: "var(--font-dm-mono)",
+              color: "rgba(255,255,255,0.35)",
+              lineHeight: 1.55,
               marginBottom: "14px",
               display: "-webkit-box",
               WebkitLineClamp: 2,
@@ -158,77 +201,135 @@ export function ArtworkCard({
               overflow: "hidden",
             }}
           >
-            &ldquo;{artwork.prompt}&rdquo;
-          </p>
-        )}
-
-        {/* Vote count + percentage */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "10px",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-dm-mono)",
-              fontWeight: 500,
-              fontSize: "1rem",
-              color: "#eeeeff",
-            }}
-          >
-            <LiveVoteCount artworkId={artwork.id} initialCount={artwork.vote_count} />
-            <span style={{ fontSize: "0.75rem", color: "#7878a0", marginLeft: "4px" }}>
-              votes
-            </span>
-          </span>
-          {showResults && totalVotes > 0 && (
-            <span
-              style={{
-                fontFamily: "var(--font-dm-mono)",
-                fontSize: "0.8125rem",
-                color: "#7878a0",
-              }}
-            >
-              {votePercentage}%
-            </span>
-          )}
-        </div>
-
-        {/* Progress bar */}
-        {showResults && totalVotes > 0 && (
-          <div
-            style={{
-              height: "3px",
-              background: "#1f1f2a",
-              borderRadius: "100px",
-              overflow: "hidden",
-              marginBottom: "14px",
-            }}
-          >
-            <div
-              style={{
-                height: "100%",
-                width: `${votePercentage}%`,
-                background: isLeading ? "#fbbf24" : isUserVote ? "#34d399" : "#8b5cf6",
-                borderRadius: "100px",
-                transition: "width 0.5s ease",
-              }}
-            />
+            {artwork.prompt}
           </div>
         )}
 
-        {/* Vote button */}
+        {/* Results: bar + counts — shown after voting or when ended */}
+        {showResults && (
+          <div style={{ marginBottom: "12px" }}>
+            <div
+              style={{
+                height: "3px",
+                background: "rgba(255,255,255,0.08)",
+                borderRadius: "2px",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${pct}%`,
+                  background: isUserVote ? accent : isLeading ? "#fbbf24" : "#8b5cf6",
+                  borderRadius: "2px",
+                  transition: "width 0.8s cubic-bezier(0.4,0,0.2,1)",
+                }}
+              />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "6px",
+                fontFamily: "var(--font-dm-mono)",
+                fontSize: "11px",
+                color: "rgba(255,255,255,0.35)",
+              }}
+            >
+              <span>
+                <LiveVoteCount artworkId={artwork.id} initialCount={voteCount} />
+                {" votes"}
+              </span>
+              <span style={{ color: isUserVote ? accent : "rgba(255,255,255,0.35)" }}>
+                {pct}%
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Vote button — only shown before voting */}
         {!hasVoted && !contestEnded && (
-          <VoteButton
-            artworkId={artwork.id}
-            contestId={contestId}
-            isAuthenticated={isAuthenticated}
-          />
+          isAuthenticated ? (
+            <VoteButtonInline
+              isVoting={isVoting}
+              accent={accent}
+              hovered={hovered}
+            />
+          ) : (
+            <Link
+              href={`/signin?callbackUrl=${encodeURIComponent(`/contest/${contestId}`)}`}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                padding: "9px",
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: "8px",
+                color: "rgba(255,255,255,0.5)",
+                fontFamily: "var(--font-dm-mono)",
+                fontSize: "12px",
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                textDecoration: "none",
+              }}
+            >
+              SIGN IN TO VOTE
+            </Link>
+          )
+        )}
+
+        {/* Quiet vote count when voted but this isn't the user's pick */}
+        {hasVoted && !isUserVote && !showResults && (
+          <div
+            style={{
+              textAlign: "center",
+              fontFamily: "var(--font-dm-mono)",
+              fontSize: "11px",
+              color: "rgba(255,255,255,0.25)",
+              padding: "9px 0",
+            }}
+          >
+            <LiveVoteCount artworkId={artwork.id} initialCount={voteCount} /> votes
+          </div>
         )}
       </div>
     </article>
+  );
+}
+
+// Inline — rendered inside ArtworkCard so it inherits the card's hover state
+function VoteButtonInline({
+  isVoting,
+  accent,
+  hovered,
+}: {
+  isVoting: boolean;
+  accent: string;
+  hovered: boolean;
+}) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        padding: "9px",
+        background: hovered ? `${accent}20` : "rgba(255,255,255,0.06)",
+        border: `1px solid ${hovered ? accent : "rgba(255,255,255,0.12)"}`,
+        borderRadius: "8px",
+        color: hovered ? accent : "#eeeeff",
+        fontFamily: "var(--font-dm-mono)",
+        fontSize: "12px",
+        fontWeight: 600,
+        letterSpacing: "0.08em",
+        textAlign: "center",
+        transition: "background 0.2s, border-color 0.2s, color 0.2s",
+        cursor: isVoting ? "wait" : "pointer",
+        pointerEvents: "none", // click handled by parent article
+      }}
+    >
+      {isVoting ? "SUBMITTING..." : "VOTE"}
+    </div>
   );
 }

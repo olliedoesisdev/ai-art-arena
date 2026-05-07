@@ -8,29 +8,30 @@ interface ContestHeaderProps {
 
 export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProps) {
   return (
-    <div style={{ marginBottom: "32px" }}>
-      <p
-        style={{
-          fontSize: "11px",
-          fontWeight: 600,
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "#a78bfa",
-          marginBottom: "8px",
-        }}
-      >
-        {status === "active" ? "Live now" : "Archived"}
-      </p>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "space-between",
-          gap: "24px",
-          flexWrap: "wrap",
-        }}
-      >
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: "24px",
+        flexWrap: "wrap",
+        marginBottom: "40px",
+      }}
+    >
+      {/* Left: eyebrow + title */}
+      <div>
+        <div
+          style={{
+            fontFamily: "var(--font-dm-mono)",
+            fontSize: "11px",
+            letterSpacing: "0.2em",
+            color: "rgba(255,255,255,0.35)",
+            marginBottom: "8px",
+            textTransform: "uppercase",
+          }}
+        >
+          Week {weekNumber} &middot; {status === "active" ? "Open for voting" : "Archived"}
+        </div>
         <h1
           style={{
             fontFamily: "var(--font-syne)",
@@ -38,14 +39,32 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
             fontSize: "clamp(2rem, 5vw, 3rem)",
             letterSpacing: "-0.03em",
             color: "#eeeeff",
-            lineHeight: 1,
+            lineHeight: 1.05,
+            margin: 0,
           }}
         >
-          Week {weekNumber}
+          The Arena
         </h1>
-
-        {status === "active" && <ContestTimer endDate={endDate} />}
       </div>
+
+      {/* Right: timer */}
+      {status === "active" && (
+        <div>
+          <div
+            style={{
+              fontFamily: "var(--font-dm-mono)",
+              fontSize: "10px",
+              letterSpacing: "0.15em",
+              color: "rgba(255,255,255,0.3)",
+              marginBottom: "8px",
+              textTransform: "uppercase",
+            }}
+          >
+            Contest closes in
+          </div>
+          <ContestTimer endDate={endDate} />
+        </div>
+      )}
     </div>
   );
 }

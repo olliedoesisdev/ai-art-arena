@@ -28,11 +28,15 @@ function Cell({ value, label }: { value: number; label: string }) {
       <div
         style={{
           fontFamily: "var(--font-dm-mono)",
-          fontWeight: 500,
-          fontSize: "1.5rem",
+          fontWeight: 700,
+          fontSize: "1.375rem",
           color: "#eeeeff",
           lineHeight: 1,
-          minWidth: "2.5ch",
+          letterSpacing: "-0.02em",
+          background: "rgba(255,255,255,0.06)",
+          padding: "8px 12px",
+          borderRadius: "8px",
+          minWidth: "48px",
         }}
       >
         {String(value).padStart(2, "0")}
@@ -40,11 +44,11 @@ function Cell({ value, label }: { value: number; label: string }) {
       <div
         style={{
           fontSize: "9px",
-          fontWeight: 600,
+          fontFamily: "var(--font-dm-mono)",
+          color: "rgba(255,255,255,0.3)",
+          marginTop: "4px",
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "#3a3a58",
-          marginTop: "4px",
         }}
       >
         {label}
@@ -65,6 +69,7 @@ export function ContestTimer({ endDate }: { endDate: string }) {
     return (
       <span
         style={{
+          fontFamily: "var(--font-dm-mono)",
           fontSize: "0.8125rem",
           fontWeight: 600,
           color: "#7878a0",
@@ -77,13 +82,21 @@ export function ContestTimer({ endDate }: { endDate: string }) {
   }
 
   const sep = (
-    <span style={{ fontFamily: "var(--font-dm-mono)", color: "#3a3a58", fontSize: "1.25rem" }}>
+    <span
+      style={{
+        fontFamily: "var(--font-dm-mono)",
+        fontSize: "1.125rem",
+        color: "rgba(255,255,255,0.2)",
+        marginBottom: "14px",
+        display: "block",
+      }}
+    >
       :
     </span>
   );
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
       <Cell value={t.days} label="days" />
       {sep}
       <Cell value={t.hours} label="hrs" />

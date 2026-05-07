@@ -9,10 +9,10 @@ import { ArtworkCard } from "@/components/contest/ArtworkCard";
 
 export const revalidate = 60;
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = params;
+  const { id } = await params;
   const supabase = await createClient();
   const { data: contest } = await supabase
     .from("contests")
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ContestPage({ params }: Props) {
-  const { id } = params;
+  const { id } = await params;
   const supabase = await createClient();
   const session = await auth();
 
@@ -91,24 +91,25 @@ export default async function ContestPage({ params }: Props) {
           <VoteAlert artworkTitle={votedArtwork.title} />
         )}
 
-        {/* Already voted — no artwork match (anonymous) */}
+        {/* Already voted — anonymous, no artwork match */}
         {hasVoted && !votedArtwork && (
           <div
             style={{
+              background: "rgba(6,182,212,0.08)",
+              border: "1px solid rgba(6,182,212,0.2)",
+              borderRadius: "10px",
+              padding: "12px 18px",
+              marginBottom: "32px",
               display: "flex",
               alignItems: "center",
-              gap: "12px",
-              padding: "14px 20px",
-              background: "rgba(52,211,153,0.08)",
-              border: "1px solid rgba(52,211,153,0.2)",
-              borderRadius: "8px",
-              marginBottom: "32px",
-              fontSize: "0.875rem",
-              color: "#34d399",
-              fontWeight: 500,
+              gap: "10px",
+              fontFamily: "var(--font-dm-mono)",
+              fontSize: "13px",
+              color: "#06b6d4",
             }}
           >
-            ✓ You&apos;ve already voted in this contest
+            <span>✓</span>
+            <span>Vote submitted — results update live.</span>
           </div>
         )}
 
@@ -116,14 +117,14 @@ export default async function ContestPage({ params }: Props) {
         {contestEnded && (
           <div
             style={{
-              padding: "14px 20px",
               background: "rgba(139,92,246,0.08)",
               border: "1px solid rgba(139,92,246,0.2)",
-              borderRadius: "8px",
+              borderRadius: "10px",
+              padding: "12px 18px",
               marginBottom: "32px",
-              fontSize: "0.875rem",
+              fontFamily: "var(--font-dm-mono)",
+              fontSize: "13px",
               color: "#a78bfa",
-              fontWeight: 500,
             }}
           >
             This contest has ended — results are final.
@@ -135,8 +136,8 @@ export default async function ContestPage({ params }: Props) {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-              gap: "20px",
+              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+              gap: "16px",
             }}
           >
             {artworks.map((artwork, index) => (
