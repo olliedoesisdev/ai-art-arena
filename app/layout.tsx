@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NoiseOrbs } from "@/components/layout/NoiseOrbs";
+import { Providers } from "@/components/layout/Providers";
 import "./globals.css";
 
 const syne = Syne({
@@ -57,21 +58,23 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${syne.variable} ${dmMono.variable}`} suppressHydrationWarning>
       <body>
-        <NoiseOrbs />
-        <Header />
-        <main style={{ position: "relative", zIndex: 1 }}>{children}</main>
-        <Footer />
-        <Toaster
-          position="top-right"
-          richColors
-          toastOptions={{
-            style: {
-              background: "#111119",
-              border: "1px solid rgba(139,92,246,0.25)",
-              color: "#eeeeff",
-            },
-          }}
-        />
+        <Providers>
+          <NoiseOrbs />
+          <Header />
+          <main style={{ position: "relative", zIndex: 1 }}>{children}</main>
+          <Footer />
+          <Toaster
+            position="top-right"
+            richColors
+            toastOptions={{
+              style: {
+                background: "#111119",
+                border: "1px solid rgba(139,92,246,0.25)",
+                color: "#eeeeff",
+              },
+            }}
+          />
+        </Providers>
       </body>
     </html>
   );

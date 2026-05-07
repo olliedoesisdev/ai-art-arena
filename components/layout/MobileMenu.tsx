@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 interface Props {
   navLinks: { href: string; label: string }[];
-  isLoggedIn: boolean;
-  isAdmin: boolean;
-  userImage: string | null;
-  userName: string | null;
   contestHref: string;
 }
 
-export function MobileMenu({ navLinks, isLoggedIn, isAdmin, userName, contestHref }: Props) {
+export function MobileMenu({ navLinks, contestHref }: Props) {
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+  const isAdmin = session?.user?.role === "admin";
+  const userName = session?.user?.name ?? session?.user?.email ?? null;
   const [open, setOpen] = useState(false);
 
   return (
