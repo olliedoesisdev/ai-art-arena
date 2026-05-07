@@ -24,7 +24,6 @@ export const metadata: Metadata = {
   title: "AI Art Arena — Weekly AI Art Voting Contest",
   description:
     "Vote on stunning AI-generated artwork every week. Discover amazing AI art and help crown the weekly champion.",
-  keywords: ["AI art", "voting contest", "AI generated art", "weekly contest"],
   authors: [{ name: "Oliver" }],
   openGraph: {
     title: "AI Art Arena — Weekly AI Art Voting Contest",
@@ -33,11 +32,20 @@ export const metadata: Metadata = {
     siteName: "AI Art Arena",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "https://olliedoesis.dev/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "AI Art Arena — Weekly AI Art Voting Contest",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "AI Art Arena",
     description: "Vote on stunning AI-generated artwork every week",
+    images: ["https://olliedoesis.dev/og-image.png"],
   },
 };
 

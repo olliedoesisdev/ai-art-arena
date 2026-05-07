@@ -5,6 +5,8 @@ const NAV = [
   { href: "/archive", label: "Archive" },
   { href: "/leaderboard", label: "Leaderboard" },
   { href: "/about", label: "About" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
 ];
 
 export function Footer() {

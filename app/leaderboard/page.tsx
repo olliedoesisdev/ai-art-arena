@@ -2,11 +2,25 @@ import { createClient } from "@/lib/supabase/server";
 import { LeaderboardList } from "@/components/leaderboard/LeaderboardList";
 import { LeaderboardFeatured } from "@/components/leaderboard/LeaderboardFeatured";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 export const metadata = {
   title: "Leaderboard — AI Art Arena",
   description: "All-time highest-voted artworks across every AI Art Arena contest.",
+  openGraph: {
+    title: "Leaderboard — AI Art Arena",
+    description: "All-time highest-voted artworks across every AI Art Arena contest.",
+    url: "https://olliedoesis.dev/leaderboard",
+    siteName: "AI Art Arena",
+    images: [{ url: "https://olliedoesis.dev/og-image.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Leaderboard — AI Art Arena",
+    description: "All-time highest-voted artworks across every AI Art Arena contest.",
+    images: ["https://olliedoesis.dev/og-image.png"],
+  },
 };
 
 export default async function LeaderboardPage() {

@@ -11,21 +11,20 @@ async function getHomeData() {
   const [statsResult, mosaicResult, lastWinnerResult] = await Promise.all([
     supabase.rpc("get_homepage_stats"),
 
-    // Pull up to 6 artworks from the active contest for the mosaic
     supabase
       .from("artworks")
       .select("id, title, image_url, contest_id, contests!inner(status)")
       .eq("contests.status", "active")
       .limit(6),
 
-    // Last archived contest winner = highest vote_count artwork in most recent archived contest
+    // Use limit(1) + maybeSingle() so no error when no archived contests exist
     supabase
       .from("contests")
       .select("id, week_number, artworks(id, title, image_url, vote_count, contest_id)")
       .eq("status", "archived")
       .order("week_number", { ascending: false })
       .limit(1)
-      .single(),
+      .maybeSingle(),
   ]);
 
   const stats =
@@ -97,7 +96,7 @@ export default async function HomePage() {
 
   return (
     <div className="animate-page">
-      {/* ── Hero ─────────────────────────────────────────────── */}
+      {/* Hero */}
       <section style={{ paddingTop: "100px", paddingBottom: "60px" }}>
         <div className="shell" style={{ textAlign: "center" }}>
           <p
@@ -159,24 +158,21 @@ export default async function HomePage() {
                   letterSpacing: "0.01em",
                 }}
               >
-                Vote now — Week {stats?.active_week ?? ""} →
+                Vote now &mdash; Week {stats?.active_week ?? ""} &rarr;
               </Link>
             ) : (
-              <Link
-                href="/archive"
+              <div
                 style={{
-                  fontFamily: "var(--font-syne)",
-                  fontWeight: 700,
-                  fontSize: "0.9375rem",
-                  color: "#08080e",
-                  background: "#fbbf24",
-                  padding: "13px 32px",
+                  padding: "13px 24px",
                   borderRadius: "100px",
-                  textDecoration: "none",
+                  background: "rgba(139,92,246,0.08)",
+                  border: "1px solid rgba(139,92,246,0.2)",
+                  fontSize: "0.9375rem",
+                  color: "#7878a0",
                 }}
               >
-                View Archive →
-              </Link>
+                No active contest right now. Check back Monday.
+              </div>
             )}
             <Link
               href="/archive"
@@ -198,12 +194,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Art Mosaic ───────────────────────────────────────── */}
+      {/* Art Mosaic */}
       {mosaicArtworks.length > 0 && (
         <ArtMosaic artworks={mosaicArtworks} />
       )}
 
-      {/* ── Stats strip ──────────────────────────────────────── */}
+      {/* Stats strip */}
       {stats && (
         <section style={{ paddingBottom: "80px" }}>
           <div className="shell">
@@ -243,13 +239,7 @@ export default async function HomePage() {
                   >
                     {value}
                   </div>
-                  <div
-                    style={{
-                      fontSize: "0.8125rem",
-                      color: "#7878a0",
-                      fontWeight: 500,
-                    }}
-                  >
+                  <div style={{ fontSize: "0.8125rem", color: "#7878a0", fontWeight: 500 }}>
                     {label}
                   </div>
                 </div>
@@ -259,7 +249,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── How it works ─────────────────────────────────────── */}
+      {/* How it works */}
       <section style={{ paddingBottom: "100px" }}>
         <div className="shell">
           <p
@@ -338,25 +328,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Last Winner ──────────────────────────────────────── */}
+      {/* Last Winner */}
       {lastWinner && lastWinnerWeek !== null && (
         <LastWinner artwork={lastWinner} weekNumber={lastWinnerWeek} />
       )}
-
-      {/* ── Footer nudge ─────────────────────────────────────── */}
-      <section
-        style={{
-          borderTop: "1px solid rgba(139,92,246,0.12)",
-          padding: "40px 0",
-          textAlign: "center",
-        }}
-      >
-        <div className="shell">
-          <p style={{ fontSize: "0.8125rem", color: "#3a3a58" }}>
-            AI Art Arena &copy; {new Date().getFullYear()} &mdash; Built by Oliver
-          </p>
-        </div>
-      </section>
     </div>
   );
 }

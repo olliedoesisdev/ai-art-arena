@@ -2,11 +2,25 @@ import { createClient } from "@/lib/supabase/server";
 import { ArchiveCard } from "@/components/archive/ArchiveCard";
 import { Contest, Artwork } from "@/lib/types";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata = {
   title: "Archive — AI Art Arena",
-  description: "Browse past AI art contests and their winners.",
+  description: "Browse past AI Art Arena contests and their winning artworks.",
+  openGraph: {
+    title: "Archive — AI Art Arena",
+    description: "Browse past AI Art Arena contests and their winning artworks.",
+    url: "https://olliedoesis.dev/archive",
+    siteName: "AI Art Arena",
+    images: [{ url: "https://olliedoesis.dev/og-image.png", width: 1200, height: 630 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Archive — AI Art Arena",
+    description: "Browse past AI Art Arena contests and their winning artworks.",
+    images: ["https://olliedoesis.dev/og-image.png"],
+  },
 };
 
 export default async function ArchivePage() {
