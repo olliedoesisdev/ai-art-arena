@@ -20,9 +20,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq("id", id)
     .single();
 
+  const week = contest?.week_number;
   return {
-    title: contest ? `Week ${contest.week_number} — AI Art Arena` : "Contest — AI Art Arena",
-    description: "Vote for your favorite AI-generated artwork in this week's contest.",
+    title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
+    description: week
+      ? `Vote for the best AI-generated artwork in Week ${week}. One vote per contest, no account needed.`
+      : "Vote for your favourite AI-generated artwork.",
+    alternates: { canonical: `https://olliedoesis.dev/contest/${id}` },
+    openGraph: {
+      title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
+      description: `Week ${week} is live. Pick your favourite AI artwork.`,
+      url: `https://olliedoesis.dev/contest/${id}`,
+      siteName: "AI Art Arena",
+      images: [{ url: "https://olliedoesis.dev/og-image.png", width: 1200, height: 630 }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
+      images: ["https://olliedoesis.dev/og-image.png"],
+    },
   };
 }
 

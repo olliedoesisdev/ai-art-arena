@@ -27,18 +27,18 @@ export function Footer() {
           gap: "16px",
         }}
       >
-        <p style={{ fontSize: "0.8125rem", color: "#3a3a58" }}>
+        <p style={{ fontSize: "0.8125rem", color: "#7878a0" }}>
           &copy; {new Date().getFullYear()} AI Art Arena
         </p>
 
-        <nav style={{ display: "flex", gap: "24px" }}>
+        <nav style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
           {NAV.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               style={{
                 fontSize: "0.8125rem",
-                color: "#3a3a58",
+                color: "#7878a0",
                 textDecoration: "none",
                 transition: "color 0.2s",
               }}

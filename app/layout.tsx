@@ -57,6 +57,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${syne.variable} ${dmMono.variable}`} suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://jmmyqvabuddsxajozqxt.supabase.co" />
+      </head>
       <body>
         <Providers>
           <NoiseOrbs />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createPublicClient } from "@/lib/supabase/server";
 import { MobileMenu } from "./MobileMenu";
 import { HeaderAuth } from "./HeaderAuth";
+import { NavLinks } from "./NavLinks";
 
 async function getActiveContestId(): Promise<string | null> {
   const supabase = createPublicClient();
@@ -43,13 +44,7 @@ export async function Header() {
         </Link>
 
         <nav className="nav-links">
-          {NAV_LINKS.map(({ href, label }) => (
-            <Link key={label} href={href} style={{
-              fontSize: "0.875rem", fontWeight: 500, color: "#7878a0", textDecoration: "none",
-            }}>
-              {label}
-            </Link>
-          ))}
+          <NavLinks links={NAV_LINKS} contestHref={contestHref} />
         </nav>
 
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
