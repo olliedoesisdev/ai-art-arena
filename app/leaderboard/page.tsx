@@ -7,6 +7,7 @@ export const revalidate = 300;
 export const metadata = {
   title: "Leaderboard — AI Art Arena",
   description: "All-time highest-voted artworks across every AI Art Arena contest.",
+  alternates: { canonical: "https://olliedoesis.dev/leaderboard" },
   openGraph: {
     title: "Leaderboard — AI Art Arena",
     description: "All-time highest-voted artworks across every AI Art Arena contest.",

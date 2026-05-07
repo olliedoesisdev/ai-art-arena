@@ -92,8 +92,28 @@ export default async function ContestPage({ params }: Props) {
     ? artworks?.find((a) => a.id === userVoteArtworkId)
     : null;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: `AI Art Arena — Week ${contest.week_number}`,
+    description: `Vote for the best AI-generated artwork in Week ${contest.week_number}. One vote per contest.`,
+    startDate: contest.start_date,
+    endDate: contest.end_date,
+    eventStatus: contest.status === "active"
+      ? "https://schema.org/EventScheduled"
+      : "https://schema.org/EventEnded",
+    eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+    location: { "@type": "VirtualLocation", url: `https://olliedoesis.dev/contest/${id}` },
+    organizer: { "@type": "Organization", name: "AI Art Arena", url: "https://olliedoesis.dev" },
+    url: `https://olliedoesis.dev/contest/${id}`,
+  };
+
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="shell">
         <ContestHeader
           weekNumber={contest.week_number}

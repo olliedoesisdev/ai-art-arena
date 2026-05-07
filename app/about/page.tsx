@@ -4,6 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "About — AI Art Arena",
   description: "Learn about AI Art Arena — a weekly voting contest for AI-generated artwork.",
+  alternates: { canonical: "https://olliedoesis.dev/about" },
   openGraph: {
     title: "About — AI Art Arena",
     description: "Learn about AI Art Arena — a weekly voting contest for AI-generated artwork.",

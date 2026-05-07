@@ -94,8 +94,25 @@ export default async function HomePage() {
   const { stats, mosaicArtworks, lastWinner, lastWinnerWeek } = await getHomeData();
   const activeId = stats?.active_id ?? null;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AI Art Arena",
+    url: "https://olliedoesis.dev",
+    description: "Vote on stunning AI-generated artwork every week. Discover amazing AI art and help crown the weekly champion.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: { "@type": "EntryPoint", urlTemplate: "https://olliedoesis.dev/archive" },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <div className="animate-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero */}
       <section style={{ paddingTop: "100px", paddingBottom: "60px" }}>
         <div className="shell" style={{ textAlign: "center" }}>

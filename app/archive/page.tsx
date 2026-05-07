@@ -7,6 +7,7 @@ export const revalidate = 3600;
 export const metadata = {
   title: "Archive — AI Art Arena",
   description: "Browse past AI Art Arena contests and their winning artworks.",
+  alternates: { canonical: "https://olliedoesis.dev/archive" },
   openGraph: {
     title: "Archive — AI Art Arena",
     description: "Browse past AI Art Arena contests and their winning artworks.",
