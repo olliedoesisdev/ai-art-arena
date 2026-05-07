@@ -5,10 +5,7 @@ import type { NextRequest } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth(function middleware(_request: NextRequest) {
-  const response = NextResponse.next();
-  const isDev = process.env.NODE_ENV === "development";
-
+function applySecurityHeaders(response: NextResponse, isDev: boolean) {
   const csp = isDev
     ? [
         "default-src 'self'",
@@ -39,9 +36,29 @@ export default auth(function middleware(_request: NextRequest) {
       "max-age=63072000; includeSubDomains; preload"
     );
   }
+}
 
+export default async function middleware(request: NextRequest) {
+  const isDev = process.env.NODE_ENV === "development";
+  const { pathname } = request.nextUrl;
+
+  // Admin routes: run auth check — this will set cookies and disable CDN caching,
+  // which is acceptable since admin pages must never be cached anyway.
+  if (pathname.startsWith("/admin")) {
+    const authMiddleware = auth((_req) => {
+      const response = NextResponse.next();
+      applySecurityHeaders(response, isDev);
+      return response;
+    });
+    return authMiddleware(request, {} as never);
+  }
+
+  // All other routes: security headers only, no auth check.
+  // This keeps public pages CDN-cacheable (no Set-Cookie header from JWT validation).
+  const response = NextResponse.next();
+  applySecurityHeaders(response, isDev);
   return response;
-});
+}
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
