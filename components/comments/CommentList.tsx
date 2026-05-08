@@ -1,4 +1,5 @@
-import { CommentThread } from "@/lib/types";
+import { CommentThread, ReactionCounts } from "@/lib/types";
+import { ReactionBar } from "./ReactionBar";
 
 function timeAgo(dateStr: string): string {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
@@ -19,17 +20,21 @@ function timeAgo(dateStr: string): string {
 }
 
 function CommentBubble({
+  id,
   authorName,
   body,
   createdAt,
   isAdminReply,
   isReply,
+  reactions,
 }: {
+  id: string;
   authorName: string;
   body: string;
   createdAt: string;
   isAdminReply: boolean;
   isReply: boolean;
+  reactions: ReactionCounts;
 }) {
   return (
     <div
@@ -77,6 +82,7 @@ function CommentBubble({
       <p style={{ fontSize: "0.875rem", color: "#7878a0", lineHeight: 1.65, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
         {body}
       </p>
+      <ReactionBar commentId={id} initialCounts={reactions} />
     </div>
   );
 }
@@ -96,23 +102,27 @@ export function CommentList({ threads }: Props) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      {threads.map(({ comment, replies }) => (
+      {threads.map(({ comment, replies, reactions, replyReactions }) => (
         <div key={comment.id} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <CommentBubble
+            id={comment.id}
             authorName={comment.author_name}
             body={comment.body}
             createdAt={comment.created_at}
             isAdminReply={comment.is_admin_reply}
             isReply={false}
+            reactions={reactions}
           />
-          {replies.map((reply) => (
+          {replies.map((reply, i) => (
             <CommentBubble
               key={reply.id}
+              id={reply.id}
               authorName={reply.author_name}
               body={reply.body}
               createdAt={reply.created_at}
               isAdminReply={reply.is_admin_reply}
               isReply={true}
+              reactions={replyReactions[i] ?? { like: 0, love: 0, laugh: 0, wow: 0 }}
             />
           ))}
         </div>

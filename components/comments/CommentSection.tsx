@@ -1,5 +1,5 @@
 import { createPublicClient } from "@/lib/supabase/server";
-import { Comment, CommentThread } from "@/lib/types";
+import { Comment, CommentThread, ReactionCounts, ReactionEmoji } from "@/lib/types";
 import { CommentList } from "./CommentList";
 import { CommentForm } from "./CommentForm";
 
@@ -7,10 +7,21 @@ interface Props {
   artworkId: string;
 }
 
+const EMPTY_COUNTS: ReactionCounts = { like: 0, love: 0, laugh: 0, wow: 0 };
+
+function buildCounts(rows: { emoji: string }[]): ReactionCounts {
+  const counts = { ...EMPTY_COUNTS };
+  for (const row of rows) {
+    counts[row.emoji as ReactionEmoji]++;
+  }
+  return counts;
+}
+
 export async function CommentSection({ artworkId }: Props) {
   const supabase = createPublicClient();
 
-  const { data, error } = await supabase
+  // Fetch comments first, then reactions in parallel with nothing else depending on them
+  const { data: commentData, error } = await supabase
     .from("comments")
     .select("id, artwork_id, parent_id, author_name, body, is_admin_reply, is_approved, created_at")
     .eq("artwork_id", artworkId)
@@ -18,19 +29,37 @@ export async function CommentSection({ artworkId }: Props) {
     .order("created_at", { ascending: true })
     .limit(50);
 
-  if (error) {
-    // Non-fatal — degrade gracefully
-    return null;
+  if (error) return null;
+
+  const rows = (commentData ?? []) as Comment[];
+  const commentIds = rows.map((c) => c.id);
+
+  // Fetch reactions for all comments in one query
+  const { data: reactionData } = commentIds.length > 0
+    ? await supabase
+        .from("comment_reactions")
+        .select("comment_id, emoji")
+        .in("comment_id", commentIds)
+    : { data: [] };
+
+  // Index reactions by comment_id
+  const reactionsByComment = new Map<string, { emoji: string }[]>();
+  for (const row of reactionData ?? []) {
+    const list = reactionsByComment.get(row.comment_id) ?? [];
+    list.push({ emoji: row.emoji });
+    reactionsByComment.set(row.comment_id, list);
   }
 
-  const rows = (data ?? []) as Comment[];
-
-  // Group into threads: top-level comments first, replies nested under parent
   const topLevel = rows.filter((c) => c.parent_id === null);
-  const threads: CommentThread[] = topLevel.map((comment) => ({
-    comment,
-    replies: rows.filter((c) => c.parent_id === comment.id),
-  }));
+  const threads: CommentThread[] = topLevel.map((comment) => {
+    const replies = rows.filter((c) => c.parent_id === comment.id);
+    return {
+      comment,
+      replies,
+      reactions: buildCounts(reactionsByComment.get(comment.id) ?? []),
+      replyReactions: replies.map((r) => buildCounts(reactionsByComment.get(r.id) ?? [])),
+    };
+  });
 
   const count = threads.reduce((n, t) => n + 1 + t.replies.length, 0);
 

@@ -56,9 +56,14 @@ export interface Comment {
 
 // author_email intentionally omitted — never passed to the client
 
+export type ReactionEmoji = "like" | "love" | "laugh" | "wow";
+export type ReactionCounts = Record<ReactionEmoji, number>;
+
 export interface CommentThread {
   comment: Comment;
   replies: Comment[];
+  reactions: ReactionCounts;
+  replyReactions: ReactionCounts[];
 }
 
 // API Response types
