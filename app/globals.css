@@ -195,6 +195,27 @@ body {
   animation: slide-down 0.3s ease forwards;
 }
 
+/* ── Comment form name/email grid ───────────────────────── */
+.grid-comment-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 520px) {
+  .grid-comment-fields { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── About page 2-col sidebar layout ────────────────────── */
+.grid-about {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .grid-about { grid-template-columns: 1fr 320px; gap: 48px; }
+}
+
 /* ── Contest page grid texture ───────────────────────────── */
 .contest-grid-texture {
   position: fixed;

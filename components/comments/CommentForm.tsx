@@ -100,7 +100,7 @@ export function CommentForm({ artworkId }: Props) {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+      <div className="grid-comment-fields">
         <div>
           <label style={labelStyle} htmlFor="comment-name">
             Name <span style={{ color: "#8b5cf6" }}>*</span>

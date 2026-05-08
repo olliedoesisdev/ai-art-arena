@@ -35,7 +35,7 @@ export async function CommentSection({ artworkId }: Props) {
   const count = threads.reduce((n, t) => n + 1 + t.replies.length, 0);
 
   return (
-    <section style={{ marginTop: "48px" }}>
+    <section>
       {/* Section header */}
       <div style={{ marginBottom: "24px" }}>
         <p

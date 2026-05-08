@@ -216,11 +216,11 @@ export default async function ContestPage({ params }: Props) {
               <div key={artwork.id} style={{ marginBottom: "48px" }}>
                 <p style={{
                   fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em",
-                  textTransform: "uppercase", color: "#3a3a58", marginBottom: "0",
+                  textTransform: "uppercase", color: "#3a3a58", marginBottom: "10px",
                 }}>
                   {artwork.title}
                 </p>
-                <div style={{ height: "1px", background: "rgba(139,92,246,0.1)", marginBottom: "0" }} />
+                <div style={{ height: "1px", background: "rgba(139,92,246,0.1)", marginBottom: "28px" }} />
                 <CommentSection artworkId={artwork.id} />
               </div>
             ))}

@@ -68,15 +68,8 @@ export default function AboutPage() {
           What is AI Art Arena?
         </h1>
 
-        {/* 2-col layout */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 320px",
-            gap: "48px",
-            alignItems: "start",
-          }}
-        >
+        {/* 2-col layout — stacks on mobile, sidebar on 900px+ */}
+        <div className="grid-about">
           {/* Left — description */}
           <div>
             <div
