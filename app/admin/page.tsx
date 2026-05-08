@@ -127,7 +127,7 @@ export default async function AdminPage() {
             {(recentVotes.data ?? []).length === 0 ? (
               <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No votes yet</p>
             ) : (recentVotes.data ?? []).map((v, i) => {
-              const artwork = v.artworks as any;
+              const artwork = v.artworks as { title: string; contests: { week_number: number } | null } | null;
               return (
                 <div key={v.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "8px 14px", background: "#181820", borderRadius: "8px" }}>
                   <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "#3a3a58", minWidth: "20px" }}>
@@ -137,7 +137,7 @@ export default async function AdminPage() {
                     <div style={{ fontSize: "0.8125rem", color: "#eeeeff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {artwork?.title ?? "Unknown"}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "#7878a0" }}>Week {(artwork?.contests as any)?.week_number ?? "?"}</div>
+                    <div style={{ fontSize: "0.75rem", color: "#7878a0" }}>Week {artwork?.contests?.week_number ?? "?"}</div>
                   </div>
                   <div style={{ fontSize: "0.6875rem", color: "#3a3a58" }}>
                     {new Date(v.created_at).toLocaleDateString()}

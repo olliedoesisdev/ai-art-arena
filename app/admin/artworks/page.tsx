@@ -44,7 +44,7 @@ export default async function ManageArtworksPage() {
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
           {artworks.map((artwork) => {
-            const contest = artwork.contests as any;
+            const contest = artwork.contests as { id: string; week_number: number; status: string } | null;
             return (
               <div key={artwork.id} style={{ background: "#111119", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden" }}>
                 <div style={{ position: "relative", aspectRatio: "1", background: "#181820" }}>

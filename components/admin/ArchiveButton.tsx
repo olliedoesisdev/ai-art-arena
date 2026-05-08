@@ -30,7 +30,7 @@ export function ArchiveButton({ contestId }: { contestId: string }) {
 
       toast.success("Contest archived successfully!");
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error("Failed to archive contest");
     } finally {
       setIsArchiving(false);

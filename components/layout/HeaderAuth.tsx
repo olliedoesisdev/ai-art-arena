@@ -4,12 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 
-interface Props {
-  contestHref: string;
-  navLinks: { href: string; label: string }[];
-}
-
-export function HeaderAuth({ contestHref, navLinks }: Props) {
+export function HeaderAuth() {
   const { data: session } = useSession();
 
   if (!session?.user) return null;

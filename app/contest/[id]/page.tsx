@@ -86,7 +86,7 @@ export default async function ContestPage({ params }: Props) {
 
   const totalVotes = artworks?.reduce((sum, a) => sum + (a.vote_count ?? 0), 0) ?? 0;
   const maxVotes = artworks && artworks.length > 0 ? Math.max(...artworks.map((a) => a.vote_count)) : 0;
-  const contestEnded = new Date(contest.end_date).getTime() <= Date.now();
+  const contestEnded = new Date(contest.end_date) <= new Date();
 
   const votedArtwork = userVoteArtworkId
     ? artworks?.find((a) => a.id === userVoteArtworkId)

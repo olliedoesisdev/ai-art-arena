@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -47,17 +47,15 @@ export function ArtworkCard({
 }: ArtworkCardProps) {
   const [isVoting, setIsVoting] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const [localVoted, setLocalVoted] = useState(false);
+  const [localVoted, setLocalVoted] = useState(() => {
+    try {
+      return typeof window !== "undefined" && !!localStorage.getItem(localVoteKey(contestId));
+    } catch {
+      return false;
+    }
+  });
   const [copied, setCopied] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    try {
-      setLocalVoted(!!localStorage.getItem(localVoteKey(contestId)));
-    } catch {
-      // localStorage blocked (private browsing)
-    }
-  }, [contestId]);
 
   const accent = ACCENT_COLORS[index % ACCENT_COLORS.length];
   const effectivelyVoted = hasVoted || localVoted;

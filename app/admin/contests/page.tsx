@@ -64,7 +64,7 @@ export default async function ManageContestsPage() {
             <Link href="/admin/contests/new" style={{ color: "#8b5cf6", fontSize: "0.875rem", textDecoration: "none" }}>Create your first contest →</Link>
           </div>
         ) : contests.map((c, i) => {
-          const artworkCount = (c.artworks as any)?.[0]?.count ?? 0;
+          const artworkCount = (c.artworks as { count: number }[])?.[0]?.count ?? 0;
           return (
             <div key={c.id} style={{
               display: "grid", gridTemplateColumns: "80px 1fr 1fr 100px 80px 120px",

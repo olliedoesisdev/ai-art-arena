@@ -2,9 +2,19 @@
 
 import { useMemo } from "react";
 
+interface ContestVoteRow {
+  id: string;
+  week_number: number;
+  votes: { count: number }[];
+}
+
+interface VoteTimeRow {
+  created_at: string;
+}
+
 interface AnalyticsChartsProps {
-  votesPerContest: any[];
-  votesOverTime: any[];
+  votesPerContest: ContestVoteRow[];
+  votesOverTime: VoteTimeRow[];
 }
 
 export function AnalyticsCharts({
@@ -13,7 +23,7 @@ export function AnalyticsCharts({
 }: AnalyticsChartsProps) {
   // Process votes per contest data
   const contestData = useMemo(() => {
-    return votesPerContest.map((contest: any) => ({
+    return votesPerContest.map((contest) => ({
       week: `Week ${contest.week_number}`,
       votes: contest.votes[0]?.count || 0,
     }));
@@ -23,7 +33,7 @@ export function AnalyticsCharts({
   const dailyVotes = useMemo(() => {
     const votesByDay = new Map<string, number>();
 
-    votesOverTime.forEach((vote: any) => {
+    votesOverTime.forEach((vote) => {
       const date = new Date(vote.created_at).toLocaleDateString();
       votesByDay.set(date, (votesByDay.get(date) || 0) + 1);
     });

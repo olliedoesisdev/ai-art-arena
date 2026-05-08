@@ -50,7 +50,7 @@ export async function Header() {
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           {/* Auth state rendered client-side — does not block ISR caching */}
           <div className="nav-links" style={{ gap: "12px" }}>
-            <HeaderAuth contestHref={contestHref} navLinks={NAV_LINKS} />
+            <HeaderAuth />
           </div>
 
           <Link href={contestHref} style={{

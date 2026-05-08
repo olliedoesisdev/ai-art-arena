@@ -45,7 +45,7 @@ export default async function middleware(request: NextRequest) {
   // Admin routes: run auth check — this will set cookies and disable CDN caching,
   // which is acceptable since admin pages must never be cached anyway.
   if (pathname.startsWith("/admin")) {
-    const authMiddleware = auth((_req) => {
+    const authMiddleware = auth(() => {
       const response = NextResponse.next();
       applySecurityHeaders(response, isDev);
       return response;

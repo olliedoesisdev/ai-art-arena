@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -50,7 +49,6 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
-  const router = useRouter();
   const [tab, setTab] = useState<"signin" | "signup">(defaultTab);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

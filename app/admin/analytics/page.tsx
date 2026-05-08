@@ -9,18 +9,16 @@ export default async function AnalyticsPage() {
   const supabase = await createClient();
 
   // Get overall stats
-  const [contestsResult, artworksResult, votesResult, usersResult] =
+  const [contestsResult, artworksResult, votesResult] =
     await Promise.all([
       supabase.from("contests").select("*", { count: "exact" }),
       supabase.from("artworks").select("*", { count: "exact" }),
       supabase.from("votes").select("*", { count: "exact" }),
-      supabase.from("users").select("id", { count: "exact" }),
     ]);
 
   const totalContests = contestsResult.count || 0;
   const totalArtworks = artworksResult.count || 0;
   const totalVotes = votesResult.count || 0;
-  const totalUsers = usersResult.count || 0;
 
   // Get votes per contest
   const { data: votesPerContest } = await supabase
@@ -72,8 +70,6 @@ export default async function AnalyticsPage() {
   const uniqueVoters = new Set(
     votesResult.data?.map((v) => v.user_id || v.ip_hash)
   ).size;
-  const participationRate =
-    totalUsers > 0 ? ((uniqueVoters / totalUsers) * 100).toFixed(1) : "0";
 
   return (
     <div className="space-y-8">
@@ -127,7 +123,7 @@ export default async function AnalyticsPage() {
           🏆 Top 10 Artworks (All Time)
         </h3>
         <div className="space-y-3">
-          {topArtworks?.map((artwork: any, index: number) => (
+          {topArtworks?.map((artwork, index) => (
             <div
               key={artwork.id}
               className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -194,7 +190,7 @@ export default async function AnalyticsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {votesPerContest?.map((contest: any, index: number) => {
+              {votesPerContest?.map((contest, index) => {
                 const voteCount = contest.votes[0]?.count || 0;
                 const avgPerArtwork = (voteCount / 6).toFixed(1);
 
