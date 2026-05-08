@@ -43,6 +43,24 @@ export interface User {
   updated_at: string;
 }
 
+export interface Comment {
+  id: string;
+  artwork_id: string;
+  parent_id: string | null;
+  author_name: string;
+  body: string;
+  is_admin_reply: boolean;
+  is_approved: boolean;
+  created_at: string;
+}
+
+// author_email intentionally omitted — never passed to the client
+
+export interface CommentThread {
+  comment: Comment;
+  replies: Comment[];
+}
+
 // API Response types
 export interface ApiResponse<T = unknown> {
   data?: T;

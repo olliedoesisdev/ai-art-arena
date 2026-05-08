@@ -7,6 +7,7 @@ import { SITE_URL } from "@/lib/site";
 import { StatsStrip } from "@/components/contest/StatsStrip";
 import { VoteAlert } from "@/components/contest/VoteAlert";
 import { ArtworkCard } from "@/components/contest/ArtworkCard";
+import { CommentSection } from "@/components/comments/CommentSection";
 
 export const revalidate = 60;
 
@@ -104,9 +105,9 @@ export default async function ContestPage({ params }: Props) {
       ? "https://schema.org/EventScheduled"
       : "https://schema.org/EventEnded",
     eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
-    location: { "@type": "VirtualLocation", url: `https://olliedoesis.dev/contest/${id}` },
-    organizer: { "@type": "Organization", name: "AI Art Arena", url: "https://olliedoesis.dev" },
-    url: `https://olliedoesis.dev/contest/${id}`,
+    location: { "@type": "VirtualLocation", url: `${SITE_URL}/contest/${id}` },
+    organizer: { "@type": "Organization", name: "AI Art Arena", url: SITE_URL },
+    url: `${SITE_URL}/contest/${id}`,
   };
 
   return (
@@ -206,6 +207,23 @@ export default async function ContestPage({ params }: Props) {
             <p style={{ fontSize: "0.875rem", color: "#7878a0" }}>
               No artworks have been uploaded for this contest yet. Check back soon.
             </p>
+          </div>
+        )}
+        {/* Per-artwork comment sections */}
+        {artworks && artworks.length > 0 && (
+          <div style={{ marginTop: "64px" }}>
+            {artworks.map((artwork) => (
+              <div key={artwork.id} style={{ marginBottom: "48px" }}>
+                <p style={{
+                  fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em",
+                  textTransform: "uppercase", color: "#3a3a58", marginBottom: "0",
+                }}>
+                  {artwork.title}
+                </p>
+                <div style={{ height: "1px", background: "rgba(139,92,246,0.1)", marginBottom: "0" }} />
+                <CommentSection artworkId={artwork.id} />
+              </div>
+            ))}
           </div>
         )}
       </div>

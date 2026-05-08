@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://olliedoesis.dev/og-image.png",
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "AI Art Arena — Weekly AI Art Voting Contest",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AI Art Arena",
     description: "Vote on stunning AI-generated artwork every week",
-    images: ["https://olliedoesis.dev/og-image.png"],
+    images: [`${SITE_URL}/og-image.png`],
   },
 };
 

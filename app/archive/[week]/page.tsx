@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
+import { CommentSection } from "@/components/comments/CommentSection";
 
 export const revalidate = 3600;
 
@@ -274,6 +275,20 @@ export default async function ArchiveWeekPage({ params }: Props) {
             );
           })}
         </div>
+
+        {/* Per-artwork comment sections */}
+        {artworks.map((artwork) => (
+          <div key={artwork.id} style={{ marginTop: "48px" }}>
+            <p style={{
+              fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em",
+              textTransform: "uppercase", color: "#3a3a58", marginBottom: "2px",
+            }}>
+              {artwork.title}
+            </p>
+            <div style={{ height: "1px", background: "rgba(139,92,246,0.1)", marginBottom: "0" }} />
+            <CommentSection artworkId={artwork.id} />
+          </div>
+        ))}
       </div>
     </div>
   );

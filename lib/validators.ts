@@ -28,3 +28,11 @@ export const UpdateProfileSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   avatar_url: z.string().url().optional(),
 });
+
+// Comment submission validation
+export const CreateCommentSchema = z.object({
+  artwork_id: z.string().uuid("Invalid artwork ID"),
+  name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be 50 characters or fewer"),
+  email: z.string().email("Invalid email address").max(254).optional().or(z.literal("")),
+  body: z.string().min(5, "Comment must be at least 5 characters").max(500, "Comment must be 500 characters or fewer"),
+});

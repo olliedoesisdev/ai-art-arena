@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       description: "Password reset token",
     });
 
-    const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
+    const resetUrl = `${process.env.AUTH_URL ?? process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
 
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({

@@ -15,8 +15,8 @@ jobs:
       # Real values not needed for type checking and linting.
       # Build requires non-empty strings for env var assertions (! operator).
       NEXT_PUBLIC_SITE_URL: https://olliedoesis.dev
-      NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: ci-secret-not-real
+      AUTH_URL: http://localhost:3000
+      AUTH_SECRET: ci-secret-not-real
       GITHUB_CLIENT_ID: ci-github-client-id
       GITHUB_CLIENT_SECRET: ci-github-client-secret
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
