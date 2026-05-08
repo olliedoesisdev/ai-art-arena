@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Syne, DM_Mono } from "next/font/google";
+import { SITE_URL } from "@/lib/site";
 import { Toaster } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AI Art Arena — Weekly AI Art Voting Contest",
     description: "Vote on stunning AI-generated artwork every week",
-    url: "https://olliedoesis.dev",
+    url: SITE_URL,
     siteName: "AI Art Arena",
     locale: "en_US",
     type: "website",

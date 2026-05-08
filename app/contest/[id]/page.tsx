@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { Metadata } from "next";
 import { ContestHeader } from "@/components/contest/ContestHeader";
+import { SITE_URL } from "@/lib/site";
 import { StatsStrip } from "@/components/contest/StatsStrip";
 import { VoteAlert } from "@/components/contest/VoteAlert";
 import { ArtworkCard } from "@/components/contest/ArtworkCard";
@@ -26,19 +27,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: week
       ? `Vote for the best AI-generated artwork in Week ${week}. One vote per contest, no account needed.`
       : "Vote for your favourite AI-generated artwork.",
-    alternates: { canonical: `https://olliedoesis.dev/contest/${id}` },
+    alternates: { canonical: `${SITE_URL}/contest/${id}` },
     openGraph: {
       title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
       description: `Week ${week} is live. Pick your favourite AI artwork.`,
-      url: `https://olliedoesis.dev/contest/${id}`,
+      url: `${SITE_URL}/contest/${id}`,
       siteName: "AI Art Arena",
-      images: [{ url: "https://olliedoesis.dev/og-image.png", width: 1200, height: 630 }],
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
-      images: ["https://olliedoesis.dev/og-image.png"],
+      images: [`${SITE_URL}/og-image.png`],
     },
   };
 }
@@ -54,7 +55,7 @@ export default async function ContestPage({ params }: Props) {
       .from("artworks")
       .select("*")
       .eq("contest_id", id)
-      .order("vote_count", { ascending: false }),
+      .order("display_order"),
   ]);
 
   if (contestError || !contest) notFound();

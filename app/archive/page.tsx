@@ -1,4 +1,5 @@
 import { createPublicClient } from "@/lib/supabase/server";
+import { SITE_URL } from "@/lib/site";
 import { ArchiveCard } from "@/components/archive/ArchiveCard";
 import { Contest, Artwork } from "@/lib/types";
 
@@ -7,20 +8,20 @@ export const revalidate = 3600;
 export const metadata = {
   title: "Archive — AI Art Arena",
   description: "Browse past AI Art Arena contests and their winning artworks.",
-  alternates: { canonical: "https://olliedoesis.dev/archive" },
+  alternates: { canonical: `${SITE_URL}/archive` },
   openGraph: {
     title: "Archive — AI Art Arena",
     description: "Browse past AI Art Arena contests and their winning artworks.",
-    url: "https://olliedoesis.dev/archive",
+    url: `${SITE_URL}/archive`,
     siteName: "AI Art Arena",
-    images: [{ url: "https://olliedoesis.dev/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Archive — AI Art Arena",
     description: "Browse past AI Art Arena contests and their winning artworks.",
-    images: ["https://olliedoesis.dev/og-image.png"],
+    images: [`${SITE_URL}/og-image.png`],
   },
 };
 

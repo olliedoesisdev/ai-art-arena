@@ -1,4 +1,5 @@
 import { createPublicClient } from "@/lib/supabase/server";
+import { SITE_URL } from "@/lib/site";
 import { LeaderboardList } from "@/components/leaderboard/LeaderboardList";
 import { LeaderboardFeatured } from "@/components/leaderboard/LeaderboardFeatured";
 
@@ -7,20 +8,20 @@ export const revalidate = 300;
 export const metadata = {
   title: "Leaderboard — AI Art Arena",
   description: "All-time highest-voted artworks across every AI Art Arena contest.",
-  alternates: { canonical: "https://olliedoesis.dev/leaderboard" },
+  alternates: { canonical: `${SITE_URL}/leaderboard` },
   openGraph: {
     title: "Leaderboard — AI Art Arena",
     description: "All-time highest-voted artworks across every AI Art Arena contest.",
-    url: "https://olliedoesis.dev/leaderboard",
+    url: `${SITE_URL}/leaderboard`,
     siteName: "AI Art Arena",
-    images: [{ url: "https://olliedoesis.dev/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Leaderboard — AI Art Arena",
     description: "All-time highest-voted artworks across every AI Art Arena contest.",
-    images: ["https://olliedoesis.dev/og-image.png"],
+    images: [`${SITE_URL}/og-image.png`],
   },
 };
 

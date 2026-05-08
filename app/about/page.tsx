@@ -1,23 +1,24 @@
 import { Metadata } from "next";
+import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About — AI Art Arena",
   description: "Learn about AI Art Arena — a weekly voting contest for AI-generated artwork.",
-  alternates: { canonical: "https://olliedoesis.dev/about" },
+  alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
     title: "About — AI Art Arena",
     description: "Learn about AI Art Arena — a weekly voting contest for AI-generated artwork.",
-    url: "https://olliedoesis.dev/about",
+    url: `${SITE_URL}/about`,
     siteName: "AI Art Arena",
-    images: [{ url: "https://olliedoesis.dev/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "About — AI Art Arena",
     description: "Learn about AI Art Arena — a weekly voting contest for AI-generated artwork.",
-    images: ["https://olliedoesis.dev/og-image.png"],
+    images: [`${SITE_URL}/og-image.png`],
   },
 };
 

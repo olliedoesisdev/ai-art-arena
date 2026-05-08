@@ -14,6 +14,7 @@ jobs:
     env:
       # Real values not needed for type checking and linting.
       # Build requires non-empty strings for env var assertions (! operator).
+      NEXT_PUBLIC_SITE_URL: https://olliedoesis.dev
       NEXTAUTH_URL: http://localhost:3000
       NEXTAUTH_SECRET: ci-secret-not-real
       GITHUB_CLIENT_ID: ci-github-client-id

@@ -15,7 +15,10 @@
       "Bash(curl -sI https://olliedoesis.dev/about)",
       "Bash(curl -sI https://olliedoesis.dev/sitemap.xml)",
       "Bash(curl -s https://olliedoesis.dev)",
-      "Bash(curl -s \"https://olliedoesis.dev\")"
+      "Bash(curl -s \"https://olliedoesis.dev\")",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__apply_migration",
+      "Bash(node_modules/.bin/tsc --noEmit)"
     ],
     "deny": [],
     "ask": []

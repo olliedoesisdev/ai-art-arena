@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createPublicClient as createClient } from "@/lib/supabase/server";
 import { ArtMosaic } from "@/components/home/ArtMosaic";
+import { SITE_URL } from "@/lib/site";
 import { LastWinner } from "@/components/home/LastWinner";
 
 export const revalidate = 60;
@@ -98,11 +99,11 @@ export default async function HomePage() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "AI Art Arena",
-    url: "https://olliedoesis.dev",
+    url: SITE_URL,
     description: "Vote on stunning AI-generated artwork every week. Discover amazing AI art and help crown the weekly champion.",
     potentialAction: {
       "@type": "SearchAction",
-      target: { "@type": "EntryPoint", urlTemplate: "https://olliedoesis.dev/archive" },
+      target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/archive` },
       "query-input": "required name=search_term_string",
     },
   };
