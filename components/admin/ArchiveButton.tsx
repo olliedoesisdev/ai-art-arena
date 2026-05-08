@@ -41,7 +41,12 @@ export function ArchiveButton({ contestId }: { contestId: string }) {
     <button
       onClick={handleArchive}
       disabled={isArchiving}
-      className="text-orange-600 hover:text-orange-900 disabled:text-gray-400 disabled:cursor-not-allowed"
+      style={{
+        fontSize: "0.8125rem", fontWeight: 500,
+        color: isArchiving ? "#3a3a58" : "#fbbf24",
+        background: "none", border: "none", cursor: isArchiving ? "not-allowed" : "pointer",
+        padding: 0,
+      }}
     >
       {isArchiving ? "Archiving..." : "Archive"}
     </button>

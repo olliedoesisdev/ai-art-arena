@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { UploadArtworksForm } from "@/components/admin/UploadArtworksForm";
@@ -9,7 +9,7 @@ export default async function UploadArtworksPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") redirect("/signin");
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: contests } = await supabase
     .from("contests")
     .select("id, week_number, status, start_date, end_date, artwork_count")

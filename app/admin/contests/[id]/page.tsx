@@ -1,111 +1,178 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
+import { auth } from "@/auth";
+import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ArchiveButton } from "@/components/admin/ArchiveButton";
 
-export const metadata = {
-  title: "Manage Contests - Admin",
-};
+type RouteContext = { params: Promise<{ id: string }> };
 
-export default async function ContestsPage() {
-  const supabase = await createClient();
+export async function generateMetadata({ params }: RouteContext) {
+  const { id } = await params;
+  const supabase = createAdminClient();
+  const { data } = await supabase.from("contests").select("week_number").eq("id", id).single();
+  return { title: data ? `Week ${data.week_number} — Admin` : "Contest — Admin" };
+}
 
-  const { data: contests } = await supabase
-    .from("contests")
-    .select(
-      `
-      id,
-      week_number,
-      start_date,
-      end_date,
-      status,
-      artworks (count)
-    `
-    )
-    .order("week_number", { ascending: false });
+export default async function ContestDetailPage({ params }: RouteContext) {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "admin") redirect("/signin");
+
+  const { id } = await params;
+  const supabase = createAdminClient();
+
+  const [{ data: contest }, { data: artworks }] = await Promise.all([
+    supabase.from("contests").select("*").eq("id", id).single(),
+    supabase.from("artworks").select("id, title, image_url, vote_count, prompt, display_order").eq("contest_id", id).order("display_order"),
+  ]);
+
+  if (!contest) notFound();
+
+  const totalVotes = artworks?.reduce((s, a) => s + a.vote_count, 0) ?? 0;
+  const leading = artworks?.reduce((top, a) => (a.vote_count > (top?.vote_count ?? -1) ? a : top), artworks[0]);
+
+  const cell: React.CSSProperties = { fontSize: "0.8125rem", color: "#7878a0", padding: "13px 16px" };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Manage Contests
-          </h2>
-          <p className="text-gray-600">View and manage all contests</p>
+    <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
+      {/* Breadcrumb + header */}
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+          <Link href="/admin/contests" style={{ fontSize: "0.8125rem", color: "#7878a0", textDecoration: "none" }}>Contests</Link>
+          <span style={{ color: "#3a3a58" }}>/</span>
+          <span style={{ fontSize: "0.8125rem", color: "#eeeeff" }}>Week {contest.week_number}</span>
         </div>
-        <Link
-          href="/admin/contests/new"
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
-        >
-          ➕ Create New Contest
-        </Link>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px" }}>
+          <div>
+            <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8b5cf6", marginBottom: "8px" }}>Contest</p>
+            <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "#eeeeff", letterSpacing: "-0.03em" }}>
+              Week {contest.week_number}
+            </h1>
+          </div>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center", flexShrink: 0, paddingTop: "28px" }}>
+            <Link href={`/contest/${id}`} target="_blank" style={{
+              fontSize: "0.8125rem", fontWeight: 600, color: "#8b5cf6",
+              border: "1px solid rgba(139,92,246,0.3)", borderRadius: "8px",
+              padding: "8px 16px", textDecoration: "none",
+            }}>
+              View live →
+            </Link>
+            {contest.status === "active" && <ArchiveButton contestId={id} />}
+          </div>
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Week
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Dates
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Artworks
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {contests?.map((contest) => (
-              <tr key={contest.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    Week {contest.week_number}
+      {/* Meta strip */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1px", background: "rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden", border: "1px solid rgba(139,92,246,0.12)" }}>
+        {[
+          { label: "Status", value: contest.status },
+          { label: "Total votes", value: totalVotes },
+          { label: "Artworks", value: artworks?.length ?? 0 },
+          { label: "Ends", value: new Date(contest.end_date).toLocaleDateString() },
+        ].map(({ label, value }) => (
+          <div key={label} style={{ background: "#111119", padding: "20px 24px" }}>
+            <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "1.5rem", fontWeight: 500, color: "#eeeeff" }}>{value}</div>
+            <div style={{ fontSize: "0.8125rem", color: "#7878a0", marginTop: "2px" }}>{label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Artworks table */}
+      <div style={{ background: "#111119", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid rgba(139,92,246,0.12)" }}>
+          <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            Artworks ({artworks?.length ?? 0} / {contest.artwork_count})
+          </p>
+          <Link href="/admin/artworks/upload" style={{
+            fontSize: "0.8125rem", fontWeight: 600, color: "#34d399",
+            border: "1px solid rgba(52,211,153,0.25)", borderRadius: "6px",
+            padding: "6px 14px", textDecoration: "none",
+          }}>
+            + Upload more
+          </Link>
+        </div>
+
+        {!artworks || artworks.length === 0 ? (
+          <div style={{ padding: "48px", textAlign: "center" }}>
+            <p style={{ color: "#7878a0", marginBottom: "12px" }}>No artworks yet</p>
+            <Link href="/admin/artworks/upload" style={{ color: "#8b5cf6", fontSize: "0.875rem", textDecoration: "none" }}>
+              Upload artworks →
+            </Link>
+          </div>
+        ) : (
+          <>
+            {/* Table header */}
+            <div style={{ display: "grid", gridTemplateColumns: "48px 1fr 1fr 80px 100px", gap: "8px", padding: "8px 16px", borderBottom: "1px solid rgba(139,92,246,0.08)" }}>
+              {["#", "Artwork", "Prompt", "Votes", "Share"].map((h) => (
+                <div key={h} style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#3a3a58" }}>{h}</div>
+              ))}
+            </div>
+
+            {artworks.map((artwork, i) => {
+              const pct = totalVotes > 0 ? Math.round((artwork.vote_count / totalVotes) * 100) : 0;
+              const isLeading = artwork.id === leading?.id && totalVotes > 0;
+              return (
+                <div key={artwork.id} style={{
+                  display: "grid", gridTemplateColumns: "48px 1fr 1fr 80px 100px",
+                  gap: "8px", alignItems: "center",
+                  borderBottom: i < artworks.length - 1 ? "1px solid rgba(139,92,246,0.08)" : "none",
+                  background: isLeading ? "rgba(251,191,36,0.04)" : "transparent",
+                }}>
+                  {/* Thumbnail + rank */}
+                  <div style={{ ...cell, paddingRight: 0 }}>
+                    <div style={{ position: "relative", width: "36px", height: "36px", borderRadius: "6px", overflow: "hidden", background: "#181820" }}>
+                      <Image src={artwork.image_url} alt={artwork.title} fill sizes="36px" style={{ objectFit: "cover" }} />
+                    </div>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
-                    {new Date(contest.start_date).toLocaleDateString()}
+
+                  {/* Title + bar */}
+                  <div style={cell}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: 600, color: isLeading ? "#fbbf24" : "#eeeeff", marginBottom: "6px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {artwork.title}
+                      {isLeading && <span style={{ fontSize: "0.6875rem", marginLeft: "8px", color: "#fbbf24" }}>LEADING</span>}
+                    </div>
+                    <div style={{ height: "3px", background: "rgba(255,255,255,0.06)", borderRadius: "2px", overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${pct}%`, background: isLeading ? "#fbbf24" : "#8b5cf6", borderRadius: "2px", transition: "width 0.6s ease" }} />
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    to {new Date(contest.end_date).toLocaleDateString()}
+
+                  {/* Prompt */}
+                  <div style={{ ...cell, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "200px" }}>
+                    {artwork.prompt ?? <span style={{ color: "#3a3a58" }}>—</span>}
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      contest.status === "active"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {contest.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {contest.artworks[0]?.count || 0}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                  <Link
-                    href={`/contest/${contest.id}`}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    View
-                  </Link>
-                  {contest.status === "active" && (
-                    <ArchiveButton contestId={contest.id} />
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+                  {/* Vote count + pct */}
+                  <div style={cell}>
+                    <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.9375rem", color: "#eeeeff" }}>{artwork.vote_count}</span>
+                    <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "#3a3a58", marginLeft: "4px" }}>{pct}%</span>
+                  </div>
+
+                  {/* Display order */}
+                  <div style={cell}>
+                    <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "#3a3a58" }}>
+                      #{artwork.display_order}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
+      </div>
+
+      {/* Dates */}
+      <div style={{ background: "#111119", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", padding: "20px 24px" }}>
+        <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "12px" }}>Schedule</p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+          <div>
+            <div style={{ fontSize: "0.75rem", color: "#3a3a58", marginBottom: "4px" }}>Start</div>
+            <div style={{ fontSize: "0.875rem", color: "#eeeeff" }}>{new Date(contest.start_date).toLocaleString()}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: "0.75rem", color: "#3a3a58", marginBottom: "4px" }}>End</div>
+            <div style={{ fontSize: "0.875rem", color: "#eeeeff" }}>{new Date(contest.end_date).toLocaleString()}</div>
+          </div>
+        </div>
       </div>
     </div>
   );

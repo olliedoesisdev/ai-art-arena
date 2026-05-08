@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Link from "next/link";
@@ -10,7 +10,7 @@ export default async function ManageArtworksPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") redirect("/signin");
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: artworks } = await supabase
     .from("artworks")
     .select("id, title, prompt, image_url, vote_count, created_at, contests(id, week_number, status)")
@@ -44,7 +44,8 @@ export default async function ManageArtworksPage() {
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
           {artworks.map((artwork) => {
-            const contest = artwork.contests as { id: string; week_number: number; status: string } | null;
+            const contestRaw = Array.isArray(artwork.contests) ? artwork.contests[0] : artwork.contests;
+            const contest = contestRaw as { id: string; week_number: number; status: string } | null;
             return (
               <div key={artwork.id} style={{ background: "#111119", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden" }}>
                 <div style={{ position: "relative", aspectRatio: "1", background: "#181820" }}>

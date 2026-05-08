@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { CreateContestForm } from "@/components/admin/CreateContestForm";
@@ -9,7 +9,7 @@ export default async function NewContestPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") redirect("/signin");
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: latest } = await supabase
     .from("contests")
     .select("week_number")

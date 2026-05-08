@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { AnalyticsCharts } from "@/components/admin/AnalyticsCharts";
 
 export const metadata = {
@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 export default async function AnalyticsPage() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   // Get overall stats
   const [contestsResult, artworksResult, votesResult] =
@@ -151,7 +151,7 @@ export default async function AnalyticsPage() {
                     {artwork.title}
                   </div>
                   <div className="text-sm text-gray-600">
-                    Week {artwork.contests.week_number}
+                    Week {Array.isArray(artwork.contests) ? artwork.contests[0]?.week_number : (artwork.contests as { week_number: number } | null)?.week_number}
                   </div>
                 </div>
               </div>

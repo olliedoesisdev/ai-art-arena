@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Link from "next/link";
@@ -10,7 +10,7 @@ export default async function ManageContestsPage() {
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") redirect("/signin");
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: contests } = await supabase
     .from("contests")
     .select("id, week_number, start_date, end_date, status, artworks(count)")
@@ -88,8 +88,8 @@ export default async function ManageContestsPage() {
               </div>
               <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.8125rem", color: "#7878a0" }}>{artworkCount}</div>
               <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                <Link href={`/contest/${c.id}`} target="_blank" style={{ fontSize: "0.8125rem", color: "#8b5cf6", textDecoration: "none" }}>
-                  View
+                <Link href={`/admin/contests/${c.id}`} style={{ fontSize: "0.8125rem", color: "#8b5cf6", textDecoration: "none" }}>
+                  Manage
                 </Link>
                 {c.status === "active" && <ArchiveButton contestId={c.id} />}
               </div>
