@@ -3,6 +3,7 @@ import { createPublicClient } from "@/lib/supabase/server";
 import { CreateCommentSchema } from "@/lib/validators";
 import { getClientIP, hashIP } from "@/lib/utils";
 import { logger, generateRequestId } from "@/lib/logger";
+import { sendCommentNotification } from "@/lib/email";
 
 export async function POST(request: Request) {
   const requestId = generateRequestId();
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
 
     const { artwork_id, name, email, body: commentBody } = result.data;
 
-    // Rate limit: one comment per IP per 60 seconds (Supabase query, no Redis needed)
+    // Rate limit: one comment per IP per 60 seconds
     const clientIP = getClientIP(request);
     const ipHash = hashIP(clientIP);
 
@@ -68,6 +69,36 @@ export async function POST(request: Request) {
 
     const ms = Date.now() - start;
     logger.info({ requestId, ms }, "comment inserted");
+
+    // Fire email notification — never blocks the response
+    if (process.env.RESEND_API_KEY && process.env.ADMIN_EMAIL) {
+      void (async () => {
+        try {
+          const { data } = await supabase
+            .from("artworks")
+            .select("title, contest_id, contests(week_number)")
+            .eq("id", artwork_id)
+            .single();
+          if (!data) return;
+          const contestRow = Array.isArray(data.contests)
+            ? data.contests[0]
+            : data.contests;
+          const week = (contestRow as { week_number: number } | null)?.week_number;
+          if (!week) return;
+          await sendCommentNotification({
+            commenterName: name,
+            commenterEmail: email || null,
+            commentBody,
+            artworkTitle: data.title,
+            weekNumber: week,
+            contestId: data.contest_id,
+          });
+        } catch (err) {
+          logger.warn({ requestId, err }, "comment email notification failed");
+        }
+      })();
+    }
+
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (err) {
     const ms = Date.now() - start;
