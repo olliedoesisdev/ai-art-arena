@@ -5,13 +5,26 @@ export const authConfig = {
     signIn: "/signin",
   },
   callbacks: {
+    // Runs in Edge middleware — must map token.role onto session so the
+    // authorized() callback below can read it.
+    jwt({ token, user }) {
+      if (user) {
+        token.role = ((user as { role?: string }).role ?? "user") as "user" | "admin";
+      }
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user) {
+        session.user.role = (token.role as "user" | "admin") ?? "user";
+      }
+      return session;
+    },
     authorized({ auth, request: { nextUrl } }) {
       const isOnAdmin = nextUrl.pathname.startsWith("/admin");
 
       if (isOnAdmin) {
         const isAdmin = auth?.user?.role === "admin";
         if (isAdmin) return true;
-        // Not logged in → redirect to signin; logged in but not admin → 403-ish redirect to home
         const isLoggedIn = !!auth?.user;
         return isLoggedIn
           ? Response.redirect(new URL("/", nextUrl))
@@ -21,5 +34,5 @@ export const authConfig = {
       return true;
     },
   },
-  providers: [], // Add providers in auth.ts
+  providers: [],
 } satisfies NextAuthConfig;
