@@ -45,7 +45,7 @@ BEGIN
   VALUES (p_artwork_id, p_contest_id, p_user_id, p_ip_hash);
 
   UPDATE artworks SET vote_count = vote_count + 1
-  WHERE id = p_artwork_id RETURNING vote_count INTO v_new_count;
+  WHERE id = p_artwork_id RETURNING artworks.vote_count INTO v_new_count;
 
   RETURN QUERY SELECT TRUE, NULL::TEXT, v_new_count;
 END;
