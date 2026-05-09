@@ -58,12 +58,15 @@ function Cell({ value, label }: { value: number; label: string }) {
 }
 
 export function ContestTimer({ endDate }: { endDate: string }) {
-  const [t, setT] = useState<TimeLeft>(() => getTimeLeft(endDate));
+  const [t, setT] = useState<TimeLeft | null>(null);
 
   useEffect(() => {
+    setT(getTimeLeft(endDate));
     const id = setInterval(() => setT(getTimeLeft(endDate)), 1000);
     return () => clearInterval(id);
   }, [endDate]);
+
+  if (!t) return null;
 
   if (t.ended) {
     return (
