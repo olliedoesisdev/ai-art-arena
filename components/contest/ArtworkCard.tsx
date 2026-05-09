@@ -145,7 +145,12 @@ export function ArtworkCard({
         position: "relative",
       }}
     >
-      {/* Image */}
+      {/* Image — links to artwork detail page, stops vote click propagation */}
+      <Link
+        href={`/artwork/${artwork.id}`}
+        onClick={(e) => e.stopPropagation()}
+        style={{ display: "block", textDecoration: "none" }}
+      >
       <div className="group" style={{ position: "relative", aspectRatio: "1", overflow: "hidden" }}>
         <Image
           src={artwork.image_url}
@@ -200,6 +205,7 @@ export function ArtworkCard({
           </div>
         )}
       </div>
+      </Link>
 
       {/* Body */}
       <div style={{ padding: "16px" }}>

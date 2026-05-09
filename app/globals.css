@@ -195,6 +195,17 @@ body {
   animation: slide-down 0.3s ease forwards;
 }
 
+/* ── Artwork detail page: image + sidebar ────────────────── */
+.grid-artwork-detail {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .grid-artwork-detail { grid-template-columns: 55fr 45fr; gap: 48px; }
+}
+
 /* ── Comment form name/email grid ───────────────────────── */
 .grid-comment-fields {
   display: grid;
