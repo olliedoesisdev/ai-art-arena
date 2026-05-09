@@ -32,6 +32,7 @@ export async function Header() {
     { href: "/archive", label: "Archive" },
     { href: "/leaderboard", label: "Leaderboard" },
     { href: "/about", label: "About" },
+    { href: "/join", label: "Join" },
   ];
 
   return (

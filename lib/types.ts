@@ -79,3 +79,39 @@ export interface VoteResponse {
   error?: string;
   resetAt?: string;
 }
+
+export type ArtistApplicationStatus =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "waitlisted";
+
+export interface Subscriber {
+  id: string;
+  name: string;
+  email: string;
+  subscribed_at: string;
+  is_active: boolean;
+}
+
+export interface ArtistApplication {
+  id: string;
+  name: string;
+  email: string;
+  location: string | null;
+  artist_bio: string;
+  art_style: string;
+  primary_tools: string[];
+  years_using_ai: string;
+  portfolio_url: string | null;
+  social_handle: string | null;
+  submission_title: string;
+  submission_prompt: string;
+  submission_image_url: string;
+  submission_image_path: string;
+  status: ArtistApplicationStatus;
+  admin_notes: string | null;
+  applied_at: string;
+  reviewed_at: string | null;
+  approved_for_contest_id: string | null;
+}

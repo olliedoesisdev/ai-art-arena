@@ -208,6 +208,69 @@ export default async function ContestPage({ params }: Props) {
             </p>
           </div>
         )}
+        {/* Join CTA strip */}
+        <div
+          style={{
+            marginTop: "64px",
+            background: "#111119",
+            border: "1px solid #1f1f1f",
+            borderRadius: "12px",
+            padding: "32px 36px",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "24px",
+          }}
+        >
+          <div>
+            <h3 style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "#eeeeff", letterSpacing: "-0.02em", margin: "0 0 6px" }}>
+              Want to compete?
+            </h3>
+            <p style={{ color: "#7878a0", fontSize: "14px", margin: 0 }}>
+              Apply to enter your AI artwork in next week&apos;s contest.
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <a
+              href="/join?track=subscriber"
+              style={{
+                padding: "10px 20px",
+                background: "transparent",
+                border: "1px solid rgba(232,213,183,0.4)",
+                borderRadius: "6px",
+                color: "#e8d5b7",
+                fontFamily: "var(--font-dm-mono)",
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Subscribe
+            </a>
+            <a
+              href="/join?track=artist"
+              style={{
+                padding: "10px 20px",
+                background: "#e8d5b7",
+                borderRadius: "6px",
+                color: "#0a0a0a",
+                fontFamily: "var(--font-dm-mono)",
+                fontSize: "11px",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Apply as Artist
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
