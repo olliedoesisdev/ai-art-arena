@@ -1,10 +1,38 @@
 export default function GlobalLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-        <p className="text-gray-600 font-medium">Loading...</p>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#08080e",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+        <div
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            border: "2px solid rgba(139,92,246,0.15)",
+            borderTopColor: "#8b5cf6",
+            animation: "spin 0.8s linear infinite",
+          }}
+        />
+        <span
+          style={{
+            fontFamily: "var(--font-dm-mono)",
+            fontSize: "12px",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "#3a3a58",
+          }}
+        >
+          Loading
+        </span>
       </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

@@ -1,20 +1,50 @@
+const pulse: React.CSSProperties = {
+  background: "linear-gradient(90deg, #111119 25%, #181820 50%, #111119 75%)",
+  backgroundSize: "200% 100%",
+  animation: "shimmer 1.5s infinite",
+  borderRadius: "8px",
+};
+
 export default function ContestLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header skeleton */}
-        <div className="mb-8 space-y-3 animate-pulse">
-          <div className="h-12 bg-gray-200 rounded w-64" />
-          <div className="h-6 bg-gray-200 rounded w-48" />
+    <div style={{ paddingTop: "48px", paddingBottom: "80px", background: "#08080e", minHeight: "100vh" }}>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+      <div className="shell">
+
+        {/* Header */}
+        <div style={{ marginBottom: "32px" }}>
+          <div style={{ ...pulse, height: "11px", width: "80px", marginBottom: "16px" }} />
+          <div style={{ ...pulse, height: "36px", width: "260px", marginBottom: "12px" }} />
+          <div style={{ ...pulse, height: "20px", width: "180px" }} />
         </div>
 
-        {/* Grid skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="space-y-3 animate-pulse">
-              <div className="aspect-square bg-gray-200 rounded-lg" />
-              <div className="h-5 bg-gray-200 rounded w-3/4" />
-              <div className="h-4 bg-gray-200 rounded w-1/2" />
+        {/* Stats strip */}
+        <div style={{ ...pulse, height: "40px", borderRadius: "10px", marginBottom: "32px" }} />
+
+        {/* Artwork grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            gap: "16px",
+          }}
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "1.5px solid rgba(255,255,255,0.06)",
+                borderRadius: "16px",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ ...pulse, aspectRatio: "1", borderRadius: 0 }} />
+              <div style={{ padding: "16px" }}>
+                <div style={{ ...pulse, height: "16px", width: "75%", marginBottom: "8px" }} />
+                <div style={{ ...pulse, height: "11px", width: "55%", marginBottom: "14px" }} />
+                <div style={{ ...pulse, height: "34px", borderRadius: "8px" }} />
+              </div>
             </div>
           ))}
         </div>

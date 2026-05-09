@@ -1,18 +1,32 @@
-import { Skeleton } from '@/components/ui/Skeleton'
+const pulse: React.CSSProperties = {
+  background: "linear-gradient(90deg, #111119 25%, #181820 50%, #111119 75%)",
+  backgroundSize: "200% 100%",
+  animation: "shimmer 1.5s infinite",
+  borderRadius: "8px",
+};
 
 export default function AboutLoading() {
   return (
-    <div className="min-h-screen bg-brand-surface">
-      <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-        <Skeleton className="mb-4 h-12 w-48" />
-        <Skeleton className="mb-2 h-5 w-full" />
-        <Skeleton className="mb-2 h-5 w-5/6" />
-        <Skeleton className="mb-10 h-5 w-4/6" />
-        <Skeleton className="mb-4 h-8 w-36" />
-        <Skeleton className="mb-2 h-4 w-full" />
-        <Skeleton className="mb-2 h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
+    <div style={{ paddingTop: "48px", paddingBottom: "80px", background: "#08080e", minHeight: "100vh" }}>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+      <div className="shell">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "48px" }}>
+
+          {/* Main content column */}
+          <div style={{ maxWidth: "640px" }}>
+            <div style={{ ...pulse, height: "11px", width: "60px", marginBottom: "16px" }} />
+            <div style={{ ...pulse, height: "44px", width: "280px", marginBottom: "20px" }} />
+            <div style={{ ...pulse, height: "16px", width: "100%", marginBottom: "8px" }} />
+            <div style={{ ...pulse, height: "16px", width: "90%", marginBottom: "8px" }} />
+            <div style={{ ...pulse, height: "16px", width: "75%", marginBottom: "40px" }} />
+
+            <div style={{ ...pulse, height: "24px", width: "160px", marginBottom: "16px" }} />
+            <div style={{ ...pulse, height: "14px", width: "100%", marginBottom: "8px" }} />
+            <div style={{ ...pulse, height: "14px", width: "100%", marginBottom: "8px" }} />
+            <div style={{ ...pulse, height: "14px", width: "80%" }} />
+          </div>
+        </div>
       </div>
     </div>
-  )
+  );
 }

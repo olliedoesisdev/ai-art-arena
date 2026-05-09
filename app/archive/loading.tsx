@@ -1,24 +1,51 @@
-import { Skeleton } from '@/components/ui/Skeleton'
+const pulse: React.CSSProperties = {
+  background: "linear-gradient(90deg, #111119 25%, #181820 50%, #111119 75%)",
+  backgroundSize: "200% 100%",
+  animation: "shimmer 1.5s infinite",
+  borderRadius: "8px",
+};
 
 export default function ArchiveLoading() {
   return (
-    <div className="min-h-screen bg-brand-surface">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <Skeleton className="mb-4 h-10 w-48" />
-        <Skeleton className="mb-10 h-5 w-72" />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="overflow-hidden rounded-xl bg-white shadow-lg">
-              <Skeleton className="aspect-video w-full rounded-none" />
-              <div className="p-5">
-                <Skeleton className="mb-2 h-5 w-24" />
-                <Skeleton className="mb-2 h-4 w-40" />
-                <Skeleton className="h-3 w-32" />
+    <div style={{ paddingTop: "48px", paddingBottom: "80px", background: "#08080e", minHeight: "100vh" }}>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+      <div className="shell">
+
+        {/* Page header */}
+        <div style={{ marginBottom: "48px" }}>
+          <div style={{ ...pulse, height: "11px", width: "80px", marginBottom: "16px" }} />
+          <div style={{ ...pulse, height: "40px", width: "240px", marginBottom: "12px" }} />
+          <div style={{ ...pulse, height: "16px", width: "320px" }} />
+        </div>
+
+        {/* Archive grid — 4 columns */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gap: "20px",
+          }}
+        >
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                border: "1.5px solid rgba(255,255,255,0.06)",
+                borderRadius: "14px",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ ...pulse, aspectRatio: "4/3", borderRadius: 0 }} />
+              <div style={{ padding: "16px" }}>
+                <div style={{ ...pulse, height: "11px", width: "60px", marginBottom: "10px" }} />
+                <div style={{ ...pulse, height: "18px", width: "80%", marginBottom: "8px" }} />
+                <div style={{ ...pulse, height: "13px", width: "50%" }} />
               </div>
             </div>
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
