@@ -19,9 +19,46 @@ function timeAgo(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+function Avatar({ avatarUrl, name }: { avatarUrl?: string | null; name: string }) {
+  return avatarUrl ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={avatarUrl}
+      alt={name}
+      style={{
+        width: "28px",
+        height: "28px",
+        borderRadius: "50%",
+        objectFit: "cover",
+        border: "1px solid rgba(139,92,246,0.2)",
+        flexShrink: 0,
+      }}
+    />
+  ) : (
+    <div style={{
+      width: "28px",
+      height: "28px",
+      borderRadius: "50%",
+      background: "#181820",
+      border: "1px solid rgba(139,92,246,0.15)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+      fontFamily: "var(--font-dm-mono)",
+      fontSize: "11px",
+      fontWeight: 700,
+      color: "#a78bfa",
+    }}>
+      {name.charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
 function CommentBubble({
   id,
   authorName,
+  avatarUrl,
   body,
   createdAt,
   isAdminReply,
@@ -30,6 +67,7 @@ function CommentBubble({
 }: {
   id: string;
   authorName: string;
+  avatarUrl?: string | null;
   body: string;
   createdAt: string;
   isAdminReply: boolean;
@@ -50,28 +88,25 @@ function CommentBubble({
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
-        <span
-          style={{
-            fontSize: "0.8125rem",
-            fontWeight: 600,
-            color: isAdminReply ? "#a78bfa" : "#eeeeff",
-          }}
-        >
+        <Avatar avatarUrl={avatarUrl} name={authorName} />
+        <span style={{
+          fontSize: "0.8125rem",
+          fontWeight: 600,
+          color: isAdminReply ? "#a78bfa" : "#eeeeff",
+        }}>
           {authorName}
         </span>
         {isAdminReply && (
-          <span
-            style={{
-              fontSize: "9px",
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "#8b5cf6",
-              background: "rgba(139,92,246,0.12)",
-              padding: "2px 7px",
-              borderRadius: "100px",
-            }}
-          >
+          <span style={{
+            fontSize: "9px",
+            fontWeight: 700,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            color: "#8b5cf6",
+            background: "rgba(139,92,246,0.12)",
+            padding: "2px 7px",
+            borderRadius: "100px",
+          }}>
             Admin
           </span>
         )}
@@ -107,6 +142,7 @@ export function CommentList({ threads }: Props) {
           <CommentBubble
             id={comment.id}
             authorName={comment.author_name}
+            avatarUrl={(comment as { avatar_url?: string | null }).avatar_url}
             body={comment.body}
             createdAt={comment.created_at}
             isAdminReply={comment.is_admin_reply}
@@ -118,6 +154,7 @@ export function CommentList({ threads }: Props) {
               key={reply.id}
               id={reply.id}
               authorName={reply.author_name}
+              avatarUrl={(reply as { avatar_url?: string | null }).avatar_url}
               body={reply.body}
               createdAt={reply.created_at}
               isAdminReply={reply.is_admin_reply}

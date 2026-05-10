@@ -17,7 +17,6 @@ interface ArtworkCardProps {
   hasVoted: boolean;
   totalVotes: number;
   contestEnded: boolean;
-  isAuthenticated: boolean;
 }
 
 function localVoteKey(contestId: string) {
@@ -43,7 +42,6 @@ export function ArtworkCard({
   hasVoted,
   totalVotes,
   contestEnded,
-  isAuthenticated,
 }: ArtworkCardProps) {
   const [isVoting, setIsVoting] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -66,11 +64,6 @@ export function ArtworkCard({
   async function handleVote() {
     if (effectivelyVoted || isVoting || contestEnded) return;
 
-    if (!isAuthenticated) {
-      toast.error("Sign in to vote");
-      return;
-    }
-
     setIsVoting(true);
     try {
       const res = await fetch("/api/v1/vote", {
@@ -86,12 +79,7 @@ export function ArtworkCard({
         toast.success(`Voted for "${artwork.title}"`);
         router.refresh();
       } else {
-        const messages: Record<number, string> = {
-          409: "Already voted in this contest",
-          429: "One vote per day",
-          401: "Sign in to vote",
-        };
-        toast.error(messages[res.status] ?? data.error ?? "Vote failed");
+        toast.error(data.error ?? "Vote failed");
         setIsVoting(false);
       }
     } catch {
@@ -111,7 +99,7 @@ export function ArtworkCard({
     }
   }
 
-  const clickable = !effectivelyVoted && !contestEnded && isAuthenticated;
+  const clickable = !effectivelyVoted && !contestEnded;
 
   return (
     <article
@@ -314,38 +302,13 @@ export function ArtworkCard({
           </button>
         )}
 
-        {/* Vote button — only shown before voting */}
+        {/* Vote button — shown to everyone before voting */}
         {!effectivelyVoted && !contestEnded && (
-          isAuthenticated ? (
-            <VoteButtonInline
-              isVoting={isVoting}
-              accent={accent}
-              hovered={hovered}
-            />
-          ) : (
-            <Link
-              href={`/signin?callbackUrl=${encodeURIComponent(`/contest/${contestId}`)}`}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                padding: "9px",
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: "8px",
-                color: "rgba(255,255,255,0.5)",
-                fontFamily: "var(--font-dm-mono)",
-                fontSize: "12px",
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textDecoration: "none",
-              }}
-            >
-              SIGN IN TO VOTE
-            </Link>
-          )
+          <VoteButtonInline
+            isVoting={isVoting}
+            accent={accent}
+            hovered={hovered}
+          />
         )}
 
         {/* Quiet vote count when voted but this isn't the user's pick */}

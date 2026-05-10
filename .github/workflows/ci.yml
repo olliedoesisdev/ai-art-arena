@@ -6,30 +6,42 @@ on:
   pull_request:
     branches: [main]
 
-jobs:
-  check:
-    name: Type check, lint, build
-    runs-on: ubuntu-latest
+# Cancel in-progress runs for the same branch on new pushes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-    env:
-      # Real values not needed for type checking and linting.
-      # Build requires non-empty strings for env var assertions (! operator).
-      NEXT_PUBLIC_SITE_URL: https://olliedoesis.dev
-      AUTH_URL: http://localhost:3000
-      AUTH_SECRET: ci-secret-not-real
-      GITHUB_CLIENT_ID: ci-github-client-id
-      GITHUB_CLIENT_SECRET: ci-github-client-secret
-      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-anon-key
-      SUPABASE_SERVICE_ROLE_KEY: ci-service-role-key
-      UPSTASH_REDIS_REST_URL: https://placeholder.upstash.io
-      UPSTASH_REDIS_REST_TOKEN: ci-redis-token
-      IP_HASH_SALT: ci-ip-hash-salt
-      RESEND_API_KEY: ci-resend-key
-      INNGEST_SIGNING_KEY: ci-inngest-signing-key
-      INNGEST_EVENT_KEY: ci-inngest-event-key
-      ADMIN_EMAIL: ci@example.com
-      LOG_LEVEL: silent
+env:
+  # Stub values — real secrets not needed for type-check, lint, unit tests, or build.
+  # The build requires non-empty strings due to the ! assertions in source code.
+  NEXT_PUBLIC_SITE_URL: https://olliedoesis.dev
+  AUTH_URL: http://localhost:3000
+  AUTH_SECRET: ci-secret-not-real-32-chars-padding
+  GITHUB_CLIENT_ID: ci-github-client-id
+  GITHUB_CLIENT_SECRET: ci-github-client-secret
+  NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-anon-key
+  SUPABASE_SERVICE_ROLE_KEY: ci-service-role-key
+  UPSTASH_REDIS_REST_URL: https://placeholder.upstash.io
+  UPSTASH_REDIS_REST_TOKEN: ci-redis-token
+  IP_HASH_SALT: ci-ip-hash-salt-32-chars-padding
+  VOTE_HASH_SALT: ci-vote-hash-salt-32-chars-padding
+  RESEND_API_KEY: ci-resend-key
+  INNGEST_SIGNING_KEY: ci-inngest-signing-key
+  INNGEST_EVENT_KEY: ci-inngest-event-key
+  ADMIN_EMAIL: ci@example.com
+  SENTRY_DSN: ""
+  NEXT_PUBLIC_SENTRY_DSN: ""
+  SENTRY_AUTH_TOKEN: ""
+  LOG_LEVEL: silent
+
+jobs:
+  # ─────────────────────────────────────────────────────────────
+  # Job 1: Static checks — fast, no server needed
+  # ─────────────────────────────────────────────────────────────
+  check:
+    name: Type check, lint, unit tests, build
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -55,3 +67,78 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # Cache the Next.js build output for the E2E job
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build
+          path: |
+            .next/
+            public/
+          retention-days: 1
+
+  # ─────────────────────────────────────────────────────────────
+  # Job 2: E2E tests — runs against the built app
+  # ─────────────────────────────────────────────────────────────
+  e2e:
+    name: E2E tests (Playwright)
+    runs-on: ubuntu-latest
+    needs: check
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nextjs-build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npx playwright test
+        env:
+          BASE_URL: http://localhost:3000
+          CI: true
+          # E2E stubs — routes that hit external services will be tested
+          # only for their UI behaviour, not real network calls
+          NEXT_PUBLIC_SITE_URL: https://olliedoesis.dev
+          AUTH_URL: http://localhost:3000
+          AUTH_SECRET: ci-secret-not-real-32-chars-padding
+          GITHUB_CLIENT_ID: ci-github-client-id
+          GITHUB_CLIENT_SECRET: ci-github-client-secret
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: ci-service-role-key
+          UPSTASH_REDIS_REST_URL: https://placeholder.upstash.io
+          UPSTASH_REDIS_REST_TOKEN: ci-redis-token
+          IP_HASH_SALT: ci-ip-hash-salt-32-chars-padding
+          VOTE_HASH_SALT: ci-vote-hash-salt-32-chars-padding
+          RESEND_API_KEY: ci-resend-key
+          INNGEST_SIGNING_KEY: ci-inngest-signing-key
+          INNGEST_EVENT_KEY: ci-inngest-event-key
+          ADMIN_EMAIL: ci@example.com
+          SENTRY_DSN: ""
+          NEXT_PUBLIC_SENTRY_DSN: ""
+          SENTRY_AUTH_TOKEN: ""
+          LOG_LEVEL: silent
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

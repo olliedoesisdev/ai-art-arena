@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 
-export const metadata = { title: "Reset Password — AI Art Arena" };
+export const metadata: Metadata = {
+  title: "Reset Password — AI Art Arena",
+  robots: { index: false, follow: false },
+};
 
 export default async function ResetPasswordPage({
   searchParams,

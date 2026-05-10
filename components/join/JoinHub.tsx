@@ -1,21 +1,21 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { SubscriberForm } from "./SubscriberForm";
 import { ArtistOnboarding } from "./ArtistOnboarding";
 
 type Track = "choose" | "subscriber" | "artist";
 
+function parseTrack(param: string | null): Track {
+  if (param === "subscriber") return "subscriber";
+  if (param === "artist") return "artist";
+  return "choose";
+}
+
 function JoinHubInner() {
   const searchParams = useSearchParams();
-  const [track, setTrack] = useState<Track>("choose");
-
-  useEffect(() => {
-    const param = searchParams.get("track");
-    if (param === "subscriber") setTrack("subscriber");
-    else if (param === "artist") setTrack("artist");
-  }, [searchParams]);
+  const [track, setTrack] = useState<Track>(() => parseTrack(searchParams.get("track")));
 
   const cardBase: React.CSSProperties = {
     flex: 1,

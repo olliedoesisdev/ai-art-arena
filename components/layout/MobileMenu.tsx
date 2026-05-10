@@ -22,6 +22,10 @@ const ADMIN_LINKS: NavLink[] = [
   { href: "/admin/upload", label: "Upload Artwork" },
 ];
 
+const PROFILE_LINKS: NavLink[] = [
+  { href: "/profile/me", label: "My Profile" },
+];
+
 export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
@@ -182,6 +186,20 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
                 </Link>
               ))}
             </nav>
+
+            {/* Profile link — shown when signed in */}
+            {isLoggedIn && (
+              <>
+                <div style={{ height: "1px", background: "rgba(139,92,246,0.12)", margin: "8px 16px" }} />
+                <nav aria-label="Profile navigation">
+                  {PROFILE_LINKS.map(({ href, label }) => (
+                    <Link key={href} href={href} onClick={() => setOpen(false)} style={linkStyle(href)}>
+                      {label}
+                    </Link>
+                  ))}
+                </nav>
+              </>
+            )}
 
             {/* Admin links */}
             {isAdmin && (

@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
 export const metadata = { title: "Admin — AI Art Arena" };
+export const revalidate = 120;
 
 const card: React.CSSProperties = {
   background: "#111119",
@@ -18,11 +19,14 @@ export default async function AdminPage() {
 
   const supabase = createAdminClient();
 
-  const [contestsResult, artworksResult, votesResult, recentContests, recentVotes] =
+  const todayISO = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+
+  const [contestsResult, artworksResult, totalVotesResult, votesTodayResult, recentContests, recentVotes] =
     await Promise.all([
       supabase.from("contests").select("id, status"),
       supabase.from("artworks").select("id", { count: "exact", head: true }),
-      supabase.from("votes").select("id, created_at"),
+      supabase.from("votes").select("id", { count: "exact", head: true }),
+      supabase.from("votes").select("id", { count: "exact", head: true }).gte("created_at", todayISO),
       supabase.from("contests").select("id, week_number, status, start_date, end_date").order("week_number", { ascending: false }).limit(5),
       supabase.from("votes").select("id, created_at, artworks(title, contests(week_number))").order("created_at", { ascending: false }).limit(8),
     ]);
@@ -30,9 +34,8 @@ export default async function AdminPage() {
   const activeContests = contestsResult.data?.filter((c) => c.status === "active").length ?? 0;
   const totalContests = contestsResult.data?.length ?? 0;
   const totalArtworks = artworksResult.count ?? 0;
-  const totalVotes = votesResult.data?.length ?? 0;
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const votesToday = votesResult.data?.filter((v) => new Date(v.created_at) >= today).length ?? 0;
+  const totalVotes = totalVotesResult.count ?? 0;
+  const votesToday = votesTodayResult.count ?? 0;
 
   const STATS = [
     { label: "Active contests", value: activeContests, sub: `${totalContests - activeContests} archived` },

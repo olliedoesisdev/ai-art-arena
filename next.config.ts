@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['pino', 'pino-pretty'],
+  serverExternalPackages: ["pino", "pino-pretty"],
   images: {
     remotePatterns: [
       {
@@ -20,4 +21,23 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "olliedoesisdev",
+  project: "ai-art-arena",
+
+  // Only upload source maps in CI/production — skip locally
+  silent: !process.env.CI,
+
+  // Disable source map upload unless SENTRY_AUTH_TOKEN is set
+  // This prevents build failures when the token isn't present
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+
+  // Tree-shake Sentry debug code from client bundle
+  disableLogger: true,
+
+  // Auto-instrument Next.js server actions and API routes
+  autoInstrumentServerFunctions: true,
+  autoInstrumentMiddleware: false,
+});

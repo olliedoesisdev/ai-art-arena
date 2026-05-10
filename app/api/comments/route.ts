@@ -4,6 +4,7 @@ import { CreateCommentSchema } from "@/lib/validators";
 import { getClientIP, hashIP } from "@/lib/utils";
 import { logger, generateRequestId } from "@/lib/logger";
 import { sendCommentNotification } from "@/lib/email";
+import { auth } from "@/auth";
 
 export async function POST(request: Request) {
   const requestId = generateRequestId();
@@ -30,6 +31,15 @@ export async function POST(request: Request) {
 
     const { artwork_id, name, email, body: commentBody } = result.data;
 
+    // Resolve session — non-fatal if missing
+    let userId: string | null = null;
+    try {
+      const session = await auth();
+      userId = session?.user?.id ?? null;
+    } catch {
+      // stay anonymous
+    }
+
     // Rate limit: one comment per IP per 60 seconds
     const clientIP = getClientIP(request);
     const ipHash = hashIP(clientIP);
@@ -51,6 +61,13 @@ export async function POST(request: Request) {
       );
     }
 
+    // Look up contest_id from the artwork so we can store it on the comment
+    const { data: artwork } = await supabase
+      .from("artworks")
+      .select("contest_id")
+      .eq("id", artwork_id)
+      .single();
+
     // Insert — is_approved defaults to false (moderation queue)
     const { error: insertError } = await supabase.from("comments").insert({
       artwork_id,
@@ -60,6 +77,8 @@ export async function POST(request: Request) {
       ip_hash: ipHash,
       is_approved: false,
       is_admin_reply: false,
+      user_id: userId,
+      contest_id: artwork?.contest_id ?? null,
     });
 
     if (insertError) {

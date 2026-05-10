@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const data = parsed.data;
     const supabase = await createClient();
 
-    const { data: application, error } = await supabase
+    const { error } = await supabase
       .from("artist_applications")
       .insert({
         name: data.name,
@@ -40,11 +40,9 @@ export async function POST(request: NextRequest) {
         submission_image_url: data.submission_image_url,
         submission_image_path: data.submission_image_path,
         status: "pending",
-      })
-      .select()
-      .single();
+      });
 
-    if (error || !application) {
+    if (error) {
       logger.error({ requestId, error }, "application insert error");
       return NextResponse.json(
         { error: "Failed to save application. Please try again." },
@@ -72,7 +70,7 @@ export async function POST(request: NextRequest) {
     })();
 
     logger.info({ requestId, ms: Date.now() - start, status: 201 }, "application response sent");
-    return NextResponse.json({ success: true, id: application.id }, { status: 201 });
+    return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
     logger.error({ requestId, error }, "application route error");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

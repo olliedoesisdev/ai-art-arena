@@ -56,6 +56,65 @@ export interface Comment {
 
 // author_email intentionally omitted — never passed to the client
 
+export interface UserProfile {
+  id: string;
+  display_name: string | null;
+  bio: string | null;
+  website_url: string | null;
+  avatar_url: string | null;
+  is_public: boolean;
+  joined_at: string;
+}
+
+export interface VoteHistoryItem {
+  vote_id: string;
+  user_id: string;
+  voted_at: string;
+  artwork_id: string;
+  artwork_title: string;
+  artwork_image_url: string;
+  artwork_vote_count: number;
+  contest_id: string;
+  contest_week: number;
+  contest_status: "active" | "archived";
+}
+
+export interface CommentHistoryItem {
+  comment_id: string;
+  user_id: string;
+  author_name: string;
+  comment_body: string;
+  commented_at: string;
+  contest_id: string;
+  contest_week: number;
+  contest_status: "active" | "archived";
+}
+
+export type ActivityType = "vote" | "comment";
+
+export interface ActivityFeedItem {
+  activity_id: string;
+  user_id: string;
+  activity_at: string;
+  activity_type: ActivityType;
+  artwork_id: string | null;
+  artwork_title: string | null;
+  artwork_image_url: string | null;
+  artwork_vote_count: number | null;
+  contest_id: string;
+  contest_week: number;
+  contest_status: "active" | "archived";
+  comment_body: string | null;
+}
+
+export interface ProfilePageData {
+  profile: UserProfile;
+  activityFeed: ActivityFeedItem[];
+  totalVotes: number;
+  totalComments: number;
+  isOwnProfile: boolean;
+}
+
 export type ReactionEmoji = "like" | "love" | "laugh" | "wow";
 export type ReactionCounts = Record<ReactionEmoji, number>;
 

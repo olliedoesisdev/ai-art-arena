@@ -4,20 +4,28 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { logger, generateRequestId } from "@/lib/logger";
 import { z } from "zod";
 
-// GET — list all comments grouped by artwork (admin only)
-export async function GET() {
+const PAGE_SIZE = 50;
+
+// GET — list all comments grouped by artwork (admin only), paginated by ?page=
+export async function GET(request: Request) {
   const requestId = generateRequestId();
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from("comments")
-    .select("id, artwork_id, parent_id, author_name, author_email, body, is_admin_reply, is_approved, created_at, artworks(title)")
-    .order("created_at", { ascending: true });
+    .select("id, artwork_id, parent_id, author_name, author_email, body, is_admin_reply, is_approved, created_at, artworks(title)", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
   if (error) {
     logger.error({ requestId, error }, "admin comments fetch failed");
@@ -65,7 +73,10 @@ export async function GET() {
     comments,
   }));
 
-  return NextResponse.json({ groups });
+  const totalCount = count ?? 0;
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
+  return NextResponse.json({ groups, page, totalPages, totalCount });
 }
 
 // POST — insert an admin reply (auto-approved, is_admin_reply = true)

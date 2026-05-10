@@ -59,7 +59,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${syne.variable} ${dmMono.variable}`} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://jmmyqvabuddsxajozqxt.supabase.co" />
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+        )}
       </head>
       <body>
         <Providers>

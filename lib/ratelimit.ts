@@ -1,13 +1,51 @@
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import crypto from 'crypto'
 
-// 1 vote per IP per 24 hours per contest (key: vote:${ipHash}:${contest_id})
+// 1 vote per 24 hours per unique identifier (email for authed, IP for anon)
 export const voteRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(1, '24 h'),
   analytics: true,
   prefix: 'vote',
 })
+
+// Build a per-contest rate limit key.
+// Signed-in users are keyed by email hash — stronger signal than IP.
+// Anonymous visitors fall back to IP hash.
+// Raw PII never stored in Redis — always hashed with VOTE_HASH_SALT.
+export function buildVoteRateLimitKey(
+  email: string | null | undefined,
+  ipHash: string,
+  contestId: string
+): string {
+  const salt = process.env.VOTE_HASH_SALT
+  if (!salt) throw new Error('VOTE_HASH_SALT env var is required')
+
+  if (email) {
+    const emailHash = crypto
+      .createHash('sha256')
+      .update('email:' + email.toLowerCase().trim() + salt)
+      .digest('hex')
+      .slice(0, 32)
+    return `${emailHash}:${contestId}`
+  }
+
+  // ipHash is already hashed by hashIP() in lib/utils.ts
+  return `${ipHash}:${contestId}`
+}
+
+// Hash an email address for storage in the votes table.
+// Uses the same salt as buildVoteRateLimitKey so both layers are consistent.
+export function hashEmail(email: string): string {
+  const salt = process.env.VOTE_HASH_SALT
+  if (!salt) throw new Error('VOTE_HASH_SALT env var is required')
+  return crypto
+    .createHash('sha256')
+    .update(email.toLowerCase().trim() + salt)
+    .digest('hex')
+    .slice(0, 32)
+}
 
 // 100 admin requests per minute
 export const adminRateLimit = new Ratelimit({
@@ -31,4 +69,12 @@ export const authRateLimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(5, '15 m'),
   analytics: true,
   prefix: 'auth',
+})
+
+// 3 password reset requests per IP per hour
+export const resetRateLimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(3, '1 h'),
+  analytics: true,
+  prefix: 'reset',
 })

@@ -69,7 +69,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             avatar_url: user.image || null,
             role: "user",
           },
-          { onConflict: "email", ignoreDuplicates: true }
+          { onConflict: "id", ignoreDuplicates: false }
         );
       }
 

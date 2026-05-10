@@ -3,6 +3,63 @@ import { SITE_URL } from "@/lib/site";
 
 const SITE_URL_PUBLIC = process.env.NEXT_PUBLIC_SITE_URL ?? SITE_URL;
 
+export async function sendPasswordResetEmail(data: {
+  email: string;
+  token: string;
+  expiresInMinutes: number;
+}): Promise<void> {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  const resetUrl = `${SITE_URL_PUBLIC}/reset-password/confirm?token=${data.token}`;
+
+  await resend.emails.send({
+    from: "AI Art Arena <notifications@olliedoesis.dev>",
+    to: data.email,
+    subject: "Reset your password — AI Art Arena",
+    html: `
+      <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;
+                  background: #111119; color: #eeeeff; padding: 40px;
+                  border-radius: 12px; border: 1px solid rgba(139,92,246,0.2);">
+
+        <p style="margin: 0 0 4px 0; font-size: 11px; font-weight: 600;
+                  letter-spacing: 0.12em; text-transform: uppercase; color: #a78bfa;">
+          AI Art Arena
+        </p>
+        <h1 style="font-size: 22px; font-weight: 800; color: #eeeeff;
+                   margin: 0 0 8px 0; letter-spacing: -0.02em;">
+          Reset your password
+        </h1>
+        <p style="font-size: 14px; color: #7878a0; margin: 0 0 32px 0; line-height: 1.6;">
+          We received a request to reset the password for your account.
+          Click the button below to choose a new one.
+          This link expires in ${data.expiresInMinutes} minutes.
+        </p>
+
+        <a href="${resetUrl}"
+           style="display: inline-block; background: #8b5cf6; color: #ffffff;
+                  padding: 13px 28px; text-decoration: none; font-size: 14px;
+                  font-weight: 700; border-radius: 8px; letter-spacing: 0.01em;
+                  margin-bottom: 32px;">
+          Reset password &rarr;
+        </a>
+
+        <p style="font-size: 13px; color: #3a3a58; margin: 0 0 8px 0;">
+          If the button does not work, copy and paste this URL into your browser:
+        </p>
+        <p style="font-family: monospace; font-size: 12px; color: #7878a0;
+                  word-break: break-all; margin: 0 0 32px 0;">
+          ${resetUrl}
+        </p>
+
+        <p style="font-size: 12px; color: #3a3a58; margin: 0; line-height: 1.6;">
+          If you did not request a password reset, you can safely ignore this email.
+          Your password will not change.
+        </p>
+      </div>
+    `,
+  });
+}
+
 interface CommentNotificationData {
   commenterName: string;
   commenterEmail: string | null;

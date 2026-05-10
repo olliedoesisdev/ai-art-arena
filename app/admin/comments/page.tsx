@@ -21,6 +21,13 @@ interface GroupedArtwork {
   comments: CommentRow[];
 }
 
+interface CommentsResponse {
+  groups: GroupedArtwork[];
+  page: number;
+  totalPages: number;
+  totalCount: number;
+}
+
 function timeAgo(dateStr: string): string {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
   if (diff < 60) return "just now";
@@ -219,15 +226,21 @@ export default function AdminCommentsPage() {
   const [groups, setGroups] = useState<GroupedArtwork[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const fetchComments = useCallback(async () => {
+  const fetchComments = useCallback(async (targetPage = 1) => {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/admin/comments");
+      const res = await fetch(`/api/admin/comments?page=${targetPage}`);
       if (!res.ok) throw new Error("Failed to load comments");
-      const data = (await res.json()) as { groups: GroupedArtwork[] };
+      const data = (await res.json()) as CommentsResponse;
       setGroups(data.groups);
+      setPage(data.page);
+      setTotalPages(data.totalPages);
+      setTotalCount(data.totalCount);
     } catch {
       setError("Failed to load comments. Please refresh.");
     } finally {
@@ -235,7 +248,7 @@ export default function AdminCommentsPage() {
     }
   }, []);
 
-  useEffect(() => { void fetchComments(); }, [fetchComments]);
+  useEffect(() => { void fetchComments(1); }, [fetchComments]);
 
   const handleApprove = useCallback(async (id: string, approved: boolean) => {
     await fetch(`/api/admin/comments/${id}`, {
@@ -243,16 +256,15 @@ export default function AdminCommentsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ is_approved: approved }),
     });
-    await fetchComments();
-  }, [fetchComments]);
+    await fetchComments(page);
+  }, [fetchComments, page]);
 
   const handleDelete = useCallback(async (id: string) => {
     await fetch(`/api/admin/comments/${id}`, { method: "DELETE" });
-    await fetchComments();
-  }, [fetchComments]);
+    await fetchComments(page);
+  }, [fetchComments, page]);
 
   const handleReply = useCallback(async (parentId: string, body: string) => {
-    // Find the artwork_id for this parent comment
     let artworkId = "";
     for (const group of groups) {
       const parent = group.comments.find((c) => c.id === parentId);
@@ -263,13 +275,24 @@ export default function AdminCommentsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ parent_id: parentId, artwork_id: artworkId, body }),
     });
-    await fetchComments();
-  }, [fetchComments, groups]);
+    await fetchComments(page);
+  }, [fetchComments, page, groups]);
 
   const totalPending = groups.reduce(
     (n, g) => n + g.comments.filter((c) => !c.is_approved).length,
     0
   );
+
+  const btnStyle = (disabled: boolean): React.CSSProperties => ({
+    padding: "7px 16px",
+    borderRadius: "8px",
+    border: "1px solid rgba(139,92,246,0.2)",
+    background: disabled ? "rgba(139,92,246,0.04)" : "rgba(139,92,246,0.1)",
+    color: disabled ? "#3a3a58" : "#a78bfa",
+    fontSize: "0.8125rem",
+    fontWeight: 600,
+    cursor: disabled ? "not-allowed" : "pointer",
+  });
 
   return (
     <div>
@@ -297,6 +320,14 @@ export default function AdminCommentsPage() {
               {totalPending} pending
             </span>
           )}
+          {totalCount > 0 && (
+            <span style={{
+              fontSize: "0.75rem", fontWeight: 600, color: "#7878a0",
+              fontFamily: "var(--font-dm-mono)",
+            }}>
+              {totalCount} total
+            </span>
+          )}
         </div>
       </div>
 
@@ -319,6 +350,28 @@ export default function AdminCommentsPage() {
           borderRadius: "14px", padding: "48px 24px", textAlign: "center",
         }}>
           <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No comments yet.</p>
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+          <button
+            onClick={() => void fetchComments(page - 1)}
+            disabled={page <= 1}
+            style={btnStyle(page <= 1)}
+          >
+            ← Prev
+          </button>
+          <span style={{ fontSize: "0.8125rem", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => void fetchComments(page + 1)}
+            disabled={page >= totalPages}
+            style={btnStyle(page >= totalPages)}
+          >
+            Next →
+          </button>
         </div>
       )}
 
@@ -371,6 +424,28 @@ export default function AdminCommentsPage() {
           );
         })}
       </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "8px" }}>
+          <button
+            onClick={() => void fetchComments(page - 1)}
+            disabled={page <= 1}
+            style={btnStyle(page <= 1)}
+          >
+            ← Prev
+          </button>
+          <span style={{ fontSize: "0.8125rem", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={() => void fetchComments(page + 1)}
+            disabled={page >= totalPages}
+            style={btnStyle(page >= totalPages)}
+          >
+            Next →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

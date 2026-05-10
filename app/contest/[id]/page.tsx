@@ -189,7 +189,6 @@ export default async function ContestPage({ params }: Props) {
                 hasVoted={hasVoted}
                 totalVotes={totalVotes}
                 contestEnded={contestEnded}
-                isAuthenticated={!!session?.user}
               />
             ))}
           </div>

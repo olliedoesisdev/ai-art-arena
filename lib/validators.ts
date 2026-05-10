@@ -9,8 +9,8 @@ export const VoteSchema = z.object({
 // Contest creation validation (admin only)
 export const CreateContestSchema = z.object({
   week_number: z.number().int().positive(),
-  start_date: z.iso.datetime(),
-  end_date: z.iso.datetime(),
+  start_date: z.string().datetime(),
+  end_date: z.string().datetime(),
   status: z.enum(["active", "archived"]).default("active"),
   artwork_count: z.number().int().min(1).max(50).default(6),
 });

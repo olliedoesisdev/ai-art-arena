@@ -58,6 +58,8 @@ function Cell({ value, label }: { value: number; label: string }) {
 }
 
 export function ContestTimer({ endDate }: { endDate: string }) {
+  // Start null so SSR and the initial client render agree (no time value),
+  // then populate after mount to avoid the hydration mismatch.
   const [t, setT] = useState<TimeLeft | null>(null);
 
   useEffect(() => {

@@ -58,7 +58,7 @@ export function ResetPasswordForm({ token }: { token?: string }) {
     setError(null);
     setLoading(true);
 
-    const res = await fetch("/api/auth/magic-link", {
+    const res = await fetch("/api/auth/reset-password/request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -69,8 +69,8 @@ export function ResetPasswordForm({ token }: { token?: string }) {
     if (res.ok) {
       setSuccess("If an account exists for that email, a reset link is on its way. Check your inbox.");
     } else {
-      const data = await res.json();
-      setError(data.error || "Something went wrong");
+      const data = await res.json() as { error?: string };
+      setError(data.error ?? "Something went wrong");
     }
   }
 
@@ -85,20 +85,20 @@ export function ResetPasswordForm({ token }: { token?: string }) {
 
     setLoading(true);
 
-    const res = await fetch("/api/auth/reset-password", {
+    const res = await fetch("/api/auth/reset-password/confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password }),
     });
 
-    const data = await res.json();
+    const data = await res.json() as { error?: string };
     setLoading(false);
 
     if (res.ok) {
       setSuccess("Password updated! Redirecting to sign in...");
       setTimeout(() => router.push("/signin"), 2000);
     } else {
-      setError(data.error || "Something went wrong");
+      setError(data.error ?? "Something went wrong");
     }
   }
 
