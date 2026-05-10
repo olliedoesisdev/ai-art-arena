@@ -125,6 +125,51 @@ export interface CommentThread {
   replyReactions: ReactionCounts[];
 }
 
+// Analytics types
+export interface DailyVoteStat {
+  day: string;
+  vote_count: number;
+}
+
+export interface ContestVoteStat {
+  id: string;
+  week_number: number;
+  status: "active" | "archived";
+  start_date: string;
+  end_date: string;
+  total_votes: number;
+  artwork_count: number;
+  avg_votes_per_artwork: number;
+}
+
+export interface VoteEngagementStat {
+  total_votes: number;
+  authenticated_votes: number;
+  anonymous_votes: number;
+  unique_ips: number;
+  unique_users: number;
+}
+
+export interface TopArtwork {
+  id: string;
+  title: string;
+  image_url: string;
+  vote_count: number;
+  contest_week: number | null;
+}
+
+export interface AnalyticsSummary {
+  totalVotes: number;
+  totalArtworks: number;
+  totalContests: number;
+  avgVotesPerContest: number;
+  avgVotesPerArtwork: number;
+  engagement: VoteEngagementStat | null;
+  dailyVotes: DailyVoteStat[];
+  contestStats: ContestVoteStat[];
+  topArtworks: TopArtwork[];
+}
+
 // API Response types
 export interface ApiResponse<T = unknown> {
   data?: T;

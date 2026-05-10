@@ -1,4 +1,10 @@
-import { createAdminClient } from "@/lib/supabase/server";
+import { getAnalyticsSummary } from "@/lib/data/analytics";
+import { MetricCard } from "@/components/admin/analytics/MetricCard";
+import { VoteTrendChart } from "@/components/admin/analytics/VoteTrendChart";
+import { ContestBarChart } from "@/components/admin/analytics/ContestBarChart";
+import { EngagementDonut } from "@/components/admin/analytics/EngagementDonut";
+import { TopArtworksTable } from "@/components/admin/analytics/TopArtworksTable";
+import { ContestStatsTable } from "@/components/admin/analytics/ContestStatsTable";
 
 export const metadata = { title: "Analytics — Admin" };
 export const revalidate = 300;
@@ -10,69 +16,33 @@ const card: React.CSSProperties = {
   padding: "24px",
 };
 
+const cardLabel: React.CSSProperties = {
+  fontSize: "0.8125rem",
+  fontWeight: 600,
+  color: "#7878a0",
+  textTransform: "uppercase",
+  letterSpacing: "0.08em",
+  marginBottom: "20px",
+};
+
 export default async function AnalyticsPage() {
-  const supabase = createAdminClient();
+  const analytics = await getAnalyticsSummary();
 
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const {
+    totalVotes,
+    totalArtworks,
+    totalContests,
+    avgVotesPerContest,
+    avgVotesPerArtwork,
+    engagement,
+    dailyVotes,
+    contestStats,
+    topArtworks,
+  } = analytics;
 
-  const [
-    { count: totalContests },
-    { count: totalArtworks },
-    { count: totalVotes },
-    { count: uniqueVoters },
-    { data: votesPerContest },
-    { data: topArtworks },
-    { data: votesOverTime },
-  ] = await Promise.all([
-    supabase.from("contests").select("id", { count: "exact", head: true }),
-    supabase.from("artworks").select("id", { count: "exact", head: true }),
-    supabase.from("votes").select("id", { count: "exact", head: true }),
-    // Distinct IP hashes as a proxy for unique voters — no row data transferred
-    supabase.from("votes").select("ip_hash", { count: "exact", head: true }),
-    supabase
-      .from("contests")
-      .select("id, week_number, votes(count)")
-      .order("week_number", { ascending: true }),
-    supabase
-      .from("artworks")
-      .select("id, title, vote_count, contests(week_number)")
-      .order("vote_count", { ascending: false })
-      .limit(10),
-    supabase
-      .from("votes")
-      .select("created_at")
-      .gte("created_at", thirtyDaysAgo.toISOString())
-      .order("created_at", { ascending: true }),
-  ]);
-
-  const avgVotesPerContest =
-    totalContests && totalContests > 0
-      ? ((totalVotes ?? 0) / totalContests).toFixed(1)
-      : "0";
-
-  const avgVotesPerArtwork =
-    totalArtworks && totalArtworks > 0
-      ? ((totalVotes ?? 0) / totalArtworks).toFixed(1)
-      : "0";
-
-  // Group votes-over-time into a per-day count map
-  const dayMap = new Map<string, number>();
-  for (const v of votesOverTime ?? []) {
-    const day = v.created_at.slice(0, 10);
-    dayMap.set(day, (dayMap.get(day) ?? 0) + 1);
-  }
-  const dailyVotes = Array.from(dayMap.entries()).map(([date, count]) => ({ date, count }));
-
-  const METRICS = [
-    { label: "Total Votes", value: totalVotes ?? 0, color: "#8b5cf6" },
-    { label: "Avg / Contest", value: avgVotesPerContest, color: "#a78bfa" },
-    { label: "Avg / Artwork", value: avgVotesPerArtwork, color: "#34d399" },
-    { label: "Unique Voters", value: uniqueVoters ?? 0, color: "#fbbf24" },
-  ];
-
-  const rankColor = (i: number) =>
-    i === 0 ? "#fbbf24" : i === 1 ? "#b0b0c8" : i === 2 ? "#c07840" : "#3a3a58";
+  const last7 = dailyVotes.slice(-7).reduce((s, d) => s + d.vote_count, 0);
+  const prev7 = dailyVotes.slice(-14, -7).reduce((s, d) => s + d.vote_count, 0);
+  const weekTrend = prev7 > 0 ? (((last7 - prev7) / prev7) * 100).toFixed(0) : null;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
@@ -86,129 +56,65 @@ export default async function AnalyticsPage() {
         </h1>
       </div>
 
-      {/* Key metrics */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1px", background: "rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden", border: "1px solid rgba(139,92,246,0.12)" }}>
-        {METRICS.map(({ label, value, color }) => (
-          <div key={label} style={{ background: "#111119", padding: "24px" }}>
-            <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "2rem", fontWeight: 500, color, letterSpacing: "-0.02em", marginBottom: "4px" }}>
-              {value}
-            </div>
-            <div style={{ fontSize: "0.8125rem", color: "#7878a0" }}>{label}</div>
-          </div>
-        ))}
+      {/* Key metrics grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
+        <MetricCard
+          label="Total Votes"
+          value={totalVotes}
+          sub={weekTrend !== null ? `${weekTrend.startsWith("-") ? "" : "+"}${weekTrend}% vs last 7 days` : undefined}
+          color="#8b5cf6"
+        />
+        <MetricCard
+          label="Avg per Contest"
+          value={avgVotesPerContest.toFixed(1)}
+          sub={`across ${totalContests} contest${totalContests !== 1 ? "s" : ""}`}
+          color="#a78bfa"
+        />
+        <MetricCard
+          label="Avg per Artwork"
+          value={avgVotesPerArtwork.toFixed(1)}
+          sub={`across ${totalArtworks} artwork${totalArtworks !== 1 ? "s" : ""}`}
+          color="#34d399"
+        />
       </div>
 
-      {/* Daily votes (last 30 days) */}
-      <div style={card}>
-        <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "20px" }}>
-          Votes — last 30 days
-        </p>
-        {dailyVotes.length === 0 ? (
-          <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No votes in the last 30 days.</p>
-        ) : (
-          <div style={{ display: "flex", alignItems: "flex-end", gap: "3px", height: "80px" }}>
-            {(() => {
-              const max = Math.max(...dailyVotes.map((d) => d.count), 1);
-              return dailyVotes.map(({ date, count }) => (
-                <div
-                  key={date}
-                  title={`${date}: ${count} vote${count !== 1 ? "s" : ""}`}
-                  style={{
-                    flex: 1,
-                    height: `${Math.max((count / max) * 80, 4)}px`,
-                    background: "rgba(139,92,246,0.5)",
-                    borderRadius: "3px 3px 0 0",
-                    cursor: "default",
-                    transition: "background 0.15s",
-                  }}
-                />
-              ));
-            })()}
-          </div>
-        )}
-      </div>
-
-      {/* Top artworks */}
-      <div style={card}>
-        <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "16px" }}>
-          Top 10 Artworks — All Time
-        </p>
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {(topArtworks ?? []).map((artwork, i) => {
-            const week = Array.isArray(artwork.contests)
-              ? artwork.contests[0]?.week_number
-              : (artwork.contests as { week_number: number } | null)?.week_number;
-            return (
-              <div key={artwork.id} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "12px 14px", background: "#181820", borderRadius: "8px" }}>
-                <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", fontWeight: 700, color: rankColor(i), minWidth: "28px" }}>
-                  {i < 3 ? ["#1", "#2", "#3"][i] : `#${i + 1}`}
-                </span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "#eeeeff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {artwork.title}
-                  </div>
-                  <div style={{ fontSize: "0.75rem", color: "#3a3a58", fontFamily: "var(--font-dm-mono)" }}>
-                    Week {week ?? "?"}
-                  </div>
-                </div>
-                <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "1rem", fontWeight: 500, color: rankColor(i) }}>
-                  {artwork.vote_count}
-                </span>
-              </div>
-            );
-          })}
+      {/* Vote trend + engagement row */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "16px" }}>
+        <div style={card}>
+          <p style={cardLabel}>Votes — last 30 days</p>
+          <VoteTrendChart data={dailyVotes} days={30} />
+        </div>
+        <div style={card}>
+          <p style={cardLabel}>Voter Breakdown</p>
+          <EngagementDonut data={engagement} />
         </div>
       </div>
 
-      {/* Contest performance */}
+      {/* Contest performance bar chart */}
       <div style={card}>
-        <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "16px" }}>
-          Contest Performance
+        <p style={cardLabel}>Votes per Contest</p>
+        <ContestBarChart data={contestStats} />
+        <p style={{ fontSize: "0.6875rem", color: "#3a3a58", marginTop: "10px", fontFamily: "var(--font-dm-mono)" }}>
+          Green bar = active contest
         </p>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid rgba(139,92,246,0.12)" }}>
-                {["Week", "Total Votes", "Avg / Artwork", "Trend"].map((h) => (
-                  <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#3a3a58" }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {(votesPerContest ?? []).map((contest, i, arr) => {
-                const voteCount = (contest.votes as { count: number }[])[0]?.count ?? 0;
-                const avg = (voteCount / 6).toFixed(1);
-                const prev = i > 0 ? ((arr[i - 1].votes as { count: number }[])[0]?.count ?? 0) : null;
-                const change = prev !== null ? voteCount - prev : null;
+      </div>
 
-                return (
-                  <tr key={contest.id} style={{ borderBottom: "1px solid rgba(139,92,246,0.06)" }}>
-                    <td style={{ padding: "12px 12px", color: "#eeeeff", fontWeight: 600 }}>
-                      Week {contest.week_number}
-                    </td>
-                    <td style={{ padding: "12px 12px", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>
-                      {voteCount}
-                    </td>
-                    <td style={{ padding: "12px 12px", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>
-                      {avg}
-                    </td>
-                    <td style={{ padding: "12px 12px" }}>
-                      {change !== null ? (
-                        <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: change >= 0 ? "#34d399" : "#f87171" }}>
-                          {change >= 0 ? "↑" : "↓"} {Math.abs(change)}
-                        </span>
-                      ) : (
-                        <span style={{ color: "#3a3a58" }}>—</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {/* Top artworks + 90-day trend side by side */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+        <div style={card}>
+          <p style={cardLabel}>Top 10 Artworks</p>
+          <TopArtworksTable artworks={topArtworks} />
         </div>
+        <div style={card}>
+          <p style={cardLabel}>Votes — last 90 days</p>
+          <VoteTrendChart data={dailyVotes} days={90} />
+        </div>
+      </div>
+
+      {/* Contest detail table */}
+      <div style={card}>
+        <p style={cardLabel}>Contest Breakdown</p>
+        <ContestStatsTable data={contestStats} />
       </div>
     </div>
   );
