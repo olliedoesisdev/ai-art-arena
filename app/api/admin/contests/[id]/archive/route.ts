@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { logger, generateRequestId } from "@/lib/logger";
+import { adminRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -21,6 +23,12 @@ export async function POST(_request: NextRequest, context: RouteContext) {
 
     if (session.user.role !== "admin") {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
+    }
+
+    const ipHash = hashIP(getClientIP(_request));
+    const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+    if (!rateLimitOk) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const supabase = createAdminClient();

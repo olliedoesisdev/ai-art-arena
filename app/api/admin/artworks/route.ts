@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { logger, generateRequestId } from "@/lib/logger";
+import { adminRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 
 const UploadArtworksSchema = z.object({
   artworks: z
@@ -18,7 +20,7 @@ const UploadArtworksSchema = z.object({
     .max(50),
 });
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const requestId = generateRequestId();
   const start = Date.now();
   logger.info({ requestId, path: '/api/admin/artworks' }, 'artwork upload request received');
@@ -28,6 +30,12 @@ export async function POST(request: Request) {
 
     if (!session?.user || session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    const ipHash = hashIP(getClientIP(request));
+    const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+    if (!rateLimitOk) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const body = await request.json();

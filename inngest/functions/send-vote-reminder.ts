@@ -5,6 +5,9 @@ import { Resend } from 'resend'
 export const sendVoteReminder = inngest.createFunction(
   { id: 'send-vote-reminder', name: 'Send Vote Reminder 24h Before End', triggers: [{ cron: '0 * * * *' }] },
   async ({ step }) => {
+    const adminEmail = process.env.ADMIN_EMAIL
+    if (!adminEmail) throw new Error('ADMIN_EMAIL env var is required for vote reminders')
+
     const resend = new Resend(process.env.RESEND_API_KEY)
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,7 +35,7 @@ export const sendVoteReminder = inngest.createFunction(
       await step.run(`send-reminder-${contest.id}`, async () => {
         await resend.emails.send({
           from: 'AI Art Arena <no-reply@olliedoesis.dev>',
-          to: [process.env.ADMIN_EMAIL ?? 'orwhite1983@gmail.com'],
+          to: [adminEmail],
           subject: `Last chance to vote — Week ${contest.week_number} ends in 24 hours`,
           html: `<p>Week ${contest.week_number} closes in 24 hours. <a href="https://olliedoesis.dev/contest/${contest.id}">Cast your vote now.</a></p>`,
         })
