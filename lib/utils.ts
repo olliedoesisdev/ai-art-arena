@@ -20,6 +20,8 @@ export function hashIP(ip: string | null): string {
 }
 
 // Returns null when no IP headers are present (never hashes a literal "unknown").
+// In local dev (no reverse proxy) falls back to loopback so votes work without
+// needing x-forwarded-for set up — production always has those headers via Vercel.
 export function getClientIP(request: Request): string | null {
   const forwardedFor = request.headers.get("x-forwarded-for");
   const realIP = request.headers.get("x-real-ip");
@@ -28,5 +30,11 @@ export function getClientIP(request: Request): string | null {
     return forwardedFor.split(",")[0].trim();
   }
 
-  return realIP || null;
+  if (realIP) return realIP;
+
+  if (process.env.NODE_ENV === "development") {
+    return "127.0.0.1";
+  }
+
+  return null;
 }
