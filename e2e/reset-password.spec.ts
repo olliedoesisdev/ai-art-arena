@@ -8,6 +8,12 @@ test.describe('Reset password flow', () => {
   })
 
   test('submitting an unknown email still shows success message (no enumeration)', async ({ page }) => {
+    // Mock the reset-password request endpoint so the test is not dependent on
+    // live Supabase / Resend — the route always returns 200 for any email to
+    // prevent account enumeration, so the mock faithfully represents that.
+    await page.route('**/api/auth/reset-password/request', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) })
+    )
     await page.goto('/reset-password')
     await page.fill('input[type="email"]', 'nobody@example.com')
     await page.click('button[type="submit"]')

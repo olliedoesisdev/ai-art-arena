@@ -34,7 +34,8 @@ export function SubscriberForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDone, setIsDone] = useState(false);
 
-  async function handleSubmit() {
+  async function handleSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
     if (!name.trim()) { toast.error("Please enter your name."); return; }
     if (!email.trim() || !email.includes("@")) { toast.error("Please enter a valid email address."); return; }
 
@@ -105,11 +106,12 @@ export function SubscriberForm() {
         Get notified when each weekly contest goes live. Vote, follow the competition, and watch the community grow.
       </p>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
           <label style={labelStyle}>Full Name</label>
           <input
             type="text"
+            required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
@@ -122,25 +124,24 @@ export function SubscriberForm() {
           <label style={labelStyle}>Email Address</label>
           <input
             type="email"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             style={inputStyle}
-            onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
             onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-amber)"; }}
             onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-border)"; }}
           />
         </div>
 
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={isSubmitting ? undefined : handleSubmit}
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSubmit(); } }}
+        <button
+          type="submit"
+          disabled={isSubmitting}
           style={{
             width: "100%",
             padding: "14px",
             background: "var(--color-join-amber)",
+            border: "none",
             borderRadius: "6px",
             color: "var(--color-join-ink)",
             fontFamily: "var(--font-dm-mono)",
@@ -152,12 +153,11 @@ export function SubscriberForm() {
             cursor: isSubmitting ? "wait" : "pointer",
             opacity: isSubmitting ? 0.7 : 1,
             transition: "opacity 0.15s",
-            userSelect: "none",
           }}
         >
           {isSubmitting ? "Subscribing..." : "Subscribe"}
-        </div>
-      </div>
+        </button>
+      </form>
     </div>
   );
 }
