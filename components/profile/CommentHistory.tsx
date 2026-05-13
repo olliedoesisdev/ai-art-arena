@@ -39,7 +39,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
       <div
         style={{
           padding: "16px 18px",
-          background: "#0d0d14",
+          background: "var(--color-bg-base)",
           border: "1px solid rgba(139,92,246,0.08)",
           borderLeft: "3px solid rgba(192,132,252,0.5)",
           borderRadius: "12px",
@@ -47,15 +47,15 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
         }}
         onMouseEnter={(e) => {
           const el = e.currentTarget as HTMLDivElement;
-          el.style.borderColor = "rgba(139,92,246,0.28)";
-          el.style.borderLeftColor = "#a78bfa";
-          el.style.background = "#111119";
+          el.style.borderColor = "var(--color-border-mid)";
+          el.style.borderLeftColor = "var(--color-purple-light)";
+          el.style.background = "var(--color-bg-surface)";
         }}
         onMouseLeave={(e) => {
           const el = e.currentTarget as HTMLDivElement;
           el.style.borderColor = "rgba(139,92,246,0.08)";
           el.style.borderLeftColor = "rgba(192,132,252,0.5)";
-          el.style.background = "#0d0d14";
+          el.style.background = "var(--color-bg-base)";
         }}
       >
         {/* Header */}
@@ -73,7 +73,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
               background: "rgba(139,92,246,0.1)",
               padding: "2px 7px",
               borderRadius: "100px",
@@ -87,7 +87,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
                 fontWeight: 700,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#34d399",
+                color: "var(--color-status-success)",
                 background: "rgba(52,211,153,0.08)",
                 padding: "2px 7px",
                 borderRadius: "100px",
@@ -99,7 +99,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
           <span style={{
             fontFamily: "var(--font-dm-mono)",
             fontSize: "11px",
-            color: "#3a3a58",
+            color: "var(--color-text-dim)",
             flexShrink: 0,
           }}>
             {timeLabel}
@@ -108,7 +108,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
 
         {/* Comment body */}
         <p style={{
-          color: "#7878a0",
+          color: "var(--color-text-muted)",
           fontSize: "14px",
           lineHeight: 1.65,
           margin: 0,
@@ -128,7 +128,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
           gap: "4px",
           fontFamily: "var(--font-dm-mono)",
           fontSize: "10px",
-          color: "#3a3a58",
+          color: "var(--color-text-dim)",
         }}>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
             <path d="M1.5 5h7M5.5 2L8.5 5l-3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -166,7 +166,7 @@ export function CommentHistory({ comments }: Props) {
         <p style={{
           fontFamily: "var(--font-dm-mono)",
           fontSize: "13px",
-          color: "#3a3a58",
+          color: "var(--color-text-dim)",
           fontStyle: "italic",
         }}>
           No comments yet.

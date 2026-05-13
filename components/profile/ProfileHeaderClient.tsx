@@ -17,15 +17,15 @@ function StatBlock({ value, label, divider }: { value: number; label: string; di
   return (
     <div style={{
       padding: "16px 20px",
-      background: "#0d0d14",
-      borderLeft: divider ? "1px solid rgba(139,92,246,0.1)" : "none",
+      background: "var(--color-bg-base)",
+      borderLeft: divider ? "1px solid var(--color-border-subtle)" : "none",
       textAlign: "center",
     }}>
       <div style={{
         fontFamily: "var(--font-dm-mono)",
         fontSize: "1.5rem",
         fontWeight: 700,
-        color: "#eeeeff",
+        color: "var(--color-text)",
         letterSpacing: "-0.03em",
         lineHeight: 1,
         marginBottom: "4px",
@@ -38,7 +38,7 @@ function StatBlock({ value, label, divider }: { value: number; label: string; di
         fontWeight: 600,
         letterSpacing: "0.1em",
         textTransform: "uppercase",
-        color: "#3a3a58",
+        color: "var(--color-text-dim)",
       }}>
         {label}
       </div>
@@ -96,8 +96,8 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
 
       {/* Info block */}
       <div style={{
-        background: "#111119",
-        border: "1px solid rgba(139,92,246,0.12)",
+        background: "var(--color-bg-surface)",
+        border: "1px solid var(--color-border-subtle)",
         borderTop: "none",
         borderRadius: "0 0 16px 16px",
         padding: "56px 24px 24px",
@@ -107,7 +107,7 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
           fontFamily: "var(--font-syne)",
           fontSize: "1.625rem",
           fontWeight: 800,
-          color: "#eeeeff",
+          color: "var(--color-text)",
           letterSpacing: "-0.03em",
           margin: "0 0 4px",
         }}>
@@ -117,7 +117,7 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
         <div style={{
           fontFamily: "var(--font-dm-mono)",
           fontSize: "11px",
-          color: "#3a3a58",
+          color: "var(--color-text-dim)",
           letterSpacing: "0.06em",
           marginBottom: profile.bio || isOwnProfile ? "14px" : "0",
         }}>
@@ -126,7 +126,7 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
 
         {profile.bio ? (
           <p style={{
-            color: "#7878a0",
+            color: "var(--color-text-muted)",
             fontSize: "14px",
             lineHeight: 1.65,
             margin: "0 0 14px",
@@ -136,7 +136,7 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
           </p>
         ) : isOwnProfile ? (
           <p style={{
-            color: "#3a3a58",
+            color: "var(--color-text-dim)",
             fontSize: "13px",
             fontStyle: "italic",
             margin: "0 0 14px",
@@ -156,7 +156,7 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
               gap: "4px",
               fontFamily: "var(--font-dm-mono)",
               fontSize: "11px",
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
               textDecoration: "none",
               marginBottom: "14px",
             }}
@@ -173,7 +173,7 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
-        border: "1px solid rgba(139,92,246,0.12)",
+        border: "1px solid var(--color-border-subtle)",
         borderTop: "none",
         borderRadius: "0 0 16px 16px",
         overflow: "hidden",
@@ -184,7 +184,7 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
       </div>
 
       <div style={{ height: "32px" }} />
-      <div style={{ height: "1px", background: "rgba(139,92,246,0.1)" }} />
+      <div style={{ height: "1px", background: "var(--color-border-subtle)" }} />
     </div>
   );
 }

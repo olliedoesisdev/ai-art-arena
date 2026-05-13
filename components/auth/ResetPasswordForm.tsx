@@ -7,10 +7,10 @@ import Link from "next/link";
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 14px",
-  background: "#181820",
-  border: "1px solid rgba(139,92,246,0.25)",
+  background: "var(--color-bg-surface2)",
+  border: "1px solid var(--color-border-mid)",
   borderRadius: "8px",
-  color: "#eeeeff",
+  color: "var(--color-text)",
   fontSize: "0.875rem",
   outline: "none",
   boxSizing: "border-box",
@@ -20,17 +20,17 @@ const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: "0.8125rem",
   fontWeight: 500,
-  color: "#7878a0",
+  color: "var(--color-text-muted)",
   marginBottom: "6px",
 };
 
 const primaryBtn: React.CSSProperties = {
   width: "100%",
   padding: "11px",
-  background: "#8b5cf6",
+  background: "var(--color-purple)",
   border: "none",
   borderRadius: "8px",
-  color: "#fff",
+  color: "var(--color-bg-base)",
   fontFamily: "var(--font-syne)",
   fontWeight: 700,
   fontSize: "0.9375rem",
@@ -40,7 +40,7 @@ const primaryBtn: React.CSSProperties = {
 
 const disabledBtn: React.CSSProperties = {
   ...primaryBtn,
-  background: "#3a3a58",
+  background: "var(--color-text-dim)",
   cursor: "not-allowed",
 };
 
@@ -107,13 +107,13 @@ export function ResetPasswordForm({ token }: { token?: string }) {
       {error && (
         <div
           style={{
-            background: "rgba(248,113,113,0.08)",
+            background: "rgba(248,113,113,0.08)", /* status-error dim — no alpha token */
             border: "1px solid rgba(248,113,113,0.3)",
             borderRadius: "8px",
             padding: "10px 14px",
             marginBottom: "20px",
             fontSize: "0.875rem",
-            color: "#f87171",
+            color: "var(--color-status-error)",
           }}
         >
           {error}
@@ -123,13 +123,13 @@ export function ResetPasswordForm({ token }: { token?: string }) {
       {success && (
         <div
           style={{
-            background: "rgba(52,211,153,0.08)",
+            background: "var(--color-status-success-dim)",
             border: "1px solid rgba(52,211,153,0.3)",
             borderRadius: "8px",
             padding: "10px 14px",
             marginBottom: "20px",
             fontSize: "0.875rem",
-            color: "#34d399",
+            color: "var(--color-status-success)",
           }}
         >
           {success}
@@ -172,7 +172,7 @@ export function ResetPasswordForm({ token }: { token?: string }) {
       ) : (
         /* ── Request reset link ── */
         <form onSubmit={handleRequestLink} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <p style={{ fontSize: "0.875rem", color: "#7878a0", margin: 0 }}>
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", margin: 0 }}>
             Enter your email and we will send you a link to reset your password.
           </p>
           <div>
@@ -196,7 +196,7 @@ export function ResetPasswordForm({ token }: { token?: string }) {
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <Link
           href="/signin"
-          style={{ fontSize: "0.8125rem", color: "#7878a0", textDecoration: "none" }}
+          style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", textDecoration: "none" }}
         >
           ← Back to sign in
         </Link>

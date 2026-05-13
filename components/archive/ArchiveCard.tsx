@@ -16,8 +16,8 @@ export function ArchiveCard({ contest }: ArchiveCardProps) {
       <article
         className="group"
         style={{
-          background: "#111119",
-          border: "1px solid rgba(139,92,246,0.12)",
+          background: "var(--color-bg-surface)",
+          border: "1px solid var(--color-border-subtle)",
           borderRadius: "14px",
           overflow: "hidden",
           transition: "transform 0.2s, border-color 0.2s",
@@ -38,13 +38,13 @@ export function ArchiveCard({ contest }: ArchiveCardProps) {
           <div
             style={{
               aspectRatio: "1",
-              background: "#181820",
+              background: "var(--color-bg-surface2)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <span style={{ fontSize: "0.75rem", color: "#3a3a58" }}>No artworks</span>
+            <span style={{ fontSize: "0.75rem", color: "var(--color-text-dim)" }}>No artworks</span>
           </div>
         )}
 
@@ -55,7 +55,7 @@ export function ArchiveCard({ contest }: ArchiveCardProps) {
                 fontFamily: "var(--font-syne)",
                 fontWeight: 700,
                 fontSize: "1rem",
-                color: "#eeeeff",
+                color: "var(--color-text)",
               }}
             >
               Week {contest.week_number}
@@ -64,7 +64,7 @@ export function ArchiveCard({ contest }: ArchiveCardProps) {
               style={{
                 fontFamily: "var(--font-dm-mono)",
                 fontSize: "0.75rem",
-                color: "#7878a0",
+                color: "var(--color-text-muted)",
               }}
             >
               {new Date(contest.end_date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
@@ -75,7 +75,7 @@ export function ArchiveCard({ contest }: ArchiveCardProps) {
             <p
               style={{
                 fontSize: "0.8125rem",
-                color: "#7878a0",
+                color: "var(--color-text-muted)",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -90,7 +90,7 @@ export function ArchiveCard({ contest }: ArchiveCardProps) {
             style={{
               fontFamily: "var(--font-dm-mono)",
               fontSize: "0.75rem",
-              color: "#3a3a58",
+              color: "var(--color-text-dim)",
             }}
           >
             {totalVotes.toLocaleString()} votes

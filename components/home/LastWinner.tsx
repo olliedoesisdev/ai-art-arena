@@ -22,7 +22,7 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
             fontWeight: 600,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "#a78bfa",
+            color: "var(--color-purple-light)",
             marginBottom: "16px",
           }}
         >
@@ -39,8 +39,8 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
               display: "flex",
               alignItems: "center",
               gap: "28px",
-              background: "#111119",
-              border: "1px solid rgba(139,92,246,0.12)",
+              background: "var(--color-bg-surface)",
+              border: "1px solid var(--color-border-subtle)",
               borderRadius: "14px",
               padding: "20px",
               transition: "border-color 0.2s, transform 0.2s",
@@ -78,9 +78,9 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
                   fontWeight: 700,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "#fbbf24",
-                  background: "rgba(251,191,36,0.08)",
-                  border: "1px solid rgba(251,191,36,0.2)",
+                  color: "var(--color-status-warning)",
+                  background: "var(--color-status-warning-dim)",
+                  border: "1px solid rgba(251,191,36,0.2)", /* status-warning at 20% — no alpha token */
                   padding: "3px 10px",
                   borderRadius: "100px",
                   marginBottom: "10px",
@@ -94,7 +94,7 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
                   fontSize: "1.125rem",
-                  color: "#eeeeff",
+                  color: "var(--color-text)",
                   marginBottom: "6px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -104,11 +104,11 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
                 {artwork.title}
               </h3>
 
-              <p style={{ fontSize: "0.8125rem", color: "#7878a0" }}>
+              <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
                 <span
                   style={{
                     fontFamily: "var(--font-dm-mono)",
-                    color: "#a78bfa",
+                    color: "var(--color-purple-light)",
                     fontWeight: 500,
                   }}
                 >
@@ -122,7 +122,7 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
             <span
               style={{
                 fontSize: "1.25rem",
-                color: "#3a3a58",
+                color: "var(--color-text-dim)",
                 flexShrink: 0,
                 transition: "color 0.2s",
               }}

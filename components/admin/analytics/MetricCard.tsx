@@ -5,11 +5,11 @@ interface Props {
   color?: string;
 }
 
-export function MetricCard({ label, value, sub, color = "#8b5cf6" }: Props) {
+export function MetricCard({ label, value, sub, color = "var(--color-purple)" }: Props) {
   return (
     <div style={{
-      background: "#111119",
-      border: "1px solid rgba(139,92,246,0.12)",
+      background: "var(--color-bg-surface)",
+      border: "1px solid var(--color-border-subtle)",
       borderRadius: "14px",
       padding: "20px 24px",
     }}>
@@ -24,9 +24,9 @@ export function MetricCard({ label, value, sub, color = "#8b5cf6" }: Props) {
       }}>
         {typeof value === "number" ? value.toLocaleString() : value}
       </div>
-      <div style={{ fontSize: "0.8125rem", color: "#7878a0" }}>{label}</div>
+      <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>{label}</div>
       {sub && (
-        <div style={{ fontSize: "0.75rem", color: "#3a3a58", fontFamily: "var(--font-dm-mono)", marginTop: "4px" }}>
+        <div style={{ fontSize: "0.75rem", color: "var(--color-text-dim)", fontFamily: "var(--font-dm-mono)", marginTop: "4px" }}>
           {sub}
         </div>
       )}

@@ -38,7 +38,7 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
             fontWeight: 800,
             fontSize: "clamp(2rem, 5vw, 3rem)",
             letterSpacing: "-0.03em",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             lineHeight: 1.05,
             margin: 0,
           }}

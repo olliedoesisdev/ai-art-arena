@@ -123,7 +123,7 @@ export default async function HomePage() {
               fontWeight: 600,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
               marginBottom: "24px",
             }}
           >
@@ -137,20 +137,20 @@ export default async function HomePage() {
               fontSize: "clamp(2.5rem, 7vw, 5rem)",
               letterSpacing: "-0.04em",
               lineHeight: 1.05,
-              color: "#eeeeff",
+              color: "var(--color-text)",
               margin: "0 auto 24px",
               maxWidth: "820px",
             }}
           >
             The arena where AI art
             <br />
-            <span style={{ color: "#8b5cf6" }}>earns its crown.</span>
+            <span style={{ color: "var(--color-purple)" }}>earns its crown.</span>
           </h1>
 
           <p
             style={{
               fontSize: "1.0625rem",
-              color: "#7878a0",
+              color: "var(--color-text-muted)",
               lineHeight: 1.65,
               maxWidth: "560px",
               margin: "0 auto 40px",
@@ -168,8 +168,8 @@ export default async function HomePage() {
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
                   fontSize: "0.9375rem",
-                  color: "#08080e",
-                  background: "#fbbf24",
+                  color: "var(--color-bg-base)",
+                  background: "var(--color-status-warning)",
                   padding: "13px 32px",
                   borderRadius: "100px",
                   textDecoration: "none",
@@ -183,10 +183,10 @@ export default async function HomePage() {
                 style={{
                   padding: "13px 24px",
                   borderRadius: "100px",
-                  background: "rgba(139,92,246,0.08)",
-                  border: "1px solid rgba(139,92,246,0.2)",
+                  background: "var(--color-purple-dim)",
+                  border: "1px solid var(--color-border-mid)",
                   fontSize: "0.9375rem",
-                  color: "#7878a0",
+                  color: "var(--color-text-muted)",
                 }}
               >
                 No active contest right now. Check back Monday.
@@ -198,9 +198,9 @@ export default async function HomePage() {
                 fontFamily: "var(--font-syne)",
                 fontWeight: 600,
                 fontSize: "0.9375rem",
-                color: "#a78bfa",
-                background: "rgba(139,92,246,0.10)",
-                border: "1px solid rgba(139,92,246,0.25)",
+                color: "var(--color-purple-light)",
+                background: "var(--color-purple-dim)",
+                border: "1px solid var(--color-border-mid)",
                 padding: "13px 32px",
                 borderRadius: "100px",
                 textDecoration: "none",
@@ -226,8 +226,8 @@ export default async function HomePage() {
                 display: "grid",
                 gridTemplateColumns: "repeat(3, 1fr)",
                 gap: "1px",
-                background: "rgba(139,92,246,0.12)",
-                border: "1px solid rgba(139,92,246,0.12)",
+                background: "var(--color-border-subtle)",
+                border: "1px solid var(--color-border-subtle)",
                 borderRadius: "14px",
                 overflow: "hidden",
               }}
@@ -240,7 +240,7 @@ export default async function HomePage() {
                 <div
                   key={label}
                   style={{
-                    background: "#111119",
+                    background: "var(--color-bg-surface)",
                     padding: "32px 24px",
                     textAlign: "center",
                   }}
@@ -250,14 +250,14 @@ export default async function HomePage() {
                       fontFamily: "var(--font-dm-mono)",
                       fontWeight: 500,
                       fontSize: "2.25rem",
-                      color: "#eeeeff",
+                      color: "var(--color-text)",
                       letterSpacing: "-0.02em",
                       marginBottom: "6px",
                     }}
                   >
                     {value}
                   </div>
-                  <div style={{ fontSize: "0.8125rem", color: "#7878a0", fontWeight: 500 }}>
+                  <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", fontWeight: 500 }}>
                     {label}
                   </div>
                 </div>
@@ -276,7 +276,7 @@ export default async function HomePage() {
               fontWeight: 600,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
               marginBottom: "16px",
             }}
           >
@@ -288,7 +288,7 @@ export default async function HomePage() {
               fontWeight: 800,
               fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
               letterSpacing: "-0.03em",
-              color: "#eeeeff",
+              color: "var(--color-text)",
               marginBottom: "48px",
             }}
           >
@@ -300,8 +300,8 @@ export default async function HomePage() {
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
               gap: "1px",
-              background: "rgba(139,92,246,0.12)",
-              border: "1px solid rgba(139,92,246,0.12)",
+              background: "var(--color-border-subtle)",
+              border: "1px solid var(--color-border-subtle)",
               borderRadius: "14px",
               overflow: "hidden",
             }}
@@ -312,14 +312,14 @@ export default async function HomePage() {
                 className="animate-card"
                 style={{ "--card-delay": `${i * 60}ms` } as React.CSSProperties}
               >
-                <div style={{ background: "#111119", padding: "36px 28px", height: "100%" }}>
+                <div style={{ background: "var(--color-bg-surface)", padding: "36px 28px", height: "100%" }}>
                   <div
                     style={{
                       fontFamily: "var(--font-dm-mono)",
                       fontSize: "0.6875rem",
                       fontWeight: 500,
                       letterSpacing: "0.12em",
-                      color: "#8b5cf6",
+                      color: "var(--color-purple)",
                       marginBottom: "16px",
                     }}
                   >
@@ -330,13 +330,13 @@ export default async function HomePage() {
                       fontFamily: "var(--font-syne)",
                       fontWeight: 700,
                       fontSize: "1.125rem",
-                      color: "#eeeeff",
+                      color: "var(--color-text)",
                       marginBottom: "10px",
                     }}
                   >
                     {title}
                   </h3>
-                  <p style={{ fontSize: "0.875rem", color: "#7878a0", lineHeight: 1.65 }}>
+                  <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", lineHeight: 1.65 }}>
                     {body}
                   </p>
                 </div>
@@ -350,6 +350,183 @@ export default async function HomePage() {
       {lastWinner && lastWinnerWeek !== null && (
         <LastWinner artwork={lastWinner} weekNumber={lastWinnerWeek} />
       )}
+
+      {/* ── Profile CTA ─────────────────────────────────────────── */}
+      <section style={{ paddingBottom: "80px" }}>
+        <div className="shell">
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr auto",
+              gap: "32px",
+              alignItems: "center",
+              background: "var(--color-bg-surface)",
+              border: "1px solid var(--color-border-subtle)",
+              borderRadius: "14px",
+              padding: "36px 40px",
+            }}
+          >
+            <div>
+              <p style={{
+                fontSize: "11px",
+                fontFamily: "var(--font-dm-mono)",
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "var(--color-purple-light)",
+                marginBottom: "10px",
+              }}>
+                Track your votes
+              </p>
+              <h2 style={{
+                fontFamily: "var(--font-syne)",
+                fontWeight: 800,
+                fontSize: "clamp(1.25rem, 3vw, 1.625rem)",
+                letterSpacing: "-0.03em",
+                color: "var(--color-text)",
+                marginBottom: "8px",
+              }}>
+                Create a free profile.
+              </h2>
+              <p style={{ fontSize: "0.9375rem", color: "var(--color-text-muted)", lineHeight: 1.6, margin: 0, maxWidth: "480px" }}>
+                Sign in with GitHub or your email to link votes to your profile, see your contest history, and appear in the community.
+              </p>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", flexShrink: 0 }}>
+              <Link
+                href="/api/auth/signin"
+                style={{
+                  fontFamily: "var(--font-syne)",
+                  fontWeight: 700,
+                  fontSize: "0.875rem",
+                  color: "var(--color-bg-base)",
+                  background: "var(--color-purple)",
+                  padding: "11px 24px",
+                  borderRadius: "100px",
+                  textDecoration: "none",
+                  letterSpacing: "0.01em",
+                  textAlign: "center",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Create profile &rarr;
+              </Link>
+              <Link
+                href="/profile/me"
+                style={{
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "0.75rem",
+                  fontWeight: 500,
+                  color: "var(--color-text-dim)",
+                  textDecoration: "none",
+                  textAlign: "center",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                Already signed in? View yours
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Artist Application CTA ──────────────────────────────── */}
+      <section style={{ paddingBottom: "120px" }}>
+        <div className="shell">
+          <div
+            style={{
+              position: "relative",
+              overflow: "hidden",
+              background: "linear-gradient(135deg, rgba(139,92,246,0.10) 0%, rgba(139,92,246,0.04) 60%, transparent 100%)",
+              border: "1px solid var(--color-border-mid)",
+              borderRadius: "14px",
+              padding: "56px 48px",
+              textAlign: "center",
+            }}
+          >
+            {/* Orb */}
+            <div aria-hidden="true" style={{
+              position: "absolute",
+              top: "-60px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "500px",
+              height: "240px",
+              background: "radial-gradient(ellipse, rgba(139,92,246,0.10) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }} />
+
+            <p style={{
+              fontSize: "11px",
+              fontFamily: "var(--font-dm-mono)",
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--color-purple-light)",
+              marginBottom: "16px",
+              position: "relative",
+            }}>
+              For AI artists
+            </p>
+            <h2 style={{
+              fontFamily: "var(--font-syne)",
+              fontWeight: 800,
+              fontSize: "clamp(1.75rem, 4vw, 2.75rem)",
+              letterSpacing: "-0.04em",
+              color: "var(--color-text)",
+              margin: "0 0 16px",
+              position: "relative",
+            }}>
+              Want your work in the arena?
+            </h2>
+            <p style={{
+              fontSize: "1rem",
+              color: "var(--color-text-muted)",
+              lineHeight: 1.65,
+              maxWidth: "460px",
+              margin: "0 auto 36px",
+              position: "relative",
+            }}>
+              Apply to enter your AI-generated artwork in a future contest. We accept all styles, models, and prompting approaches — the only judge is the crowd.
+            </p>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", position: "relative" }}>
+              <Link
+                href="/join?track=artist"
+                style={{
+                  fontFamily: "var(--font-syne)",
+                  fontWeight: 700,
+                  fontSize: "0.9375rem",
+                  color: "var(--color-bg-base)",
+                  background: "var(--color-status-warning)",
+                  padding: "13px 32px",
+                  borderRadius: "100px",
+                  textDecoration: "none",
+                  letterSpacing: "0.01em",
+                }}
+              >
+                Apply as an artist &rarr;
+              </Link>
+              <Link
+                href="/join?track=subscriber"
+                style={{
+                  fontFamily: "var(--font-syne)",
+                  fontWeight: 600,
+                  fontSize: "0.9375rem",
+                  color: "var(--color-purple-light)",
+                  background: "var(--color-purple-dim)",
+                  border: "1px solid var(--color-border-mid)",
+                  padding: "13px 32px",
+                  borderRadius: "100px",
+                  textDecoration: "none",
+                }}
+              >
+                Just keep me posted
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }

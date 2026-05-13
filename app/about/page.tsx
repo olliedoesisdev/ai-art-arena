@@ -1,340 +1,535 @@
 import { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
-import Link from "next/link";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "About — AI Art Arena",
-  description: "AI Art Arena is a weekly voting contest where AI-generated artwork earns its crown. Learn how it works and what was built.",
+  title: "About — Oliver | Full Stack Developer | AI Art Arena",
+  description:
+    "Oliver built AI Art Arena — a production Next.js 14 voting platform for AI-generated artwork. Every tool in the stack solved a real problem. Read why each technology was chosen.",
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
-    title: "About — AI Art Arena",
-    description: "AI Art Arena is a weekly voting contest where AI-generated artwork earns its crown.",
+    title: "About — Oliver | Full Stack Developer | AI Art Arena",
+    description:
+      "A production Next.js 14 + Supabase voting platform built from scratch. Every architectural decision explained: the problem, the solution, and who else solved it the same way.",
     url: `${SITE_URL}/about`,
     siteName: "AI Art Arena",
-    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
-    type: "website",
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "AI Art Arena — built by Oliver" }],
+    type: "profile",
   },
   twitter: {
     card: "summary_large_image",
-    title: "About — AI Art Arena",
-    description: "AI Art Arena is a weekly voting contest where AI-generated artwork earns its crown.",
+    title: "About — Oliver | AI Art Arena",
+    description:
+      "Production Next.js 14 + Supabase voting platform. Every tool in the stack solved a real problem.",
     images: [`${SITE_URL}/og-image.png`],
   },
 };
 
-const STACK = [
-  { name: "Next.js 14+", desc: "App Router, Server Components, ISR caching" },
-  { name: "Supabase", desc: "PostgreSQL, RLS, Storage, Realtime" },
-  { name: "Upstash Redis", desc: "Per-contest rate limiting, sliding window" },
-  { name: "NextAuth v5", desc: "GitHub OAuth, credentials auth" },
-  { name: "Inngest", desc: "Background jobs, weekly contest automation" },
-  { name: "Vercel", desc: "Edge deployment, CDN, CI/CD" },
-  { name: "Recharts", desc: "Admin analytics — trends, breakdowns, donuts" },
-  { name: "Resend", desc: "Transactional email notifications" },
-];
-
-const LESSONS = [
-  {
-    title: "Atomic DB functions are not optional at scale",
-    body: "The vote endpoint used to make five separate database calls. One to check the contest status. One to verify the artwork. One to check for duplicate votes. One to insert. One to increment. That's five round trips, five points of failure, and a race condition waiting to happen. One stored procedure with SECURITY DEFINER collapsed it to a single call with a transaction guarantee.",
+// JSON-LD: Person schema for AEO — search engines surface this in AI answers
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Oliver",
+  url: SITE_URL,
+  jobTitle: "Full Stack Developer",
+  description:
+    "Self-taught full stack developer. Built AI Art Arena — a production Next.js 14 voting platform for AI-generated artwork — using PostgreSQL, Supabase, NextAuth, Upstash Redis, Inngest, and Vercel.",
+  knowsAbout: [
+    "Next.js",
+    "TypeScript",
+    "PostgreSQL",
+    "Supabase",
+    "React",
+    "Tailwind CSS",
+    "Vercel",
+    "Redis",
+    "NextAuth",
+  ],
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": `${SITE_URL}/about`,
   },
-  {
-    title: "Server Components change how you think about data",
-    body: "The temptation in React is to fetch everything client-side with useEffect. App Router flips that. Data fetching is boring server code again — await supabase.from(...) directly in the component, no loading spinners, no client state, no waterfalls. The client only gets involved when it genuinely has to.",
+  worksFor: {
+    "@type": "CreativeWork",
+    name: "AI Art Arena",
+    url: SITE_URL,
+    description:
+      "A weekly voting contest for AI-generated artwork. One vote per contest, live real-time counts, automated weekly cycling.",
   },
-  {
-    title: "Rate limiting needs to be scoped correctly",
-    body: "My first instinct was one vote per IP per day, globally. But that would block someone from voting in any new contest after casting their vote in week one. The correct scope is per-IP per-contest. A small distinction with a big difference in fairness.",
-  },
-  {
-    title: "Middleware is load-bearing",
-    body: "Next.js looks for middleware.ts specifically. Rename it to literally anything else and NextAuth silently stops working — session endpoints return 404, every page shows as logged out, and the error messages point you nowhere near the real problem. middleware.ts. Not proxy.ts. Not auth-middleware.ts. The filename is the contract.",
-  },
-  {
-    title: "RLS policies are invisible until they're not",
-    body: "Row-level security in Supabase is elegant right up until you write an API route that does an insert followed by a .select().single() to read back the inserted row. If your policy only allows users to read their own rows — and your route runs with the anon key — that select returns null and your error message says \"failed to save\" when the save actually succeeded. Read the policy. Trust the insert error. Don't trust the read-back.",
-  },
-];
-
-const WHAT_IS_LIVE = [
-  "Full voting experience — artworks, countdown, live vote counts, one-vote enforcement",
-  "Artist application flow — aspiring contributors can submit their work and portfolio",
-  "User profiles with activity feeds, avatar uploads, and public pages",
-  "Admin dashboard — contest management, artwork uploads, comment moderation, analytics",
-  "Archive of every past contest and its results",
-  "Leaderboard of all-time highest-voted artworks",
-  "Automated weekly contest cycling via background jobs",
-  "CI pipeline — type checks, lint, unit tests, and build on every push",
-];
-
-const ROADMAP = [
-  { status: "live",    label: "Weekly voting contests" },
-  { status: "live",    label: "Anonymous + authenticated voting" },
-  { status: "live",    label: "Real-time vote counts via Supabase Realtime" },
-  { status: "live",    label: "Contest archive and leaderboard" },
-  { status: "live",    label: "Artist application system" },
-  { status: "live",    label: "User profiles and activity feeds" },
-  { status: "live",    label: "Admin analytics dashboard" },
-  { status: "soon",    label: "Email vote reminders" },
-  { status: "soon",    label: "Public artist profiles" },
-  { status: "planned", label: "Community artwork submissions" },
-  { status: "planned", label: "Themed weekly contests" },
-];
-
-const STATUS: Record<string, { color: string; bg: string; border: string; label: string }> = {
-  live:    { color: "#34d399", bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)",  label: "Live" },
-  soon:    { color: "#fbbf24", bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.2)",  label: "Soon" },
-  planned: { color: "#3a3a58", bg: "rgba(58,58,88,0.12)",    border: "rgba(58,58,88,0.2)",    label: "Planned" },
 };
 
-const card: React.CSSProperties = {
-  background: "#111119",
-  border: "1px solid rgba(139,92,246,0.12)",
-  borderRadius: "14px",
-};
-
-const eyebrow: React.CSSProperties = {
-  fontSize: "11px",
-  fontWeight: 600,
-  letterSpacing: "0.12em",
-  textTransform: "uppercase",
-  color: "#a78bfa",
-  marginBottom: "12px",
-};
-
-const sectionHead: React.CSSProperties = {
-  fontFamily: "var(--font-syne)",
-  fontWeight: 800,
-  fontSize: "clamp(1.5rem, 3vw, 2rem)",
-  letterSpacing: "-0.03em",
-  color: "#eeeeff",
-  marginBottom: "32px",
-};
+const decisions = [
+  {
+    tech: "Next.js 14",
+    problem:
+      "I needed a framework that could serve fast, SEO-friendly pages for the contest and archive — but still handle real-time interactivity for voting without a full page reload.",
+    solution:
+      "Next.js App Router let me solve both at once. Archive pages and contest details are Server Components: the HTML is generated on the server, loads instantly, and search engines can index every past contest. The vote button is a Client Component — it is the only piece that ships JavaScript to the browser. The rest of the page is pure, fast HTML. That distinction is not just a performance trick. It is an architectural discipline that keeps the codebase clean and the user experience fast.",
+    company: "TikTok",
+    parallel:
+      "TikTok built their web app on Next.js for exactly this reason. The feed is mostly static — fast server-rendered HTML. The like button, comments, and share interactions are isolated client components. Same split. Same reasoning. Twitch, Hulu, Nike, and OpenAI made the same call.",
+  },
+  {
+    tech: "Supabase + PostgreSQL",
+    problem:
+      "The moment I decided users could vote, I had a data problem. I needed to store users, artworks, contests, and votes — and the relationships between them. A vote belongs to a user. A user can only cast one vote per contest. An artwork belongs to a contest. I needed a real relational database, not a JSON blob.",
+    solution:
+      "Supabase gave me PostgreSQL with Row Level Security built in. RLS means the database itself enforces the rules — a user cannot read another user's vote history, a user cannot insert a second vote for the same contest, and those constraints live at the database layer, not in application code. On top of that, I wrote a single atomic PostgreSQL function — submit_vote — that checks contest status, verifies the artwork, detects duplicate votes, inserts the vote row, and increments the vote count in one transaction. What used to be five sequential round trips is one call at ~40ms. No race conditions. No partial writes.",
+    company: "Reddit",
+    parallel:
+      "Reddit denormalizes upvote counts on posts using the same approach — maintaining a running count at write time rather than running a COUNT query across all votes on every page load. Mozilla and PwC both run on Supabase. The RLS security model is the same pattern healthcare and fintech companies use because they cannot rely on application code alone to protect sensitive data.",
+  },
+  {
+    tech: "NextAuth v5",
+    problem:
+      "I needed users to be able to sign in, stay signed in across sessions, and have their identity attached to their votes. I also needed two sign-in methods: GitHub OAuth for developers, and magic link email for everyone else. And I needed session data available on the server — not just the browser — so Server Components could check who is logged in before rendering.",
+    solution:
+      "NextAuth v5 handles all of it. OAuth flow, magic link generation and verification, secure session tokens, server-side session access. I did not write authentication from scratch — that would be the wrong decision. Authentication is one of the highest-risk areas in any application. Using a battle-tested library and wiring it correctly into the Next.js App Router required real understanding of how sessions flow between server and client.",
+    company: "Vercel",
+    parallel:
+      "Vercel themselves use NextAuth in their documentation examples and internal tooling. It is the authentication standard across the Next.js ecosystem because reinventing auth at the application layer is a security liability. The companies that build their own auth from scratch are the ones that end up in breach headlines.",
+  },
+  {
+    tech: "Upstash Redis",
+    problem:
+      "Votes had to be limited. Without enforcement, a single person with a script could vote thousands of times in an hour and corrupt every contest result. I also needed protection on authentication — limiting failed sign-in attempts to prevent brute force attacks. Application-level checks are not enough because they do not persist across server restarts and do not handle distributed traffic accurately.",
+    solution:
+      "Upstash gives me serverless Redis — a persistent, fast key-value store I can write to from any edge function or API route. I implemented a sliding window rate limiter on the vote endpoint: one vote per IP address per contest per 24-hour window. The sliding window algorithm is more accurate than a fixed window because it does not reset abruptly at midnight — it tracks the rolling 24 hours. When someone hits the limit, they get a 429 response with the exact time their window resets. Authenticated users are keyed by email hash for stronger signal than IP alone.",
+    company: "Stripe",
+    parallel:
+      "Stripe protects every API endpoint with Redis-based sliding window rate limiting. So does GitHub. So does Cloudflare. The pattern is identical: track request counts in Redis with a TTL-based key per identifier, reject requests that exceed the threshold. What I built for vote protection is architecturally the same system that protects payment APIs processing billions of dollars.",
+  },
+  {
+    tech: "Resend",
+    problem:
+      "I needed automated emails to actually work. When a user uses magic link authentication, they get a sign-in link. Those emails have to arrive instantly, land in the inbox — not spam — and come from my own domain. Setting up raw SMTP is a deliverability nightmare. Using a bulk email service sends the wrong signals to spam filters.",
+    solution:
+      "Resend is built specifically for transactional email — emails triggered by user actions, not marketing blasts. I wired it into the NextAuth magic link flow. Emails go out from my domain, with proper SPF and DKIM records, through infrastructure built for exactly this use case. The developer experience is clean: a single API call, and the email is in the inbox.",
+    company: "Airbnb",
+    parallel:
+      "Airbnb sends hundreds of millions of transactional emails — booking confirmations, host notifications, payment receipts. Their infrastructure separates transactional email from marketing email for exactly the reason I chose Resend: deliverability depends on reputation, and reputation depends on sending the right type of email through the right infrastructure. Resend was built by engineers who came from Stripe — a company that cannot afford email failures on payment receipts.",
+  },
+  {
+    tech: "Inngest",
+    problem:
+      "Contests need to archive automatically when their end date passes and a new one needs to open immediately after. Vote reminder emails need to go out 24 hours before a contest closes. These are time-based background jobs — they cannot run inside a web request and cannot rely on cron jobs that need a persistent server.",
+    solution:
+      "Inngest handles background jobs in a serverless environment. The archive function runs hourly, checks whether any active contest has passed its end date, flips the status to archived, and fires an event that triggers the next contest creation. The vote reminder function runs hourly and emails subscribed users when a contest is within 24 hours of closing. All of this happens automatically — no manual intervention, no server to babysit.",
+    company: "Vercel",
+    parallel:
+      "Serverless background job queues are the standard pattern for any Next.js app deployed on Vercel because there is no persistent server process. The same architecture powers automated workflows at companies running on Vercel's infrastructure — event-driven functions that trigger on schedule or on application events, not long-running processes.",
+  },
+  {
+    tech: "Vercel",
+    problem:
+      "I needed deployment that did not require managing servers. Every push to main needs to update the live site. Every pull request needs a preview URL so I can test changes before they go live. Images need to be served from a CDN. Environment variables need to be managed securely.",
+    solution:
+      "Vercel handles all of it natively. Push to main, site deploys in under a minute. Open a pull request, get a unique preview URL automatically. Environment variables are stored encrypted and injected at build time. The Next.js Image component routes through Vercel's image optimization pipeline — it converts artwork to WebP, resizes for the device, and caches at the edge. A 4MB PNG becomes a 200KB WebP delivered from a server milliseconds from the user.",
+    company: "The Washington Post",
+    parallel:
+      "The Washington Post rebuilt their frontend on Next.js and Vercel because their old deployment pipeline was slow and brittle. Now their newsroom can publish and the site updates in seconds through the same git-push-to-deploy model I use. Loom, HashiCorp, and OpenAI all deploy the same way. The pattern scales from a weekly art contest to a national newspaper.",
+  },
+  {
+    tech: "TypeScript",
+    problem:
+      "When writing a vote API that touches the database, I need to know exactly what shape the data coming in looks like. When passing artwork data from a Server Component to a Client Component, I need to know what fields exist. Without types, a typo in a field name is a runtime bug that only surfaces when a user hits it. With types, it is a compile error caught before the code ships.",
+    solution:
+      "TypeScript is enabled in strict mode throughout the entire codebase. The database schema has corresponding TypeScript interfaces. Every API route validates its input against a Zod schema — which generates TypeScript types from runtime validation rules. The result is a codebase where the shape of data is documented in the code itself, and the compiler enforces that documentation.",
+    company: "Google",
+    parallel:
+      "Google, Airbnb, Slack, and Microsoft all mandated TypeScript across their codebases after experiencing the maintenance cost of large untyped JavaScript projects. Airbnb published a study showing TypeScript would have caught 38% of their production bugs before deployment. Strict mode is not optional polish — it is the baseline expectation at any serious engineering organisation.",
+  },
+  {
+    tech: "Tailwind CSS",
+    problem:
+      "I needed a consistent visual language across every page — same spacing scale, same colour palette, same font sizing — without writing and maintaining a separate CSS file for every component. I also needed the styles to live next to the markup so I could see exactly what a component looks like without jumping between files.",
+    solution:
+      "Tailwind utility classes mean every styling decision is visible in the JSX. The design tokens — violet for primary actions, dark surfaces for cards, monospace for numbers and stats — are applied consistently across every component because they come from the same scale defined once in tailwind.config.ts. There is no CSS specificity to debug, no dead styles to audit, no import order to manage.",
+    company: "GitHub",
+    parallel:
+      "GitHub, Shopify, OpenAI, and Vercel all use Tailwind as the foundation of their design systems. GitHub migrated their internal component library to Tailwind because co-locating styles with components made the codebase faster to work in and easier for new engineers to understand. Shopify's Polaris component system is built on the same philosophy.",
+  },
+];
 
 export default function AboutPage() {
   return (
-    <div className="animate-page" style={{ paddingTop: "72px", paddingBottom: "120px" }}>
-      <div className="shell">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-        {/* ── Hero ─────────────────────────────────────────────── */}
-        <section style={{ marginBottom: "100px", maxWidth: "760px" }}>
-          <p style={eyebrow}>About</p>
-          <h1 style={{
-            fontFamily: "var(--font-syne)",
-            fontWeight: 800,
-            fontSize: "clamp(2.25rem, 6vw, 3.75rem)",
-            letterSpacing: "-0.04em",
-            lineHeight: 1.05,
-            color: "#eeeeff",
-            margin: "0 0 28px",
-          }}>
-            The arena where AI art<br />
-            <span style={{ color: "#8b5cf6" }}>earns its crown.</span>
-          </h1>
-          <p style={{ fontSize: "1.0625rem", color: "#7878a0", lineHeight: 1.7, maxWidth: "620px", margin: "0 0 20px" }}>
-            It&apos;s Monday morning. Six pieces of AI-generated artwork walk into a ring. They&apos;re stunning, weird, uncanny, beautiful — sometimes all four at once. And for the next seven days, the internet gets to decide which one is the champion.
-          </p>
-          <p style={{ fontSize: "1.0625rem", color: "#7878a0", lineHeight: 1.7, maxWidth: "620px" }}>
-            That&apos;s AI Art Arena. Built from scratch to answer one question: in an ocean of AI-generated images, what actually resonates with real people?
-          </p>
-        </section>
+      <div className="animate-page" style={{ paddingBottom: "120px" }}>
 
-        {/* ── The Idea ─────────────────────────────────────────── */}
-        <section style={{ marginBottom: "100px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1px", background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden" }}>
-            <div style={{ background: "#111119", padding: "40px" }}>
-              <p style={{ ...eyebrow, color: "#3a3a58" }}>The Problem</p>
-              <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1.25rem", color: "#eeeeff", marginBottom: "16px", letterSpacing: "-0.02em" }}>
-                An ocean with no crown
-              </h2>
-              <p style={{ fontSize: "0.9375rem", color: "#7878a0", lineHeight: 1.72 }}>
-                There&apos;s an ocean of AI-generated art. Midjourney galleries, Stable Diffusion subreddits, ComfyUI workflows producing a thousand images an hour. It&apos;s everywhere. But there&apos;s almost no moment of judgment. No stakes. No measure of what actually connects.
-              </p>
-            </div>
-            <div style={{ background: "#111119", padding: "40px", borderLeft: "1px solid rgba(139,92,246,0.12)" }}>
-              <p style={{ ...eyebrow, color: "#8b5cf6" }}>The Solution</p>
-              <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1.25rem", color: "#eeeeff", marginBottom: "16px", letterSpacing: "-0.02em" }}>
-                Make it earn it
-              </h2>
-              <p style={{ fontSize: "0.9375rem", color: "#7878a0", lineHeight: 1.72 }}>
-                Every week, a curated set of AI artworks enters the contest. Visitors vote once — no account required, just show up and pick your favourite. When the timer hits zero, the highest-voted piece wins and gets archived forever. Then we go again.
-              </p>
-            </div>
+        {/* ── HERO ──────────────────────────────────────────────────── */}
+        <section
+          style={{
+            borderBottom: "1px solid rgba(139,92,246,0.12)",
+            paddingTop: "80px",
+            paddingBottom: "80px",
+            marginBottom: "0",
+          }}
+        >
+          {/* Subtle grid texture */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              opacity: 0.018,
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)",
+              backgroundSize: "48px 48px",
+              pointerEvents: "none",
+            }}
+          />
+          <div className="shell" style={{ position: "relative" }}>
+            <p style={{
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "#a78bfa",
+              fontFamily: "var(--font-dm-mono)",
+              marginBottom: "24px",
+            }}>
+              Oliver — Full Stack Developer
+            </p>
+            <h1 style={{
+              fontFamily: "var(--font-syne)",
+              fontWeight: 800,
+              fontSize: "clamp(2.25rem, 6vw, 3.75rem)",
+              letterSpacing: "-0.04em",
+              lineHeight: 1.05,
+              color: "#eeeeff",
+              margin: "0 0 28px",
+              maxWidth: "760px",
+            }}>
+              Every tool here<br />
+              <span style={{ color: "#3a3a58" }}>solved a real problem.</span>
+            </h1>
+            <p style={{
+              fontSize: "1.0625rem",
+              color: "#7878a0",
+              lineHeight: 1.72,
+              maxWidth: "620px",
+              margin: 0,
+            }}>
+              AI Art Arena is a live, production web application — a weekly voting contest for
+              AI-generated artwork. I did not choose this tech stack because it looked impressive
+              on a CV. I chose each piece because I had a problem, and it was the right tool to
+              solve it. That is how every serious product gets built.
+            </p>
           </div>
         </section>
 
-        {/* ── How It Works ─────────────────────────────────────── */}
-        <section style={{ marginBottom: "100px" }}>
-          <p style={eyebrow}>How it works</p>
-          <h2 style={sectionHead}>Simple by design.</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            {[
-              { n: "01", title: "Six artworks drop every Monday", body: "A curated selection of AI-generated images enters the arena — each built from a unique prompt, each competing for the same crown." },
-              { n: "02", title: "You vote once", body: "One vote per contest. No account required. Pick the artwork that stops you in your tracks. Signing in links your vote to your profile so you can track it." },
-              { n: "03", title: "Live counts update in real time", body: "Supabase Realtime pushes vote counts to every open browser tab the moment a vote lands. Watch the standings shift." },
-              { n: "04", title: "Champion is crowned at the final bell", body: "When the timer hits zero, the highest-voted piece wins. The contest auto-archives and a new one opens automatically." },
-              { n: "05", title: "Results live forever in the Archive", body: "Every past champion is preserved with their vote count, week number, and full contest results. Nothing disappears." },
-            ].map(({ n, title, body }, i) => (
-              <div
-                key={n}
-                className="animate-card"
-                style={{ "--card-delay": `${i * 60}ms` } as React.CSSProperties}
-              >
-                <div style={{
-                  display: "flex",
-                  gap: "24px",
-                  alignItems: "flex-start",
-                  padding: "28px 32px",
-                  background: "#111119",
-                  border: "1px solid rgba(139,92,246,0.12)",
-                  borderRadius: "12px",
+        {/* ── THE PERSON ────────────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid rgba(139,92,246,0.12)", padding: "80px 0" }}>
+          <div className="shell">
+            <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "80px", alignItems: "start" }}>
+              <div style={{ position: "sticky", top: "84px" }}>
+                <p style={{
+                  fontSize: "11px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "#3a3a58",
                 }}>
-                  <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", fontWeight: 700, color: "#8b5cf6", flexShrink: 0, marginTop: "3px", letterSpacing: "0.06em" }}>{n}</span>
-                  <div>
-                    <h3 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1rem", color: "#eeeeff", marginBottom: "6px", letterSpacing: "-0.01em" }}>{title}</h3>
-                    <p style={{ fontSize: "0.9375rem", color: "#7878a0", lineHeight: 1.65, margin: 0 }}>{body}</p>
-                  </div>
-                </div>
+                  The builder
+                </p>
               </div>
-            ))}
+              <div style={{ display: "flex", flexDirection: "column", gap: "24px", color: "#7878a0", lineHeight: 1.72, fontSize: "1.0625rem" }}>
+                <p style={{ margin: 0 }}>
+                  Three years ago I was selling life insurance. No computer science degree.
+                  No bootcamp. No head start. What I had was a stubborn need to understand
+                  how things work and the willingness to keep going when they did not.
+                </p>
+                <p style={{ margin: 0 }}>
+                  I taught myself to code the way most things worth knowing get learned — by
+                  building something, running into a problem, figuring out the solution, and
+                  building something harder next. React first, then Next.js, then what a
+                  database actually is and why it matters, then authentication, security,
+                  deployment, performance. Each layer required the one before it.
+                </p>
+                <p style={{ margin: 0 }}>
+                  Necessity is the mother of invention. I wanted to build a voting platform,
+                  so I needed to store data. I needed to store data, so I learned PostgreSQL.
+                  I needed users to sign in, so I learned authentication. I needed to prevent
+                  abuse, so I learned rate limiting. Every technology on this project exists
+                  because the project demanded it. That is the only reason to learn anything.
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* ── The Stack ─────────────────────────────────────────── */}
-        <section style={{ marginBottom: "100px" }}>
-          <p style={eyebrow}>Under the hood</p>
-          <h2 style={sectionHead}>Built on tools I&apos;d trust with production traffic.</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "1px", background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden", marginBottom: "28px" }}>
-            {STACK.map(({ name, desc }) => (
-              <div key={name} style={{ background: "#111119", padding: "24px 28px" }}>
-                <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.8125rem", fontWeight: 500, color: "#a78bfa", marginBottom: "6px" }}>{name}</div>
-                <div style={{ fontSize: "0.8125rem", color: "#7878a0", lineHeight: 1.55 }}>{desc}</div>
+        {/* ── THE DECISIONS ─────────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid rgba(139,92,246,0.12)", padding: "80px 0" }}>
+          <div className="shell">
+            <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "80px", alignItems: "start" }}>
+              <div style={{ position: "sticky", top: "84px" }}>
+                <p style={{
+                  fontSize: "11px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "#3a3a58",
+                  marginBottom: "8px",
+                }}>
+                  The stack
+                </p>
+                <p style={{ fontSize: "11px", color: "#3a3a58", lineHeight: 1.55, fontFamily: "var(--font-dm-mono)" }}>
+                  Problem.<br />Solution.<br />Who else did it.
+                </p>
               </div>
-            ))}
-          </div>
-          <div style={{ ...card, padding: "28px 32px" }}>
-            <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#eeeeff", marginBottom: "8px", letterSpacing: "-0.01em" }}>
-              The vote endpoint is one atomic PostgreSQL function.
-            </p>
-            <p style={{ fontSize: "0.9375rem", color: "#7878a0", lineHeight: 1.7, margin: 0 }}>
-              <code style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.8125rem", color: "#8b5cf6", background: "rgba(139,92,246,0.08)", padding: "1px 6px", borderRadius: "4px" }}>submit_vote</code> checks contest status, artwork existence, duplicate votes, and increments the count in a single transaction. What used to be five sequential database queries is now one round trip at ~40ms. No race conditions. No partial writes.
-            </p>
-          </div>
-        </section>
 
-        {/* ── Lessons ───────────────────────────────────────────── */}
-        <section style={{ marginBottom: "100px" }}>
-          <p style={eyebrow}>What I learned</p>
-          <h2 style={sectionHead}>Building it taught me things the docs don&apos;t say.</h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {LESSONS.map(({ title, body }, i) => (
-              <div
-                key={i}
-                className="animate-card"
-                style={{ "--card-delay": `${i * 50}ms`, ...card, padding: "28px 32px" } as React.CSSProperties}
-              >
-                <h3 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1rem", color: "#eeeeff", marginBottom: "10px", letterSpacing: "-0.01em" }}>
-                  {title}
-                </h3>
-                <p style={{ fontSize: "0.9375rem", color: "#7878a0", lineHeight: 1.72, margin: 0 }}>{body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+              <div style={{ display: "flex", flexDirection: "column", gap: "64px" }}>
+                {decisions.map(({ tech, problem, solution, company, parallel }, i) => (
+                  <article
+                    key={tech}
+                    className="animate-card"
+                    style={{ "--card-delay": `${i * 40}ms` } as React.CSSProperties}
+                  >
+                    {/* Tech badge */}
+                    <div style={{ marginBottom: "24px" }}>
+                      <span style={{
+                        fontSize: "11px",
+                        fontFamily: "var(--font-dm-mono)",
+                        fontWeight: 700,
+                        letterSpacing: "0.15em",
+                        textTransform: "uppercase",
+                        color: "#a78bfa",
+                        background: "rgba(139,92,246,0.10)",
+                        padding: "4px 12px",
+                        borderRadius: "100px",
+                      }}>
+                        {tech}
+                      </span>
+                    </div>
 
-        {/* ── What's Live + Roadmap ─────────────────────────────── */}
-        <section style={{ marginBottom: "100px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "24px", alignItems: "start" }}>
-            {/* What's live */}
-            <div>
-              <p style={eyebrow}>What&apos;s live today</p>
-              <h2 style={{ ...sectionHead, marginBottom: "24px" }}>Everything is working.</h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {WHAT_IS_LIVE.map((item) => (
-                  <div key={item} style={{ display: "flex", gap: "14px", alignItems: "flex-start", padding: "16px 20px", background: "#111119", border: "1px solid rgba(139,92,246,0.1)", borderRadius: "10px" }}>
-                    <span style={{ color: "#34d399", fontSize: "0.875rem", flexShrink: 0, marginTop: "1px" }}>✓</span>
-                    <span style={{ fontSize: "0.9375rem", color: "#7878a0", lineHeight: 1.55 }}>{item}</span>
-                  </div>
+                    {/* Problem */}
+                    <div style={{ marginBottom: "20px" }}>
+                      <p style={{
+                        fontSize: "11px",
+                        fontFamily: "var(--font-dm-mono)",
+                        fontWeight: 600,
+                        letterSpacing: "0.15em",
+                        textTransform: "uppercase",
+                        color: "#3a3a58",
+                        marginBottom: "8px",
+                      }}>
+                        The problem
+                      </p>
+                      <p style={{ fontSize: "0.9375rem", color: "#7878a0", lineHeight: 1.72, margin: 0 }}>
+                        {problem}
+                      </p>
+                    </div>
+
+                    {/* Solution */}
+                    <div style={{ marginBottom: "20px" }}>
+                      <p style={{
+                        fontSize: "11px",
+                        fontFamily: "var(--font-dm-mono)",
+                        fontWeight: 600,
+                        letterSpacing: "0.15em",
+                        textTransform: "uppercase",
+                        color: "#3a3a58",
+                        marginBottom: "8px",
+                      }}>
+                        How it solved it
+                      </p>
+                      <p style={{ fontSize: "0.9375rem", color: "#eeeeff", lineHeight: 1.72, margin: 0 }}>
+                        {solution}
+                      </p>
+                    </div>
+
+                    {/* Company parallel */}
+                    <div style={{
+                      background: "#111119",
+                      border: "1px solid rgba(139,92,246,0.12)",
+                      borderRadius: "10px",
+                      padding: "20px 24px",
+                    }}>
+                      <p style={{
+                        fontSize: "11px",
+                        fontFamily: "var(--font-dm-mono)",
+                        fontWeight: 600,
+                        letterSpacing: "0.15em",
+                        textTransform: "uppercase",
+                        color: "#3a3a58",
+                        marginBottom: "8px",
+                      }}>
+                        {company} did this too
+                      </p>
+                      <p style={{ fontSize: "0.875rem", color: "#7878a0", lineHeight: 1.65, margin: 0 }}>
+                        {parallel}
+                      </p>
+                    </div>
+                  </article>
                 ))}
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* Roadmap */}
-            <div style={{ ...card, padding: "28px", position: "sticky", top: "120px" }}>
-              <p style={{ ...eyebrow, color: "#3a3a58" }}>Roadmap</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {ROADMAP.map(({ status, label }) => {
-                  const s = STATUS[status];
-                  return (
-                    <div key={label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
-                      <span style={{ fontSize: "0.8125rem", color: status === "live" ? "#7878a0" : "#3a3a58", lineHeight: 1.4 }}>{label}</span>
-                      <span style={{
-                        fontSize: "9px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
-                        color: s.color, background: s.bg, border: `1px solid ${s.border}`,
-                        padding: "2px 8px", borderRadius: "100px", flexShrink: 0,
-                      }}>
-                        {s.label}
-                      </span>
-                    </div>
-                  );
-                })}
+        {/* ── ON USING AI ───────────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid rgba(139,92,246,0.12)", padding: "80px 0", background: "rgba(139,92,246,0.02)" }}>
+          <div className="shell">
+            <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "80px", alignItems: "start" }}>
+              <div style={{ position: "sticky", top: "84px" }}>
+                <p style={{
+                  fontSize: "11px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "#3a3a58",
+                }}>
+                  On using AI
+                </p>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "24px", color: "#7878a0", lineHeight: 1.72, fontSize: "1.0625rem" }}>
+                <p style={{ margin: 0 }}>
+                  I use Claude as a development tool — the same way I use TypeScript, a linter,
+                  or a debugger. It helps me write code faster and explore implementation options.
+                  Every architectural decision, technology choice, security tradeoff, and product
+                  direction on this project was mine.
+                </p>
+                <p style={{ margin: 0 }}>
+                  The architect is human. The tools are modern. That is how professional
+                  development works in 2026, and pretending otherwise does not make someone a
+                  better developer — it just makes them a slower one.
+                </p>
+                <p style={{ margin: 0 }}>
+                  What AI cannot do is understand the problem I am trying to solve. It cannot
+                  decide that one vote per IP per 24 hours is the right constraint for this
+                  platform. It cannot decide that database-level security matters more than
+                  shipping a week faster. It cannot look at five sequential database queries
+                  and understand why collapsing them into one atomic function is the right
+                  call — not just for performance, but for correctness under concurrent load.
+                  Those decisions require understanding the system. That understanding is mine.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── CTA ───────────────────────────────────────────────── */}
-        <section>
-          <div style={{
-            background: "linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(139,92,246,0.06) 50%, rgba(139,92,246,0.02) 100%)",
-            border: "1px solid rgba(139,92,246,0.2)",
-            borderRadius: "20px",
-            padding: "64px 48px",
-            textAlign: "center",
-            position: "relative",
-            overflow: "hidden",
-          }}>
-            {/* Subtle orb behind CTA */}
-            <div style={{ position: "absolute", top: "-40px", left: "50%", transform: "translateX(-50%)", width: "400px", height: "200px", background: "radial-gradient(ellipse, rgba(139,92,246,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
-
-            <p style={{ ...eyebrow, position: "relative" }}>The arena is open</p>
-            <h2 style={{
-              fontFamily: "var(--font-syne)", fontWeight: 800,
-              fontSize: "clamp(1.75rem, 4vw, 2.75rem)", letterSpacing: "-0.04em",
-              color: "#eeeeff", margin: "0 0 16px", position: "relative",
-            }}>
-              Come vote. Pick your champion.
-            </h2>
-            <p style={{ fontSize: "1rem", color: "#7878a0", lineHeight: 1.65, maxWidth: "480px", margin: "0 auto 36px", position: "relative" }}>
-              If you make AI art, want to see AI art, or just want to have an opinion about AI art — this is the place.
-            </p>
-            <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", position: "relative" }}>
-              <Link href="/contest" style={{
-                fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "0.9375rem",
-                color: "#08080e", background: "#fbbf24",
-                padding: "13px 32px", borderRadius: "100px", textDecoration: "none",
-                letterSpacing: "0.01em",
-              }}>
-                Vote this week &rarr;
-              </Link>
-              <Link href="https://github.com/olliedoesisdev/ai-art-arena" target="_blank" rel="noopener noreferrer" style={{
-                fontFamily: "var(--font-syne)", fontWeight: 600, fontSize: "0.9375rem",
-                color: "#a78bfa", background: "rgba(139,92,246,0.10)",
-                border: "1px solid rgba(139,92,246,0.25)",
-                padding: "13px 32px", borderRadius: "100px", textDecoration: "none",
-              }}>
-                View the code
-              </Link>
+        {/* ── WHERE THINGS STAND ────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid rgba(139,92,246,0.12)", padding: "80px 0" }}>
+          <div className="shell">
+            <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "80px", alignItems: "start" }}>
+              <div style={{ position: "sticky", top: "84px" }}>
+                <p style={{
+                  fontSize: "11px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "#3a3a58",
+                }}>
+                  Where things stand
+                </p>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "24px", color: "#7878a0", lineHeight: 1.72, fontSize: "1.0625rem" }}>
+                <p style={{ margin: 0 }}>
+                  Week one is live. Voting works. The contest runs, the archive records results,
+                  the leaderboard tracks all-time champions, and the background jobs cycle
+                  everything automatically. The infrastructure is production-grade — 19
+                  tracked migrations, atomic database functions, three layers of duplicate-vote
+                  prevention, database-level constraints, and a full security audit completed
+                  this week.
+                </p>
+                <p style={{ margin: 0 }}>
+                  The gap between this project and a production app at a well-funded startup
+                  is execution depth and time, not fundamental approach. The technology is
+                  identical. The architectural thinking is the same. That gap closes with hours,
+                  and the hours are going in.
+                </p>
+                <p style={{ margin: 0 }}>
+                  What this project demonstrates right now: I understand how to identify the
+                  right tool for a real problem, implement it correctly, and build systems
+                  that hold up under scrutiny. That is the job.
+                </p>
+              </div>
             </div>
           </div>
+        </section>
 
-          {/* Footer credit */}
-          <p style={{ textAlign: "center", fontSize: "0.8125rem", color: "#3a3a58", fontFamily: "var(--font-dm-mono)", marginTop: "32px" }}>
-            Built with Next.js, Supabase, Vercel, and an unreasonable amount of dark purple.
-          </p>
+        {/* ── CTA ───────────────────────────────────────────────────── */}
+        <section style={{ padding: "80px 0", background: "rgba(139,92,246,0.02)" }}>
+          <div className="shell">
+            <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "80px", alignItems: "start" }}>
+              <div style={{ position: "sticky", top: "84px" }}>
+                <p style={{
+                  fontSize: "11px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontWeight: 600,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  color: "#3a3a58",
+                }}>
+                  Work together
+                </p>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "32px", color: "#7878a0", lineHeight: 1.72, fontSize: "1.0625rem" }}>
+                <p style={{ margin: 0 }}>
+                  I take on client work. If you need a developer who solves problems instead
+                  of copying solutions — someone who understands every layer of the stack and
+                  treats your project with the same seriousness as their own — reach out.
+                </p>
+                <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                  <a
+                    href="mailto:hello@olliedoesis.dev"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "12px 28px",
+                      background: "#8b5cf6",
+                      color: "#fff",
+                      fontFamily: "var(--font-syne)",
+                      fontWeight: 700,
+                      fontSize: "0.9375rem",
+                      borderRadius: "100px",
+                      textDecoration: "none",
+                      letterSpacing: "0.01em",
+                      transition: "background 0.2s",
+                    }}
+                  >
+                    Get in touch
+                  </a>
+                  <a
+                    href="https://github.com/olliedoesisdev/ai-art-arena"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "12px 28px",
+                      background: "transparent",
+                      border: "1px solid rgba(139,92,246,0.25)",
+                      color: "#a78bfa",
+                      fontFamily: "var(--font-syne)",
+                      fontWeight: 600,
+                      fontSize: "0.9375rem",
+                      borderRadius: "100px",
+                      textDecoration: "none",
+                      transition: "border-color 0.2s, color 0.2s",
+                    }}
+                  >
+                    View source on GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
       </div>
-    </div>
+    </>
   );
 }

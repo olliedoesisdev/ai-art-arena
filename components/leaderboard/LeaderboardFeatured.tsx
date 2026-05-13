@@ -14,8 +14,8 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
   return (
     <div
       style={{
-        background: "#111119",
-        border: "1px solid rgba(251,191,36,0.2)",
+        background: "var(--color-bg-surface)",
+        border: "1px solid rgba(251,191,36,0.2)", /* status-warning at 20% */
         borderRadius: "14px",
         overflow: "hidden",
         position: "sticky",
@@ -44,7 +44,7 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
             fontWeight: 700,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#fbbf24",
+            color: "var(--color-status-warning)",
             background: "rgba(251,191,36,0.12)",
             border: "1px solid rgba(251,191,36,0.3)",
             padding: "4px 10px",
@@ -62,7 +62,7 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
             fontFamily: "var(--font-syne)",
             fontWeight: 700,
             fontSize: "1.125rem",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             marginBottom: "8px",
           }}
         >
@@ -70,7 +70,7 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
         </h3>
 
         {artwork.contests && (
-          <p style={{ fontSize: "0.8125rem", color: "#7878a0", marginBottom: "16px" }}>
+          <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginBottom: "16px" }}>
             Week {artwork.contests.week_number}
           </p>
         )}
@@ -91,12 +91,12 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
               fontFamily: "var(--font-dm-mono)",
               fontSize: "1.75rem",
               fontWeight: 500,
-              color: "#fbbf24",
+              color: "var(--color-status-warning)",
             }}
           >
             {artwork.vote_count.toLocaleString()}
           </span>
-          <span style={{ fontSize: "0.8125rem", color: "#7878a0" }}>votes</span>
+          <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>votes</span>
         </div>
       </div>
     </div>

@@ -10,9 +10,9 @@ interface LeaderboardEntry {
 }
 
 const RANK_COLORS: Record<number, string> = {
-  1: "#fbbf24",
-  2: "#b0b0c8",
-  3: "#c07840",
+  1: "var(--color-status-warning)",   /* gold */
+  2: "var(--color-rank-silver)",      /* documented in globals.css */
+  3: "var(--color-rank-bronze)",      /* documented in globals.css */
 };
 
 export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) {
@@ -22,15 +22,15 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
         display: "flex",
         flexDirection: "column",
         gap: "1px",
-        background: "rgba(139,92,246,0.12)",
-        border: "1px solid rgba(139,92,246,0.12)",
+        background: "var(--color-border-subtle)",
+        border: "1px solid var(--color-border-subtle)",
         borderRadius: "14px",
         overflow: "hidden",
       }}
     >
       {artworks.map((artwork, index) => {
         const rank = index + 1;
-        const rankColor = RANK_COLORS[rank] ?? "#3a3a58";
+        const rankColor = RANK_COLORS[rank] ?? "var(--color-text-dim)";
         const isTop3 = rank <= 3;
 
         return (
@@ -41,7 +41,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
               alignItems: "center",
               gap: "16px",
               padding: "14px 20px",
-              background: "#111119",
+              background: "var(--color-bg-surface)",
             }}
           >
             {/* Rank */}
@@ -86,7 +86,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
                 style={{
                   fontSize: "0.875rem",
                   fontWeight: 600,
-                  color: "#eeeeff",
+                  color: "var(--color-text)",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -96,7 +96,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
                 {artwork.title}
               </p>
               {artwork.contests && (
-                <p style={{ fontSize: "0.75rem", color: "#3a3a58" }}>
+                <p style={{ fontSize: "0.75rem", color: "var(--color-text-dim)" }}>
                   Week {artwork.contests.week_number}
                 </p>
               )}
@@ -109,12 +109,12 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
                   fontFamily: "var(--font-dm-mono)",
                   fontSize: "0.9375rem",
                   fontWeight: 500,
-                  color: isTop3 ? rankColor : "#7878a0",
+                  color: isTop3 ? rankColor : "var(--color-text-muted)",
                 }}
               >
                 {artwork.vote_count.toLocaleString()}
               </span>
-              <span style={{ display: "block", fontSize: "0.6875rem", color: "#3a3a58" }}>votes</span>
+              <span style={{ display: "block", fontSize: "0.6875rem", color: "var(--color-text-dim)" }}>votes</span>
             </div>
           </div>
         );

@@ -16,15 +16,6 @@ interface Props {
   isAdmin: boolean;
 }
 
-const ADMIN_LINKS: NavLink[] = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/contests", label: "Manage Contests" },
-  { href: "/admin/upload", label: "Upload Artwork" },
-];
-
-const PROFILE_LINKS: NavLink[] = [
-  { href: "/profile/me", label: "My Profile" },
-];
 
 export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
   const { data: session } = useSession();
@@ -78,13 +69,13 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
   const linkStyle = (href: string): React.CSSProperties => ({
     fontSize: "1rem",
     fontWeight: isActive(href) ? 600 : 500,
-    color: isActive(href) ? "#eeeeff" : "#7878a0",
+    color: isActive(href) ? "var(--color-text)" : "var(--color-text-muted)",
     textDecoration: "none",
     padding: "12px 16px",
     borderRadius: "8px",
     display: "block",
-    background: isActive(href) ? "rgba(139,92,246,0.08)" : "transparent",
-    borderLeft: isActive(href) ? "2px solid #8b5cf6" : "2px solid transparent",
+    background: isActive(href) ? "var(--color-purple-dim)" : "transparent",
+    borderLeft: isActive(href) ? "2px solid var(--color-purple)" : "2px solid transparent",
     transition: "color 0.15s, background 0.15s",
   });
 
@@ -99,8 +90,8 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
         style={{
           width: "36px",
           height: "36px",
-          background: open ? "rgba(139,92,246,0.14)" : "rgba(139,92,246,0.08)",
-          border: "1px solid rgba(139,92,246,0.25)",
+          background: open ? "rgba(139,92,246,0.14)" : "var(--color-purple-dim)",
+          border: "1px solid var(--color-border-mid)",
           borderRadius: "8px",
           cursor: "pointer",
           flexShrink: 0,
@@ -132,7 +123,7 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
                 left: 0,
                 width: "16px",
                 height: "1.5px",
-                background: "#eeeeff",
+                background: "var(--color-text)",
                 borderRadius: "2px",
                 top: open ? openTop : defaultTop,
                 transformOrigin: "center",
@@ -153,7 +144,7 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
             inset: 0,
             zIndex: 49,
             // Subtle backdrop — panel itself has the main visual weight
-            background: "rgba(8,8,14,0.6)",
+            background: "rgba(8,8,14,0.6)", /* bg-base at 60% opacity — no token for alpha variants */
             backdropFilter: "blur(3px)",
             WebkitBackdropFilter: "blur(3px)",
           }}
@@ -166,8 +157,8 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
               top: "60px", // matches header height
               left: 0,
               right: 0,
-              background: "#111119",
-              borderBottom: "1px solid rgba(139,92,246,0.15)",
+              background: "var(--color-bg-surface)",
+              borderBottom: "1px solid var(--color-border-subtle)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
               padding: "12px 16px 20px",
               animation: "mobileMenuSlideDown 0.22s ease forwards",
@@ -187,53 +178,19 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
               ))}
             </nav>
 
-            {/* Profile link — shown when signed in */}
+            {/* Profile + admin — shown when signed in */}
             {isLoggedIn && (
               <>
-                <div style={{ height: "1px", background: "rgba(139,92,246,0.12)", margin: "8px 16px" }} />
-                <nav aria-label="Profile navigation">
-                  {PROFILE_LINKS.map(({ href, label }) => (
-                    <Link key={href} href={href} onClick={() => setOpen(false)} style={linkStyle(href)}>
-                      {label}
+                <div style={{ height: "1px", background: "var(--color-border-subtle)", margin: "8px 16px" }} />
+                <nav aria-label="Account navigation">
+                  <Link href="/profile/me" onClick={() => setOpen(false)} style={linkStyle("/profile/me")}>
+                    My Profile
+                  </Link>
+                  {isAdmin && (
+                    <Link href="/admin" onClick={() => setOpen(false)} style={linkStyle("/admin")}>
+                      Dashboard
                     </Link>
-                  ))}
-                </nav>
-              </>
-            )}
-
-            {/* Admin links */}
-            {isAdmin && (
-              <>
-                <div
-                  style={{
-                    height: "1px",
-                    background: "rgba(139,92,246,0.12)",
-                    margin: "8px 16px",
-                  }}
-                />
-                <p
-                  style={{
-                    fontSize: "9px",
-                    fontWeight: 700,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: "#3a3a58",
-                    padding: "4px 16px 8px",
-                  }}
-                >
-                  Admin
-                </p>
-                <nav aria-label="Admin navigation">
-                  {ADMIN_LINKS.map(({ href, label }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setOpen(false)}
-                      style={linkStyle(href)}
-                    >
-                      {label}
-                    </Link>
-                  ))}
+                  )}
                 </nav>
               </>
             )}
@@ -256,11 +213,11 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
                   display: "block",
                   textAlign: "center",
                   padding: "12px",
-                  background: "#fbbf24",
+                  background: "var(--color-status-warning)",
                   borderRadius: "8px",
                   fontSize: "0.9375rem",
                   fontWeight: 700,
-                  color: "#08080e",
+                  color: "var(--color-bg-base)",
                   textDecoration: "none",
                 }}
               >
@@ -277,11 +234,11 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
                     width: "100%",
                     padding: "11px",
                     background: "transparent",
-                    border: "1px solid rgba(248,113,113,0.2)",
+                    border: "1px solid rgba(248,113,113,0.2)", /* status-error at 20% — no alpha token */
                     borderRadius: "8px",
                     fontSize: "0.875rem",
                     fontWeight: 500,
-                    color: "#f87171",
+                    color: "var(--color-status-error)",
                     cursor: "pointer",
                   }}
                 >
@@ -295,11 +252,11 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
                     display: "block",
                     textAlign: "center",
                     padding: "11px",
-                    border: "1px solid rgba(139,92,246,0.25)",
+                    border: "1px solid var(--color-border-mid)",
                     borderRadius: "8px",
                     fontSize: "0.875rem",
                     fontWeight: 500,
-                    color: "#7878a0",
+                    color: "var(--color-text-muted)",
                     textDecoration: "none",
                   }}
                 >
@@ -312,7 +269,7 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
               <p
                 style={{
                   fontSize: "0.75rem",
-                  color: "#3a3a58",
+                  color: "var(--color-text-dim)",
                   textAlign: "center",
                   marginTop: "14px",
                 }}
@@ -324,13 +281,6 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
         </div>
       )}
 
-      {/* Slide-down keyframe — injected inline to avoid a separate CSS file */}
-      <style>{`
-        @keyframes mobileMenuSlideDown {
-          from { opacity: 0; transform: translateY(-8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </>
   );
 }

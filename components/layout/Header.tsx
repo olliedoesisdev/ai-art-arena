@@ -32,7 +32,6 @@ export async function Header() {
     { href: "/archive", label: "Archive" },
     { href: "/leaderboard", label: "Leaderboard" },
     { href: "/about", label: "About" },
-    { href: "/join", label: "Join" },
   ];
 
   return (
@@ -45,7 +44,7 @@ export async function Header() {
         background: "rgba(8,8,14,0.88)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
-        borderBottom: "1px solid rgba(139,92,246,0.12)",
+        borderBottom: "1px solid var(--color-border-subtle)",
       }}
     >
       <div
@@ -64,7 +63,7 @@ export async function Header() {
             fontFamily: "var(--font-syne)",
             fontWeight: 800,
             fontSize: "1.125rem",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             letterSpacing: "-0.03em",
             textDecoration: "none",
             flexShrink: 0,
@@ -89,8 +88,8 @@ export async function Header() {
             style={{
               fontSize: "0.8125rem",
               fontWeight: 700,
-              color: "#08080e",
-              background: "#fbbf24",
+              color: "var(--color-bg-base)",
+              background: "var(--color-status-warning)",
               padding: "7px 16px",
               borderRadius: "100px",
               textDecoration: "none",

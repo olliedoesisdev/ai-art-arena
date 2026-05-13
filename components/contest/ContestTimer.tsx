@@ -30,7 +30,7 @@ function Cell({ value, label }: { value: number; label: string }) {
           fontFamily: "var(--font-dm-mono)",
           fontWeight: 700,
           fontSize: "1.375rem",
-          color: "#eeeeff",
+          color: "var(--color-text)",
           lineHeight: 1,
           letterSpacing: "-0.02em",
           background: "rgba(255,255,255,0.06)",
@@ -78,7 +78,7 @@ export function ContestTimer({ endDate }: { endDate: string }) {
           fontFamily: "var(--font-dm-mono)",
           fontSize: "0.8125rem",
           fontWeight: 600,
-          color: "#7878a0",
+          color: "var(--color-text-muted)",
           letterSpacing: "0.05em",
         }}
       >

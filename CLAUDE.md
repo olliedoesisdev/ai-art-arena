@@ -387,59 +387,13 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artworks_vote_count
 Replaces 5 sequential DB queries with 1 atomic transaction.
 ~200ms becomes ~40ms. No race conditions.
 
-```sql
-CREATE OR REPLACE FUNCTION submit_vote(
-  p_artwork_id UUID,
-  p_contest_id UUID,
-  p_user_id    UUID,
-  p_ip_hash    TEXT
-) RETURNS TABLE (
-  success     BOOLEAN,
-  error_code  TEXT,
-  vote_count  INTEGER
-) LANGUAGE plpgsql SECURITY DEFINER AS $$
-DECLARE
-  v_contest_status TEXT;
-  v_artwork_exists BOOLEAN;
-  v_already_voted  BOOLEAN;
-  v_new_count      INTEGER;
-BEGIN
-  SELECT
-    c.status,
-    EXISTS(SELECT 1 FROM artworks WHERE id = p_artwork_id AND contest_id = p_contest_id),
-    EXISTS(
-      SELECT 1 FROM votes v WHERE v.contest_id = p_contest_id
-      AND (v.ip_hash = p_ip_hash
-        OR (p_user_id IS NOT NULL AND v.user_id = p_user_id))
-    )
-  INTO v_contest_status, v_artwork_exists, v_already_voted
-  FROM contests c WHERE c.id = p_contest_id;
+The live version of this function is migration `20240017_fix_submit_vote_ambiguous_column.sql`.
+It adds a fifth parameter `p_email_hash TEXT DEFAULT NULL` and checks three duplicate-vote vectors:
+- `v.ip_hash = p_ip_hash`
+- `p_user_id IS NOT NULL AND v.user_id = p_user_id`
+- `p_email_hash IS NOT NULL AND v.email_hash = p_email_hash`
 
-  IF v_contest_status IS NULL THEN
-    RETURN QUERY SELECT FALSE, 'CONTEST_NOT_FOUND'::TEXT, 0; RETURN;
-  END IF;
-  IF v_contest_status != 'active' THEN
-    RETURN QUERY SELECT FALSE, 'CONTEST_NOT_ACTIVE'::TEXT, 0; RETURN;
-  END IF;
-  IF NOT v_artwork_exists THEN
-    RETURN QUERY SELECT FALSE, 'ARTWORK_NOT_FOUND'::TEXT, 0; RETURN;
-  END IF;
-  IF v_already_voted THEN
-    RETURN QUERY SELECT FALSE, 'ALREADY_VOTED'::TEXT, 0; RETURN;
-  END IF;
-
-  INSERT INTO votes (artwork_id, contest_id, user_id, ip_hash)
-  VALUES (p_artwork_id, p_contest_id, p_user_id, p_ip_hash);
-
-  UPDATE artworks SET vote_count = vote_count + 1
-  WHERE id = p_artwork_id RETURNING vote_count INTO v_new_count;
-
-  RETURN QUERY SELECT TRUE, NULL::TEXT, v_new_count;
-END;
-$$;
-
-GRANT EXECUTE ON FUNCTION submit_vote TO authenticated, anon;
-```
+Always call with all five parameters. See migration file for the full canonical body.
 
 ### get_homepage_stats — replaces 3 separate COUNT queries
 
@@ -525,7 +479,11 @@ export const adminUploadRateLimit = new Ratelimit({
 })
 ```
 
-Rate limit key for votes: `vote:${ipHash}:${contest_id}` (scoped per contest, not global).
+Rate limit key for votes: `${emailHash}:${contest_id}` for authenticated users, `${ipHash}:${contest_id}` for anonymous (scoped per contest, not global). Email hash uses a separate `VOTE_HASH_SALT` env var.
+
+Two additional limiters exist in `lib/ratelimit.ts`:
+- `authRateLimit` — 5 requests per 15 minutes (prefix: `auth`)
+- `resetRateLimit` — 3 requests per hour (prefix: `reset`)
 
 ---
 
@@ -734,7 +692,7 @@ Rank styling:
 ## 19. MIGRATIONS
 
 All schema changes are migration files in `supabase/migrations/`.
-Naming convention: `YYYYMMDDHHMMSS_description.sql`
+Naming convention: `YYYYMMDD_description.sql` (sequential integer suffix per day if needed)
 Never alter the production database directly. Always write a migration.
 
 Current migrations (applied in order):
@@ -743,6 +701,20 @@ Current migrations (applied in order):
 3. `20240003_submit_vote_function.sql` — submit_vote + get_homepage_stats RPCs
 4. `20240004_system_config.sql` — seeds the 4 system_config rows
 5. `20240005_users_table.sql` — users table + RLS + idx_users_email
+6. `20240006_schema_corrections.sql`
+7. `20240007_security_fixes.sql`
+8. `20240008_comments.sql` — comments table + RLS
+9. `20240009_comments_ip_hash.sql`
+10. `20240010_comment_reactions.sql`
+11. `20240011_add_vote_count_index.sql`
+12. `20240012_security_performance_fixes.sql`
+13. `20240013_add_password_reset_tokens.sql`
+14. `20240014_add_email_hash_to_votes.sql` — email_hash column on votes for third duplicate-vote layer
+15. `20240015_user_profile_columns.sql`
+16. `20240016_views_and_functions.sql`
+17. `20240017_fix_submit_vote_ambiguous_column.sql` — fixes ambiguous column reference + adds p_email_hash param
+18. `20240018_drop_double_increment_trigger.sql` — caught and fixed double-increment trigger bug; corrective UPDATE included
+19. `20240019_vote_count_check_constraint.sql` — CHECK (vote_count >= 0) constraint on artworks
 
 ---
 
@@ -766,28 +738,34 @@ Vitest unit tests (`__tests__/` directory):
 ## 21. CURRENT BUILD STATUS
 
 **Built and working:**
-- NextAuth v5 (GitHub OAuth + Credentials)
-- Supabase schema with RLS policies (5 migrations written)
-- Security headers in middleware
-- IP hashing utility (`lib/utils.ts`)
+- NextAuth v5 (GitHub OAuth + Credentials + magic link email)
+- Supabase schema with RLS policies (19 migrations applied)
+- Security headers in middleware (CSP, HSTS, X-Frame-Options, Permissions-Policy)
+- IP hashing utility (`lib/utils.ts`); email hashing in `lib/ratelimit.ts`
 - Vercel deployment pipeline
 - `/api/v1/vote` route — correct path, atomic RPC, op order per spec
-- Rate limiting (`lib/ratelimit.ts`) — all 3 limiters, correct prefix
+- Rate limiting (`lib/ratelimit.ts`) — 5 limiters (vote, admin, adminUpload, auth, reset)
 - `lib/logger.ts` — pino, all API routes use it
+- Three-client Supabase setup: `createClient()` (cookie), `createPublicClient()` (no-cookie, ISR-safe), `createAdminClient()` (service role)
 - UI components: ArtworkGrid, ArtworkCard, LiveVoteCount, ArchiveGrid, ArchiveCard, WinnerBadge, Button, Card, Skeleton
+- Full homepage, contest page, archive page, leaderboard page, about page — all built and live
 - loading.tsx skeletons for all routes
 - Inngest automation (archive, create-next, vote-reminder)
-- Vitest unit tests (17 passing) + Playwright E2E specs
+- Vitest unit tests (7 test files) + Playwright E2E (6 spec files)
 - Admin dashboard (overview, contests, artworks, analytics)
+- Artist application system (`/join?track=artist`)
+- User profiles with activity feeds and avatar uploads
+- Comments system with reactions and IP-hash moderation
+- Password reset flow with token table
+- CI/CD pipeline: `.github/workflows/ci.yml` — type-check → lint → unit tests → build → Playwright E2E, two jobs, concurrency cancel-in-progress
+- JSON-LD structured data on homepage and about page
 
-**Not yet built — build in this order:**
-1. Design system: update `tailwind.config.ts` to dark token set, add Syne + DM Mono via next/font
-2. Global layout: `app/layout.tsx` — noise/orb layers, dark nav, new font classes
-3. Homepage (`app/page.tsx`) — hero, mosaic, stats (get_homepage_stats), how-it-works, last winner strip
-4. Contest page (`app/contest/[id]/page.tsx`) — dark card grid, timer cells, stats strip, vote alert
-5. Archive page (`app/archive/page.tsx`) — 4-col dark grid with champion badges
-6. Leaderboard page (`app/leaderboard/page.tsx` + components)
-7. About page (`app/about/page.tsx`) — 2-col layout, profile card, roadmap
+**Known gaps (fix in this order for portfolio impact):**
+1. `ArtworkCard.tsx` uses hardcoded hex values in inline styles — should use Tailwind design tokens from tailwind.config.ts
+2. middleware.ts does not redirect unauthenticated requests from `/admin/*` — admin protection is per-route only (each admin route checks session independently)
+3. `requestId` is not forwarded as `X-Request-Id` response header — harder to correlate logs from client errors
+4. Some non-thrown RPC error paths (success: false rows) are not automatically captured by Sentry — manual `captureMessage` needed
+5. Leaderboard rank colours (#2 silver, #3 bronze) use hardcoded hex in the component rather than design tokens
 
 ---
 
@@ -805,6 +783,7 @@ SUPABASE_SERVICE_ROLE_KEY
 UPSTASH_REDIS_REST_URL
 UPSTASH_REDIS_REST_TOKEN
 IP_HASH_SALT
+VOTE_HASH_SALT
 SENTRY_DSN
 RESEND_API_KEY
 INNGEST_SIGNING_KEY

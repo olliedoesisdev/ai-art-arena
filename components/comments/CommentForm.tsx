@@ -44,12 +44,12 @@ export function CommentForm({ artworkId }: Props) {
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    background: "#181820",
-    border: "1px solid rgba(139,92,246,0.2)",
+    background: "var(--color-bg-surface2)",
+    border: "1px solid var(--color-border-mid)",
     borderRadius: "8px",
     padding: "10px 14px",
     fontSize: "0.875rem",
-    color: "#eeeeff",
+    color: "var(--color-text)",
     outline: "none",
     fontFamily: "inherit",
   };
@@ -58,7 +58,7 @@ export function CommentForm({ artworkId }: Props) {
     display: "block",
     fontSize: "0.75rem",
     fontWeight: 600,
-    color: "#7878a0",
+    color: "var(--color-text-muted)",
     marginBottom: "6px",
     letterSpacing: "0.04em",
   };
@@ -85,7 +85,7 @@ export function CommentForm({ artworkId }: Props) {
           style={{
             marginLeft: "auto",
             fontSize: "0.75rem",
-            color: "#7878a0",
+            color: "var(--color-text-muted)",
             background: "transparent",
             border: "none",
             cursor: "pointer",

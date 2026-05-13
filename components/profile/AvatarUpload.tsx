@@ -95,9 +95,9 @@ export function AvatarUpload({ avatarUrl, displayName, isOwnProfile, onAvatarCha
           height: "88px",
           borderRadius: "50%",
           overflow: "hidden",
-          background: "#181820",
-          border: "3px solid #08080e",
-          boxShadow: "0 0 0 2px rgba(139,92,246,0.3)",
+          background: "var(--color-bg-surface2)",
+          border: "3px solid var(--color-bg-base)",
+          boxShadow: "0 0 0 2px var(--color-border-mid)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -114,7 +114,7 @@ export function AvatarUpload({ avatarUrl, displayName, isOwnProfile, onAvatarCha
               fontFamily: "var(--font-dm-mono)",
               fontWeight: 700,
               fontSize: "1.75rem",
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
               letterSpacing: "-0.02em",
             }}>
               {getInitial(displayName)}
@@ -144,7 +144,7 @@ export function AvatarUpload({ avatarUrl, displayName, isOwnProfile, onAvatarCha
                 height: "20px",
                 borderRadius: "50%",
                 border: "2px solid rgba(255,255,255,0.2)",
-                borderTopColor: "#fff",
+                borderTopColor: "white",
                 animation: "avatarSpin 0.7s linear infinite",
               }} />
             ) : (
@@ -173,18 +173,18 @@ export function AvatarUpload({ avatarUrl, displayName, isOwnProfile, onAvatarCha
       {isOwnProfile && avatarUrl && (
         <div style={{ marginTop: "8px" }}>
           {confirmingRemove ? (
-            <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#7878a0" }}>
+            <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
               Sure?{" "}
               <span
                 onClick={handleRemove}
-                style={{ color: "#f87171", cursor: "pointer", textDecoration: "underline" }}
+                style={{ color: "var(--color-status-error)", cursor: "pointer", textDecoration: "underline" }}
               >
                 Yes
               </span>
               {" / "}
               <span
                 onClick={() => setConfirmingRemove(false)}
-                style={{ color: "#7878a0", cursor: "pointer", textDecoration: "underline" }}
+                style={{ color: "var(--color-text-muted)", cursor: "pointer", textDecoration: "underline" }}
               >
                 Cancel
               </span>
@@ -195,7 +195,7 @@ export function AvatarUpload({ avatarUrl, displayName, isOwnProfile, onAvatarCha
               style={{
                 fontFamily: "var(--font-dm-mono)",
                 fontSize: "11px",
-                color: "#3a3a58",
+                color: "var(--color-text-dim)",
                 cursor: "pointer",
                 textDecoration: "underline",
                 textUnderlineOffset: "2px",

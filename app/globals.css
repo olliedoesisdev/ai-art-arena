@@ -39,6 +39,18 @@
   --radius-card: 14px;
   --radius-sm:   8px;
   --radius-pill: 100px;
+
+  /* ── Leaderboard rank colours ─────────────────────────────── */
+  --color-rank-silver: #b0b0c8;
+  --color-rank-bronze: #c07840;
+
+  /* ── Artwork card accents (cycled by index in ArtworkCard.tsx) ── */
+  --color-card-accent-0: #7c3aed;
+  --color-card-accent-1: #ff6b35;
+  --color-card-accent-2: #06b6d4;
+  --color-card-accent-3: #84cc16;
+  --color-card-accent-4: #f59e0b;
+  --color-card-accent-5: #f472b6;
 }
 
 /* ── Base ────────────────────────────────────────────────── */
@@ -177,6 +189,12 @@ body {
   animation: card-enter 0.4s ease forwards;
   animation-delay: var(--card-delay, 0ms);
   opacity: 0;
+}
+
+/* ── Mobile menu slide-down ──────────────────────────────── */
+@keyframes mobileMenuSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Vote alert slide-down ───────────────────────────────── */

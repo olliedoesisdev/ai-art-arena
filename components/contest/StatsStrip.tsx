@@ -11,8 +11,8 @@ export function StatsStrip({ totalVotes, artworkCount }: StatsStripProps) {
         gap: "24px",
         alignItems: "center",
         padding: "12px 20px",
-        background: "#111119",
-        border: "1px solid rgba(139,92,246,0.12)",
+        background: "var(--color-bg-surface)",
+        border: "1px solid var(--color-border-subtle)",
         borderRadius: "8px",
         marginBottom: "32px",
       }}
@@ -23,18 +23,18 @@ export function StatsStrip({ totalVotes, artworkCount }: StatsStripProps) {
             fontFamily: "var(--font-dm-mono)",
             fontWeight: 500,
             fontSize: "1.25rem",
-            color: "#eeeeff",
+            color: "var(--color-text)",
           }}
         >
           {totalVotes.toLocaleString()}
         </span>
-        <span style={{ fontSize: "0.8125rem", color: "#7878a0" }}>votes cast</span>
+        <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>votes cast</span>
       </div>
       <div
         style={{
           width: "1px",
           height: "16px",
-          background: "rgba(139,92,246,0.2)",
+          background: "var(--color-border-mid)",
           flexShrink: 0,
         }}
       />
@@ -44,12 +44,12 @@ export function StatsStrip({ totalVotes, artworkCount }: StatsStripProps) {
             fontFamily: "var(--font-dm-mono)",
             fontWeight: 500,
             fontSize: "1.25rem",
-            color: "#eeeeff",
+            color: "var(--color-text)",
           }}
         >
           {artworkCount}
         </span>
-        <span style={{ fontSize: "0.8125rem", color: "#7878a0" }}>artworks competing</span>
+        <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>artworks competing</span>
       </div>
     </div>
   );

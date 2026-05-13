@@ -19,9 +19,9 @@ export function EditProfileButton({ profile, onSaved }: Props) {
         style={{
           padding: "7px 16px",
           background: "transparent",
-          border: "1px solid rgba(139,92,246,0.3)",
+          border: "1px solid var(--color-border-mid)",
           borderRadius: "100px",
-          color: "#a78bfa",
+          color: "var(--color-purple-light)",
           fontSize: "11px",
           fontFamily: "var(--font-dm-mono)",
           fontWeight: 700,

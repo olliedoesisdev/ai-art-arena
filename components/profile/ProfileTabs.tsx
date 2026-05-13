@@ -19,8 +19,8 @@ export function ProfileTabs({ votes, comments }: Props) {
     padding: "12px 4px",
     background: "none",
     border: "none",
-    borderBottom: activeTab === tab ? "2px solid #a78bfa" : "2px solid transparent",
-    color: activeTab === tab ? "#a78bfa" : "#7878a0",
+    borderBottom: activeTab === tab ? "2px solid var(--color-purple-light)" : "2px solid transparent",
+    color: activeTab === tab ? "var(--color-purple-light)" : "var(--color-text-muted)",
     fontFamily: "var(--font-dm-mono)",
     fontSize: "12px",
     fontWeight: 700,
@@ -37,7 +37,7 @@ export function ProfileTabs({ votes, comments }: Props) {
       <div style={{
         display: "flex",
         gap: "24px",
-        borderBottom: "1px solid rgba(139,92,246,0.12)",
+        borderBottom: "1px solid var(--color-border-subtle)",
         marginBottom: "24px",
       }}>
         <button style={tabStyle("votes")} onClick={() => setActiveTab("votes")}>

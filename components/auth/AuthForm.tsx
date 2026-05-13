@@ -6,10 +6,10 @@ import { signIn } from "next-auth/react";
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 14px",
-  background: "#181820",
-  border: "1px solid rgba(139,92,246,0.25)",
+  background: "var(--color-bg-surface2)",
+  border: "1px solid var(--color-border-mid)",
   borderRadius: "8px",
-  color: "#eeeeff",
+  color: "var(--color-text)",
   fontSize: "0.875rem",
   outline: "none",
   boxSizing: "border-box",
@@ -19,17 +19,17 @@ const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: "0.8125rem",
   fontWeight: 500,
-  color: "#7878a0",
+  color: "var(--color-text-muted)",
   marginBottom: "6px",
 };
 
 const primaryBtn: React.CSSProperties = {
   width: "100%",
   padding: "11px",
-  background: "#8b5cf6",
+  background: "var(--color-purple)",
   border: "none",
   borderRadius: "8px",
-  color: "#fff",
+  color: "var(--color-bg-base)",
   fontFamily: "var(--font-syne)",
   fontWeight: 700,
   fontSize: "0.9375rem",
@@ -39,7 +39,7 @@ const primaryBtn: React.CSSProperties = {
 
 const disabledBtn: React.CSSProperties = {
   ...primaryBtn,
-  background: "#3a3a58",
+  background: "var(--color-text-dim)",
   cursor: "not-allowed",
 };
 
@@ -119,7 +119,7 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
       <div
         style={{
           display: "flex",
-          background: "#181820",
+          background: "var(--color-bg-surface2)",
           borderRadius: "8px",
           padding: "4px",
           marginBottom: "28px",
@@ -138,8 +138,8 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
               fontSize: "0.875rem",
               fontWeight: 600,
               cursor: "pointer",
-              background: tab === t ? "#8b5cf6" : "transparent",
-              color: tab === t ? "#fff" : "#7878a0",
+              background: tab === t ? "var(--color-purple)" : "transparent",
+              color: tab === t ? "var(--color-bg-base)" : "var(--color-text-muted)",
               transition: "all 0.15s",
             }}
           >
@@ -152,13 +152,13 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
       {error && (
         <div
           style={{
-            background: "rgba(248,113,113,0.08)",
+            background: "rgba(248,113,113,0.08)", /* status-error dim — no token; matches status-error-dim pattern */
             border: "1px solid rgba(248,113,113,0.3)",
             borderRadius: "8px",
             padding: "10px 14px",
             marginBottom: "20px",
             fontSize: "0.875rem",
-            color: "#f87171",
+            color: "var(--color-status-error)",
           }}
         >
           {error}
@@ -169,13 +169,13 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
       {success && (
         <div
           style={{
-            background: "rgba(52,211,153,0.08)",
+            background: "var(--color-status-success-dim)",
             border: "1px solid rgba(52,211,153,0.3)",
             borderRadius: "8px",
             padding: "10px 14px",
             marginBottom: "20px",
             fontSize: "0.875rem",
-            color: "#34d399",
+            color: "var(--color-status-success)",
           }}
         >
           {success}
@@ -201,7 +201,7 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
               <label style={{ ...labelStyle, marginBottom: 0 }}>Password</label>
               <a
                 href="/reset-password"
-                style={{ fontSize: "0.75rem", color: "#7878a0", textDecoration: "none" }}
+                style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", textDecoration: "none" }}
               >
                 Forgot password?
               </a>
@@ -219,12 +219,12 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
           <button type="submit" disabled={loading} style={loading ? disabledBtn : primaryBtn}>
             {loading ? "Signing in..." : "Sign In"}
           </button>
-          <p style={{ textAlign: "center", fontSize: "0.8125rem", color: "#7878a0", marginTop: "4px" }}>
+          <p style={{ textAlign: "center", fontSize: "0.8125rem", color: "var(--color-text-muted)", marginTop: "4px" }}>
             No account?{" "}
             <button
               type="button"
               onClick={() => { setTab("signup"); setError(null); }}
-              style={{ background: "none", border: "none", color: "#a78bfa", cursor: "pointer", fontSize: "0.8125rem", fontWeight: 600 }}
+              style={{ background: "none", border: "none", color: "var(--color-purple-light)", cursor: "pointer", fontSize: "0.8125rem", fontWeight: 600 }}
             >
               Sign up free
             </button>
@@ -271,12 +271,12 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
           <button type="submit" disabled={loading} style={loading ? disabledBtn : primaryBtn}>
             {loading ? "Creating account..." : "Create Account"}
           </button>
-          <p style={{ textAlign: "center", fontSize: "0.8125rem", color: "#7878a0", marginTop: "4px" }}>
+          <p style={{ textAlign: "center", fontSize: "0.8125rem", color: "var(--color-text-muted)", marginTop: "4px" }}>
             Already have an account?{" "}
             <button
               type="button"
               onClick={() => { setTab("signin"); setError(null); }}
-              style={{ background: "none", border: "none", color: "#a78bfa", cursor: "pointer", fontSize: "0.8125rem", fontWeight: 600 }}
+              style={{ background: "none", border: "none", color: "var(--color-purple-light)", cursor: "pointer", fontSize: "0.8125rem", fontWeight: 600 }}
             >
               Sign in
             </button>
@@ -285,7 +285,7 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
       )}
 
       {/* Divider + GitHub */}
-      <div style={{ marginTop: "24px", paddingTop: "24px", borderTop: "1px solid rgba(139,92,246,0.12)" }}>
+      <div style={{ marginTop: "24px", paddingTop: "24px", borderTop: "1px solid var(--color-border-subtle)" }}>
         <button
           type="button"
           onClick={() => signIn("github", { callbackUrl })}
@@ -296,10 +296,10 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
             gap: "10px",
             width: "100%",
             padding: "10px",
-            background: "#1f1f2a",
-            border: "1px solid rgba(139,92,246,0.2)",
+            background: "var(--color-bg-surface3)",
+            border: "1px solid var(--color-border-mid)",
             borderRadius: "8px",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             fontSize: "0.875rem",
             fontWeight: 500,
             cursor: "pointer",

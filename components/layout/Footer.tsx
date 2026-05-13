@@ -13,7 +13,7 @@ export function Footer() {
   return (
     <footer
       style={{
-        borderTop: "1px solid rgba(139,92,246,0.12)",
+        borderTop: "1px solid var(--color-border-subtle)",
         padding: "40px 0",
       }}
     >
@@ -27,7 +27,7 @@ export function Footer() {
           gap: "16px",
         }}
       >
-        <p style={{ fontSize: "0.8125rem", color: "#7878a0" }}>
+        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
           &copy; {new Date().getFullYear()} AI Art Arena
         </p>
 
@@ -38,7 +38,7 @@ export function Footer() {
               href={href}
               style={{
                 fontSize: "0.8125rem",
-                color: "#7878a0",
+                color: "var(--color-text-muted)",
                 textDecoration: "none",
                 transition: "color 0.2s",
               }}

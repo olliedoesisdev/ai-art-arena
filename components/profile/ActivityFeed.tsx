@@ -49,7 +49,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
           alignItems: "center",
           gap: "14px",
           padding: "14px 16px",
-          background: "#0d0d14",
+          background: "var(--color-bg-base)",
           border: "1px solid rgba(139,92,246,0.08)",
           borderRadius: "12px",
           transition: "border-color 0.15s, background 0.15s",
@@ -58,13 +58,13 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
         className="feed-item-enter"
         onMouseEnter={(e) => {
           const el = e.currentTarget as HTMLDivElement;
-          el.style.borderColor = "rgba(139,92,246,0.25)";
-          el.style.background = "#111119";
+          el.style.borderColor = "var(--color-border-mid)";
+          el.style.background = "var(--color-bg-surface)";
         }}
         onMouseLeave={(e) => {
           const el = e.currentTarget as HTMLDivElement;
           el.style.borderColor = "rgba(139,92,246,0.08)";
-          el.style.background = "#0d0d14";
+          el.style.background = "var(--color-bg-base)";
         }}
       >
         {/* Type indicator */}
@@ -81,7 +81,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
           borderRadius: "8px",
           overflow: "hidden",
           flexShrink: 0,
-          background: "#1f1f2a",
+          background: "var(--color-bg-surface3)",
           border: "1px solid rgba(139,92,246,0.1)",
         }}>
           {item.artwork_image_url ? (
@@ -100,7 +100,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
             fontFamily: "var(--font-syne)",
             fontSize: "13px",
             fontWeight: 700,
-            color: "#eeeeff",
+            color: "var(--color-text)",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -112,7 +112,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
             fontFamily: "var(--font-dm-mono)",
             fontSize: "10px",
             fontWeight: 700,
-            color: "#34d399",
+            color: "var(--color-status-success)",
             letterSpacing: "0.06em",
           }}>
             Voted on Week {item.contest_week}
@@ -121,7 +121,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
 
         {/* Time + arrow */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#3a3a58" }}>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
             {timeLabel}
           </span>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -147,7 +147,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
       <div
         style={{
           padding: "14px 16px",
-          background: "#0d0d14",
+          background: "var(--color-bg-base)",
           border: "1px solid rgba(139,92,246,0.08)",
           borderLeft: "3px solid rgba(192,132,252,0.6)",
           borderRadius: "12px",
@@ -157,15 +157,15 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
         className="feed-item-enter"
         onMouseEnter={(e) => {
           const el = e.currentTarget as HTMLDivElement;
-          el.style.borderColor = "rgba(139,92,246,0.25)";
-          el.style.borderLeftColor = "#a78bfa";
-          el.style.background = "#111119";
+          el.style.borderColor = "var(--color-border-mid)";
+          el.style.borderLeftColor = "var(--color-purple-light)";
+          el.style.background = "var(--color-bg-surface)";
         }}
         onMouseLeave={(e) => {
           const el = e.currentTarget as HTMLDivElement;
           el.style.borderColor = "rgba(139,92,246,0.08)";
           el.style.borderLeftColor = "rgba(192,132,252,0.6)";
-          el.style.background = "#0d0d14";
+          el.style.background = "var(--color-bg-base)";
         }}
       >
         {/* Header row */}
@@ -177,7 +177,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
             fontFamily: "var(--font-dm-mono)",
             fontSize: "10px",
             fontWeight: 700,
-            color: "#a78bfa",
+            color: "var(--color-purple-light)",
             letterSpacing: "0.06em",
           }}>
             Commented on Week {item.contest_week}
@@ -185,7 +185,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
           <span style={{
             fontFamily: "var(--font-dm-mono)",
             fontSize: "11px",
-            color: "#3a3a58",
+            color: "var(--color-text-dim)",
             marginLeft: "auto",
           }}>
             {timeLabel}
@@ -194,7 +194,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
 
         {/* Body */}
         <p style={{
-          color: "#7878a0",
+          color: "var(--color-text-muted)",
           fontSize: "13px",
           lineHeight: 1.65,
           margin: 0,
@@ -215,7 +215,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
               fontFamily: "var(--font-dm-mono)",
               fontSize: "10px",
               fontWeight: 700,
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
               cursor: "pointer",
               letterSpacing: "0.06em",
             }}
@@ -278,8 +278,8 @@ export function ActivityFeed({ activityFeed, totalVotes, totalComments }: Props)
   const filterBtnStyle = (f: Filter): React.CSSProperties => ({
     background: "none",
     border: "none",
-    borderBottom: filter === f ? "2px solid #a78bfa" : "2px solid transparent",
-    color: filter === f ? "#a78bfa" : "#7878a0",
+    borderBottom: filter === f ? "2px solid var(--color-purple-light)" : "2px solid transparent",
+    color: filter === f ? "var(--color-purple-light)" : "var(--color-text-muted)",
     fontFamily: "var(--font-dm-mono)",
     fontSize: "11px",
     fontWeight: 700,
@@ -301,7 +301,7 @@ export function ActivityFeed({ activityFeed, totalVotes, totalComments }: Props)
           fontFamily: "var(--font-syne)",
           fontSize: "1.125rem",
           fontWeight: 800,
-          color: "#eeeeff",
+          color: "var(--color-text)",
           letterSpacing: "-0.02em",
           margin: 0,
         }}>
@@ -318,8 +318,8 @@ export function ActivityFeed({ activityFeed, totalVotes, totalComments }: Props)
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#3a3a58",
-              background: "#0d0d14",
+              color: "var(--color-text-dim)",
+              background: "var(--color-bg-base)",
               border: "1px solid rgba(139,92,246,0.1)",
               padding: "3px 10px",
               borderRadius: "100px",

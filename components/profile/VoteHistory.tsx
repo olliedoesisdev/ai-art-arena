@@ -42,20 +42,20 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
           alignItems: "center",
           gap: "14px",
           padding: "14px",
-          background: "#0d0d14",
+          background: "var(--color-bg-base)",
           border: "1px solid rgba(139,92,246,0.08)",
           borderRadius: "12px",
           transition: "border-color 0.2s, background 0.2s",
         }}
         onMouseEnter={(e) => {
           const el = e.currentTarget as HTMLDivElement;
-          el.style.borderColor = "rgba(139,92,246,0.28)";
-          el.style.background = "#111119";
+          el.style.borderColor = "var(--color-border-mid)";
+          el.style.background = "var(--color-bg-surface)";
         }}
         onMouseLeave={(e) => {
           const el = e.currentTarget as HTMLDivElement;
           el.style.borderColor = "rgba(139,92,246,0.08)";
-          el.style.background = "#0d0d14";
+          el.style.background = "var(--color-bg-base)";
         }}
       >
         {/* Thumbnail */}
@@ -65,8 +65,8 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
           borderRadius: "10px",
           overflow: "hidden",
           flexShrink: 0,
-          background: "#181820",
-          border: "1px solid rgba(139,92,246,0.12)",
+          background: "var(--color-bg-surface2)",
+          border: "1px solid var(--color-border-subtle)",
         }}>
           {vote.artwork_image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -86,7 +86,7 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
             fontFamily: "var(--font-syne)",
             fontSize: "14px",
             fontWeight: 700,
-            color: "#eeeeff",
+            color: "var(--color-text)",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -101,7 +101,7 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
               background: "rgba(139,92,246,0.1)",
               padding: "2px 7px",
               borderRadius: "100px",
@@ -115,7 +115,7 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
                 fontWeight: 700,
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#34d399",
+                color: "var(--color-status-success)",
                 background: "rgba(52,211,153,0.08)",
                 padding: "2px 7px",
                 borderRadius: "100px",
@@ -130,14 +130,14 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
         <div style={{
           fontFamily: "var(--font-dm-mono)",
           fontSize: "11px",
-          color: "#3a3a58",
+          color: "var(--color-text-dim)",
           flexShrink: 0,
         }}>
           {timeLabel}
         </div>
 
         {/* Arrow */}
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, color: "#3a3a58" }}>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, color: "var(--color-text-dim)" }}>
           <path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
@@ -171,7 +171,7 @@ export function VoteHistory({ votes }: Props) {
         <p style={{
           fontFamily: "var(--font-dm-mono)",
           fontSize: "13px",
-          color: "#3a3a58",
+          color: "var(--color-text-dim)",
           fontStyle: "italic",
         }}>
           No votes cast yet.
@@ -207,7 +207,7 @@ export function VoteHistory({ votes }: Props) {
               fontWeight: 700,
               letterSpacing: "0.14em",
               textTransform: "uppercase",
-              color: "#3a3a58",
+              color: "var(--color-text-dim)",
             }}>
               Week {String(week).padStart(2, "0")}
             </span>

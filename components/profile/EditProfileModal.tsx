@@ -79,10 +79,10 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
   const inputStyle: React.CSSProperties = {
     width: "100%",
     padding: "10px 12px",
-    background: "#0d0d0d",
-    border: "1px solid #2a2a2a",
+    background: "var(--color-bg-base)",
+    border: "1px solid var(--color-border-mid)",
     borderRadius: "8px",
-    color: "#eeeeff",
+    color: "var(--color-text)",
     fontSize: "14px",
     fontFamily: "var(--font-syne)",
     outline: "none",
@@ -95,7 +95,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
     fontWeight: 600,
     letterSpacing: "0.1em",
     textTransform: "uppercase",
-    color: "#7878a0",
+    color: "var(--color-text-muted)",
     fontFamily: "var(--font-dm-mono)",
     marginBottom: "6px",
   };
@@ -117,7 +117,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
     >
       <div
         style={{
-          background: "#111119",
+          background: "var(--color-bg-surface)",
           border: "1px solid rgba(139,92,246,0.2)",
           borderRadius: "14px",
           padding: "32px",
@@ -135,7 +135,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
             right: "16px",
             background: "none",
             border: "none",
-            color: "#7878a0",
+            color: "var(--color-text-muted)",
             fontSize: "18px",
             cursor: "pointer",
             lineHeight: 1,
@@ -150,7 +150,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
           fontFamily: "var(--font-syne)",
           fontSize: "1.25rem",
           fontWeight: 800,
-          color: "#eeeeff",
+          color: "var(--color-text)",
           letterSpacing: "-0.02em",
           marginBottom: "24px",
         }}>
@@ -161,7 +161,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
           {/* Display name */}
           <div>
             <label style={labelStyle}>
-              Display Name <span style={{ color: "#f87171" }}>*</span>
+              Display Name <span style={{ color: "var(--color-status-error)" }}>*</span>
             </label>
             <input
               type="text"
@@ -171,7 +171,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
               placeholder="Your display name"
               style={inputStyle}
             />
-            <div style={{ fontSize: "11px", color: "#3a3a58", fontFamily: "var(--font-dm-mono)", marginTop: "4px", textAlign: "right" }}>
+            <div style={{ fontSize: "11px", color: "var(--color-text-dim)", fontFamily: "var(--font-dm-mono)", marginTop: "4px", textAlign: "right" }}>
               {displayName.length}/50
             </div>
           </div>
@@ -187,7 +187,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
               placeholder="Tell people about yourself..."
               style={{ ...inputStyle, resize: "vertical", lineHeight: 1.6 }}
             />
-            <div style={{ fontSize: "11px", color: bio.length > 270 ? "#fbbf24" : "#3a3a58", fontFamily: "var(--font-dm-mono)", marginTop: "4px", textAlign: "right" }}>
+            <div style={{ fontSize: "11px", color: bio.length > 270 ? "var(--color-status-warning)" : "var(--color-text-dim)", fontFamily: "var(--font-dm-mono)", marginTop: "4px", textAlign: "right" }}>
               {bio.length}/300
             </div>
           </div>
@@ -216,10 +216,10 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
             borderRadius: "8px",
           }}>
             <div>
-              <div style={{ fontSize: "14px", color: "#eeeeff", fontWeight: 600, marginBottom: "4px" }}>
+              <div style={{ fontSize: "14px", color: "var(--color-text)", fontWeight: 600, marginBottom: "4px" }}>
                 Public profile
               </div>
-              <div style={{ fontSize: "12px", color: "#7878a0" }}>
+              <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>
                 When off, only you can see your profile.
               </div>
             </div>
@@ -232,7 +232,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
                 width: "44px",
                 height: "24px",
                 borderRadius: "12px",
-                background: isPublic ? "#8b5cf6" : "#2a2a2a",
+                background: isPublic ? "var(--color-purple)" : "var(--color-bg-surface3)",
                 border: "none",
                 cursor: "pointer",
                 position: "relative",
@@ -259,10 +259,10 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
             style={{
               width: "100%",
               padding: "12px",
-              background: isSaving ? "rgba(139,92,246,0.4)" : "#8b5cf6",
+              background: isSaving ? "var(--color-purple-dim)" : "var(--color-purple)",
               border: "none",
               borderRadius: "8px",
-              color: "#fff",
+              color: "var(--color-text)",
               fontSize: "12px",
               fontFamily: "var(--font-dm-mono)",
               fontWeight: 700,

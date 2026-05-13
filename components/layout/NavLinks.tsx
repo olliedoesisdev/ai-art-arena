@@ -27,10 +27,10 @@ export function NavLinks({ links, contestHref }: Props) {
           style={{
             fontSize: "0.875rem",
             fontWeight: 500,
-            color: isActive(href) ? "#eeeeff" : "#7878a0",
+            color: isActive(href) ? "var(--color-text)" : "var(--color-text-muted)",
             textDecoration: "none",
             transition: "color 0.15s",
-            borderBottom: isActive(href) ? "1px solid rgba(139,92,246,0.5)" : "1px solid transparent",
+            borderBottom: isActive(href) ? "1px solid var(--color-border-strong)" : "1px solid transparent",
             paddingBottom: "2px",
           }}
         >

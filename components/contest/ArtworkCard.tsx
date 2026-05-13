@@ -23,14 +23,14 @@ function localVoteKey(contestId: string) {
   return `voted:${contestId}`;
 }
 
-// Each card gets a unique accent colour cycling through the palette
+// Per-card accent colours — documented in globals.css under "Artwork card accents"
 const ACCENT_COLORS = [
-  "#7c3aed",
-  "#ff6b35",
-  "#06b6d4",
-  "#84cc16",
-  "#f59e0b",
-  "#f472b6",
+  "var(--color-card-accent-0)",
+  "var(--color-card-accent-1)",
+  "var(--color-card-accent-2)",
+  "var(--color-card-accent-3)",
+  "var(--color-card-accent-4)",
+  "var(--color-card-accent-5)",
 ];
 
 export function ArtworkCard({
@@ -157,7 +157,7 @@ export function ArtworkCard({
               top: "10px",
               right: "10px",
               background: accent,
-              color: "#000",
+              color: "var(--color-bg-base)",
               fontSize: "10px",
               fontFamily: "var(--font-dm-mono)",
               fontWeight: 700,
@@ -178,8 +178,8 @@ export function ArtworkCard({
               position: "absolute",
               top: "10px",
               right: "10px",
-              background: "rgba(251,191,36,0.92)",
-              color: "#08080e",
+              background: "rgba(251,191,36,0.92)", /* status-warning at 92% — no alpha token */
+              color: "var(--color-bg-base)",
               fontSize: "10px",
               fontFamily: "var(--font-dm-mono)",
               fontWeight: 700,
@@ -203,7 +203,7 @@ export function ArtworkCard({
             fontFamily: "var(--font-syne)",
             fontSize: "1rem",
             fontWeight: 700,
-            color: "#eeeeff",
+            color: "var(--color-text)",
             marginBottom: "4px",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -247,7 +247,7 @@ export function ArtworkCard({
                 style={{
                   height: "100%",
                   width: `${pct}%`,
-                  background: isUserVote ? accent : isLeading ? "#fbbf24" : "#8b5cf6",
+                  background: isUserVote ? accent : isLeading ? "var(--color-status-warning)" : "var(--color-purple)",
                   borderRadius: "2px",
                   transition: "width 0.8s cubic-bezier(0.4,0,0.2,1)",
                 }}
@@ -348,7 +348,7 @@ function VoteButtonInline({
         background: hovered ? `${accent}20` : "rgba(255,255,255,0.06)",
         border: `1px solid ${hovered ? accent : "rgba(255,255,255,0.12)"}`,
         borderRadius: "8px",
-        color: hovered ? accent : "#eeeeff",
+        color: hovered ? accent : "var(--color-text)",
         fontFamily: "var(--font-dm-mono)",
         fontSize: "12px",
         fontWeight: 600,

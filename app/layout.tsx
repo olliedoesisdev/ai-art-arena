@@ -74,9 +74,9 @@ export default function RootLayout({
             richColors
             toastOptions={{
               style: {
-                background: "#111119",
-                border: "1px solid rgba(139,92,246,0.25)",
-                color: "#eeeeff",
+                background: "var(--color-bg-surface)",
+                border: "1px solid var(--color-border-mid)",
+                color: "var(--color-text)",
               },
             }}
           />
