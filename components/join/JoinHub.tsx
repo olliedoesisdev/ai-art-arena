@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -20,8 +20,8 @@ function JoinHubInner() {
   const cardBase: React.CSSProperties = {
     flex: 1,
     minWidth: "260px",
-    background: "#111",
-    border: "1px solid #1f1f1f",
+    background: "var(--color-join-card)",
+    border: "1px solid var(--color-join-border)",
     borderRadius: "12px",
     padding: "36px 32px",
     display: "flex",
@@ -31,7 +31,7 @@ function JoinHubInner() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0a0a", padding: "64px 24px 80px" }}>
+    <div style={{ minHeight: "100vh", background: "var(--color-join-ink)", padding: "64px 24px 80px" }}>
       <div style={{ maxWidth: "760px", margin: "0 auto" }}>
 
         {/* Page header */}
@@ -42,7 +42,7 @@ function JoinHubInner() {
             fontWeight: 600,
             letterSpacing: "0.18em",
             textTransform: "uppercase",
-            color: "#555",
+            color: "var(--color-join-muted)",
             margin: "0 0 16px",
           }}>
             AI Art Arena
@@ -51,13 +51,13 @@ function JoinHubInner() {
             fontFamily: "var(--font-syne)",
             fontSize: "clamp(2rem, 5vw, 3rem)",
             fontWeight: 800,
-            color: "#f5f5f5",
+            color: "var(--color-join-text)",
             letterSpacing: "-0.03em",
             margin: "0 0 12px",
           }}>
             Join the Arena
           </h1>
-          <p style={{ color: "#555", fontSize: "15px", margin: 0 }}>Choose your path below.</p>
+          <p style={{ color: "var(--color-join-muted)", fontSize: "15px", margin: 0 }}>Choose your path below.</p>
         </div>
 
         {track !== "choose" && (
@@ -74,13 +74,13 @@ function JoinHubInner() {
               fontSize: "11px",
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#555",
+              color: "var(--color-join-muted)",
               cursor: "pointer",
               marginBottom: "40px",
               userSelect: "none",
             }}
           >
-            ← Back
+            â† Back
           </div>
         )}
 
@@ -88,18 +88,18 @@ function JoinHubInner() {
           <>
             {/* Divider */}
             <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "32px" }}>
-              <div style={{ flex: 1, height: "1px", background: "#1f1f1f" }} />
+              <div style={{ flex: 1, height: "1px", background: "var(--color-join-border)" }} />
               <span style={{
                 fontFamily: "var(--font-dm-mono)",
                 fontSize: "10px",
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "#333",
+                color: "var(--color-join-subtle)",
                 whiteSpace: "nowrap",
               }}>
                 Which path is yours?
               </span>
-              <div style={{ flex: 1, height: "1px", background: "#1f1f1f" }} />
+              <div style={{ flex: 1, height: "1px", background: "var(--color-join-border)" }} />
             </div>
 
             {/* Track cards */}
@@ -107,20 +107,20 @@ function JoinHubInner() {
 
               {/* Subscriber card */}
               <div style={cardBase}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "#181818", border: "1px solid #222", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "var(--color-join-card-icon)", border: "1px solid #222", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-join-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                     <polyline points="22,6 12,13 2,6" />
                   </svg>
                 </div>
                 <div>
-                  <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.375rem", fontWeight: 800, color: "#f5f5f5", letterSpacing: "-0.02em", margin: "0 0 8px" }}>
+                  <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.375rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.02em", margin: "0 0 8px" }}>
                     Stay in the Loop
                   </h2>
-                  <p style={{ color: "#666", fontSize: "14px", lineHeight: 1.7, margin: "0 0 10px" }}>
+                  <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 10px" }}>
                     Get notified when each weekly contest goes live. Vote, follow the competition, and watch the community grow.
                   </p>
-                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "#333", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-subtle)", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>
                     Name + email. One step.
                   </p>
                 </div>
@@ -132,9 +132,9 @@ function JoinHubInner() {
                   style={{
                     padding: "11px 20px",
                     background: "transparent",
-                    border: "1px solid #e8d5b7",
+                    border: "1px solid var(--color-join-amber)",
                     borderRadius: "6px",
-                    color: "#e8d5b7",
+                    color: "var(--color-join-amber)",
                     fontFamily: "var(--font-dm-mono)",
                     fontSize: "11px",
                     fontWeight: 600,
@@ -155,20 +155,20 @@ function JoinHubInner() {
 
               {/* Artist card */}
               <div style={cardBase}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "#181818", border: "1px solid #222", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e8d5b7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "var(--color-join-card-icon)", border: "1px solid #222", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-join-amber)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                   </svg>
                 </div>
                 <div>
-                  <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.375rem", fontWeight: 800, color: "#f5f5f5", letterSpacing: "-0.02em", margin: "0 0 8px" }}>
+                  <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.375rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.02em", margin: "0 0 8px" }}>
                     Compete as an Artist
                   </h2>
-                  <p style={{ color: "#666", fontSize: "14px", lineHeight: 1.7, margin: "0 0 10px" }}>
+                  <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 10px" }}>
                     Submit your AI-generated artwork for consideration in the weekly contest. Tell us about your process, your tools, and let your work speak.
                   </p>
-                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "#333", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-subtle)", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>
                     Four steps. One submission.
                   </p>
                 </div>
@@ -179,10 +179,10 @@ function JoinHubInner() {
                   onKeyDown={(e) => { if (e.key === "Enter") setTrack("artist"); }}
                   style={{
                     padding: "11px 20px",
-                    background: "#e8d5b7",
+                    background: "var(--color-join-amber)",
                     border: "none",
                     borderRadius: "6px",
-                    color: "#0a0a0a",
+                    color: "var(--color-join-ink)",
                     fontFamily: "var(--font-dm-mono)",
                     fontSize: "11px",
                     fontWeight: 700,
@@ -218,8 +218,8 @@ function JoinHubInner() {
 export function JoinHub() {
   return (
     <Suspense fallback={
-      <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #1f1f1f", borderTopColor: "#e8d5b7", animation: "spin 0.8s linear infinite" }} />
+      <div style={{ minHeight: "100vh", background: "var(--color-join-ink)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: "32px", height: "32px", borderRadius: "50%", border: "2px solid var(--color-join-border)", borderTopColor: "var(--color-join-amber)", animation: "spin 0.8s linear infinite" }} />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     }>

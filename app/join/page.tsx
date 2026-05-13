@@ -1,15 +1,15 @@
-import { Metadata } from "next";
+﻿import { Metadata } from "next";
 import { JoinHub } from "@/components/join/JoinHub";
 
 export const metadata: Metadata = {
-  title: "Join — AI Art Arena",
+  title: "Join â€” AI Art Arena",
   description:
     "Sign up for weekly contest updates or apply to compete as an AI artist at olliedoesis.dev.",
 };
 
 export default function JoinPage() {
   return (
-    <main style={{ minHeight: "100vh", background: "#0a0a0a" }}>
+    <main style={{ minHeight: "100vh", background: "var(--color-join-ink)" }}>
       <JoinHub />
     </main>
   );

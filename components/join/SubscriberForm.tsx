@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -6,10 +6,10 @@ import { toast } from "sonner";
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "12px 14px",
-  background: "#0d0d0d",
-  border: "1px solid #1f1f1f",
+  background: "var(--color-join-surface)",
+  border: "1px solid var(--color-join-border)",
   borderRadius: "6px",
-  color: "#f5f5f5",
+  color: "var(--color-join-text)",
   fontSize: "15px",
   fontFamily: "inherit",
   outline: "none",
@@ -24,7 +24,7 @@ const labelStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: "0.12em",
   textTransform: "uppercase",
-  color: "#555",
+  color: "var(--color-join-muted)",
   marginBottom: "6px",
 };
 
@@ -59,7 +59,7 @@ export function SubscriberForm() {
       }
       setIsDone(true);
     } catch {
-      toast.error("Network error — please try again.");
+      toast.error("Network error â€” please try again.");
       setIsSubmitting(false);
     }
   }
@@ -72,24 +72,24 @@ export function SubscriberForm() {
             width: "64px",
             height: "64px",
             borderRadius: "50%",
-            border: "2px solid #e8d5b7",
+            border: "2px solid var(--color-join-amber)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             margin: "0 auto 28px",
           }}
         >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e8d5b7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-join-amber)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "2rem", fontWeight: 800, color: "#f5f5f5", letterSpacing: "-0.03em", margin: "0 0 12px" }}>
+        <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "2rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.03em", margin: "0 0 12px" }}>
           You are in.
         </h2>
-        <p style={{ color: "#888", fontSize: "15px", lineHeight: 1.7, margin: "0 0 20px" }}>
+        <p style={{ color: "var(--color-join-body)", fontSize: "15px", lineHeight: 1.7, margin: "0 0 20px" }}>
           Check your inbox for a welcome from us.
         </p>
-        <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#333", letterSpacing: "0.06em" }}>
+        <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-subtle)", letterSpacing: "0.06em" }}>
           olliedoesis.dev
         </p>
       </div>
@@ -98,10 +98,10 @@ export function SubscriberForm() {
 
   return (
     <div style={{ maxWidth: "440px", margin: "0 auto" }}>
-      <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.75rem", fontWeight: 800, color: "#f5f5f5", letterSpacing: "-0.03em", margin: "0 0 8px" }}>
+      <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.75rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.03em", margin: "0 0 8px" }}>
         Stay in the Loop
       </h2>
-      <p style={{ color: "#888", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px" }}>
+      <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px" }}>
         Get notified when each weekly contest goes live. Vote, follow the competition, and watch the community grow.
       </p>
 
@@ -114,8 +114,8 @@ export function SubscriberForm() {
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
             style={inputStyle}
-            onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "#e8d5b7"; }}
-            onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"; }}
+            onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-amber)"; }}
+            onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-border)"; }}
           />
         </div>
         <div>
@@ -127,8 +127,8 @@ export function SubscriberForm() {
             placeholder="you@example.com"
             style={inputStyle}
             onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
-            onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "#e8d5b7"; }}
-            onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"; }}
+            onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-amber)"; }}
+            onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-border)"; }}
           />
         </div>
 
@@ -140,9 +140,9 @@ export function SubscriberForm() {
           style={{
             width: "100%",
             padding: "14px",
-            background: "#e8d5b7",
+            background: "var(--color-join-amber)",
             borderRadius: "6px",
-            color: "#0a0a0a",
+            color: "var(--color-join-ink)",
             fontFamily: "var(--font-dm-mono)",
             fontSize: "12px",
             fontWeight: 700,

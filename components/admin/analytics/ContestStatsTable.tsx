@@ -1,4 +1,4 @@
-import type { ContestVoteStat } from "@/lib/types";
+﻿import type { ContestVoteStat } from "@/lib/types";
 
 interface Props {
   data: ContestVoteStat[];
@@ -6,7 +6,7 @@ interface Props {
 
 export function ContestStatsTable({ data }: Props) {
   if (data.length === 0) {
-    return <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No contests yet.</p>;
+    return <p style={{ fontSize: "0.875rem", color: "var(--color-text-dim)" }}>No contests yet.</p>;
   }
 
   return (
@@ -24,7 +24,7 @@ export function ContestStatsTable({ data }: Props) {
                   fontWeight: 600,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
-                  color: "#3a3a58",
+                  color: "var(--color-text-dim)",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -40,7 +40,7 @@ export function ContestStatsTable({ data }: Props) {
 
             return (
               <tr key={contest.id} style={{ borderBottom: "1px solid rgba(139,92,246,0.06)" }}>
-                <td style={{ padding: "12px 12px", color: "#eeeeff", fontWeight: 600, fontFamily: "var(--font-dm-mono)" }}>
+                <td style={{ padding: "12px 12px", color: "var(--color-text)", fontWeight: 600, fontFamily: "var(--font-dm-mono)" }}>
                   {contest.week_number}
                 </td>
                 <td style={{ padding: "12px 12px" }}>
@@ -49,7 +49,7 @@ export function ContestStatsTable({ data }: Props) {
                     fontWeight: 700,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
-                    color: contest.status === "active" ? "#34d399" : "#3a3a58",
+                    color: contest.status === "active" ? "var(--color-status-success)" : "var(--color-text-dim)",
                     background: contest.status === "active" ? "rgba(52,211,153,0.08)" : "rgba(58,58,88,0.15)",
                     padding: "2px 8px",
                     borderRadius: "100px",
@@ -57,13 +57,13 @@ export function ContestStatsTable({ data }: Props) {
                     {contest.status}
                   </span>
                 </td>
-                <td style={{ padding: "12px 12px", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>
+                <td style={{ padding: "12px 12px", color: "var(--color-text-muted)", fontFamily: "var(--font-dm-mono)" }}>
                   {contest.artwork_count}
                 </td>
-                <td style={{ padding: "12px 12px", color: "#eeeeff", fontFamily: "var(--font-dm-mono)", fontWeight: 600 }}>
+                <td style={{ padding: "12px 12px", color: "var(--color-text)", fontFamily: "var(--font-dm-mono)", fontWeight: 600 }}>
                   {contest.total_votes}
                 </td>
-                <td style={{ padding: "12px 12px", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>
+                <td style={{ padding: "12px 12px", color: "var(--color-text-muted)", fontFamily: "var(--font-dm-mono)" }}>
                   {contest.avg_votes_per_artwork.toFixed(1)}
                 </td>
                 <td style={{ padding: "12px 12px" }}>
@@ -71,12 +71,12 @@ export function ContestStatsTable({ data }: Props) {
                     <span style={{
                       fontSize: "0.8125rem",
                       fontWeight: 600,
-                      color: delta > 0 ? "#34d399" : delta < 0 ? "#f87171" : "#3a3a58",
+                      color: delta > 0 ? "var(--color-status-success)" : delta < 0 ? "var(--color-status-error)" : "var(--color-text-dim)",
                     }}>
                       {delta > 0 ? "+" : ""}{delta}
                     </span>
                   ) : (
-                    <span style={{ color: "#3a3a58" }}>—</span>
+                    <span style={{ color: "var(--color-text-dim)" }}>â€”</span>
                   )}
                 </td>
               </tr>

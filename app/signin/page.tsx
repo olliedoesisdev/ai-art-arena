@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
+﻿import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth/AuthForm";
 
 export const metadata = {
-  title: "Sign In — AI Art Arena",
+  title: "Sign In â€” AI Art Arena",
 };
 
 export default async function SignInPage({
@@ -45,14 +45,14 @@ export default async function SignInPage({
               fontFamily: "var(--font-syne)",
               fontWeight: 800,
               fontSize: "1.5rem",
-              color: "#eeeeff",
+              color: "var(--color-text)",
               letterSpacing: "-0.03em",
               marginBottom: "8px",
             }}
           >
             AI Art Arena
           </p>
-          <p style={{ fontSize: "0.875rem", color: "#7878a0" }}>
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
             Sign in to vote on AI-generated artwork
           </p>
         </div>
@@ -60,7 +60,7 @@ export default async function SignInPage({
         {/* Card */}
         <div
           style={{
-            background: "#111119",
+            background: "var(--color-bg-surface)",
             border: "1px solid rgba(139,92,246,0.12)",
             borderRadius: "14px",
             padding: "32px",

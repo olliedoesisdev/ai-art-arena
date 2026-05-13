@@ -1,4 +1,4 @@
-const pulse: React.CSSProperties = {
+﻿const pulse: React.CSSProperties = {
   background: "linear-gradient(90deg, #111119 25%, #181820 50%, #111119 75%)",
   backgroundSize: "200% 100%",
   animation: "shimmer 1.5s infinite",
@@ -7,7 +7,7 @@ const pulse: React.CSSProperties = {
 
 export default function AboutLoading() {
   return (
-    <div style={{ paddingTop: "48px", paddingBottom: "80px", background: "#08080e", minHeight: "100vh" }}>
+    <div style={{ paddingTop: "48px", paddingBottom: "80px", background: "var(--color-bg-base)", minHeight: "100vh" }}>
       <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
       <div className="shell">
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "48px" }}>

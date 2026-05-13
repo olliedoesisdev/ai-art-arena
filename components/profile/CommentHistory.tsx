@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -120,7 +120,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
           {comment.comment_body}
         </p>
 
-        {/* Footer — view link hint */}
+        {/* Footer â€” view link hint */}
         <div style={{
           marginTop: "10px",
           display: "flex",
@@ -160,7 +160,7 @@ export function CommentHistory({ comments }: Props) {
           margin: "0 auto 16px",
         }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M4 4h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H7l-4 3V5a1 1 0 0 1 1-1z" stroke="#8b5cf6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M4 4h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H7l-4 3V5a1 1 0 0 1 1-1z" stroke="var(--color-purple)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
         <p style={{

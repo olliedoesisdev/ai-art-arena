@@ -1,19 +1,19 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 
-// ── Shared styles ──────────────────────────────────────────────────────────────
+// â”€â”€ Shared styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "12px 14px",
-  background: "#0d0d0d",
-  border: "1px solid #1f1f1f",
+  background: "var(--color-join-surface)",
+  border: "1px solid var(--color-join-border)",
   borderRadius: "6px",
-  color: "#f5f5f5",
+  color: "var(--color-join-text)",
   fontSize: "15px",
   fontFamily: "inherit",
   outline: "none",
@@ -28,7 +28,7 @@ const labelStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: "0.12em",
   textTransform: "uppercase",
-  color: "#555",
+  color: "var(--color-join-muted)",
   marginBottom: "6px",
 };
 
@@ -36,9 +36,9 @@ const primaryBtn: React.CSSProperties = {
   display: "block",
   width: "100%",
   padding: "14px",
-  background: "#e8d5b7",
+  background: "var(--color-join-amber)",
   borderRadius: "6px",
-  color: "#0a0a0a",
+  color: "var(--color-join-ink)",
   fontFamily: "var(--font-dm-mono)",
   fontSize: "12px",
   fontWeight: 700,
@@ -53,9 +53,9 @@ const primaryBtn: React.CSSProperties = {
 
 const ghostBtn: React.CSSProperties = {
   background: "transparent",
-  border: "1px solid #1f1f1f",
+  border: "1px solid var(--color-join-border)",
   borderRadius: "6px",
-  color: "#555",
+  color: "var(--color-join-muted)",
   fontFamily: "var(--font-dm-mono)",
   fontSize: "11px",
   fontWeight: 600,
@@ -66,7 +66,7 @@ const ghostBtn: React.CSSProperties = {
   transition: "border-color 0.15s, color 0.15s",
 };
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface FormData {
   name: string;
@@ -88,7 +88,7 @@ interface UploadedImage {
   preview: string;
 }
 
-// ── Progress bar ───────────────────────────────────────────────────────────────
+// â”€â”€ Progress bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const STEP_LABELS = ["About You", "Your Practice", "Your Submission", "Review"];
 
@@ -107,11 +107,11 @@ function StepProgress({ step }: { step: number }) {
                   height: "32px",
                   borderRadius: "50%",
                   background: done
-                    ? "rgba(232,213,183,0.4)"
+                    ? "var(--color-join-amber-dim3)"
                     : active
-                    ? "#e8d5b7"
-                    : "#111",
-                  border: done || active ? "none" : "1px solid #1f1f1f",
+                    ? "var(--color-join-amber)"
+                    : "var(--color-join-card)",
+                  border: done || active ? "none" : "1px solid var(--color-join-border)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -120,7 +120,7 @@ function StepProgress({ step }: { step: number }) {
                 }}
               >
                 {done ? (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={active ? "#0a0a0a" : "#e8d5b7"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={active ? "var(--color-join-ink)" : "var(--color-join-amber)"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 ) : (
@@ -129,7 +129,7 @@ function StepProgress({ step }: { step: number }) {
                       fontFamily: "var(--font-dm-mono)",
                       fontSize: "11px",
                       fontWeight: 700,
-                      color: active ? "#0a0a0a" : "#333",
+                      color: active ? "var(--color-join-ink)" : "var(--color-join-subtle)",
                     }}
                   >
                     {String(n).padStart(2, "0")}
@@ -141,7 +141,7 @@ function StepProgress({ step }: { step: number }) {
                   style={{
                     flex: 1,
                     height: "1px",
-                    background: step > n ? "rgba(232,213,183,0.4)" : "#1f1f1f",
+                    background: step > n ? "var(--color-join-amber-dim3)" : "var(--color-join-border)",
                     transition: "background 0.2s",
                   }}
                 />
@@ -159,7 +159,7 @@ function StepProgress({ step }: { step: number }) {
               fontSize: "9px",
               letterSpacing: "0.1em",
               textTransform: "uppercase",
-              color: step === i + 1 ? "#e8d5b7" : "#333",
+              color: step === i + 1 ? "var(--color-join-amber)" : "var(--color-join-subtle)",
               flex: i < 3 ? 1 : 0,
               textAlign: i === 0 ? "left" : i === 3 ? "right" : "center",
               transition: "color 0.2s",
@@ -173,7 +173,7 @@ function StepProgress({ step }: { step: number }) {
   );
 }
 
-// ── Step 1 ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Step 1 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function Step1({
   data,
@@ -208,12 +208,12 @@ function Step1({
           type="text"
           value={name}
           onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
-          style={{ ...inputStyle, borderColor: errors.name ? "#f87171" : "#1f1f1f" }}
+          style={{ ...inputStyle, borderColor: errors.name ? "var(--color-status-error)" : "var(--color-join-border)" }}
           placeholder="Your name"
-          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.name ? "#f87171" : "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.name ? "#f87171" : "#1f1f1f"; }}
+          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.name ? "var(--color-status-error)" : "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.name ? "var(--color-status-error)" : "var(--color-join-border)"; }}
         />
-        {errors.name && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.name}</p>}
+        {errors.name && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.name}</p>}
       </div>
       <div>
         <label style={labelStyle}>Email Address *</label>
@@ -221,35 +221,35 @@ function Step1({
           type="email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: "" })); }}
-          style={{ ...inputStyle, borderColor: errors.email ? "#f87171" : "#1f1f1f" }}
+          style={{ ...inputStyle, borderColor: errors.email ? "var(--color-status-error)" : "var(--color-join-border)" }}
           placeholder="you@example.com"
-          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.email ? "#f87171" : "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.email ? "#f87171" : "#1f1f1f"; }}
+          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.email ? "var(--color-status-error)" : "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.email ? "var(--color-status-error)" : "var(--color-join-border)"; }}
         />
-        {errors.email && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.email}</p>}
+        {errors.email && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.email}</p>}
       </div>
       <div>
-        <label style={labelStyle}>Location <span style={{ color: "#333" }}>(optional)</span></label>
+        <label style={labelStyle}>Location <span style={{ color: "var(--color-join-subtle)" }}>(optional)</span></label>
         <input
           type="text"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           style={inputStyle}
           placeholder="City, Country"
-          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"; }}
+          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-border)"; }}
         />
       </div>
       <div style={{ marginTop: "8px" }}>
         <div role="button" tabIndex={0} onClick={handleNext} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} style={primaryBtn}>
-          Next — Your Practice →
+          Next â€” Your Practice â†’
         </div>
       </div>
     </div>
   );
 }
 
-// ── Step 2 ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Step 2 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const AI_TOOLS = [
   "Midjourney", "DALL-E", "Stable Diffusion", "Adobe Firefly",
@@ -312,7 +312,7 @@ function Step2({
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "6px" }}>
           <label style={{ ...labelStyle, marginBottom: 0 }}>Tell us about yourself and your art *</label>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: bio.length > 550 ? "#f87171" : "#333" }}>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: bio.length > 550 ? "var(--color-status-error)" : "var(--color-join-subtle)" }}>
             {bio.length}/600
           </span>
         </div>
@@ -322,11 +322,11 @@ function Step2({
           rows={4}
           maxLength={600}
           placeholder="I make dark fantasy portraits using..."
-          style={{ ...inputStyle, resize: "vertical", borderColor: errors.bio ? "#f87171" : "#1f1f1f" }}
-          onFocus={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.bio ? "#f87171" : "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.bio ? "#f87171" : "#1f1f1f"; }}
+          style={{ ...inputStyle, resize: "vertical", borderColor: errors.bio ? "var(--color-status-error)" : "var(--color-join-border)" }}
+          onFocus={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.bio ? "var(--color-status-error)" : "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.bio ? "var(--color-status-error)" : "var(--color-join-border)"; }}
         />
-        {errors.bio && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.bio}</p>}
+        {errors.bio && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.bio}</p>}
       </div>
 
       <div>
@@ -335,12 +335,12 @@ function Step2({
           type="text"
           value={style}
           onChange={(e) => { setStyle(e.target.value); setErrors((p) => ({ ...p, style: "" })); }}
-          style={{ ...inputStyle, borderColor: errors.style ? "#f87171" : "#1f1f1f" }}
+          style={{ ...inputStyle, borderColor: errors.style ? "var(--color-status-error)" : "var(--color-join-border)" }}
           placeholder="Surrealist, photorealistic, anime-inspired..."
-          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.style ? "#f87171" : "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.style ? "#f87171" : "#1f1f1f"; }}
+          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.style ? "var(--color-status-error)" : "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.style ? "var(--color-status-error)" : "var(--color-join-border)"; }}
         />
-        {errors.style && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.style}</p>}
+        {errors.style && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.style}</p>}
       </div>
 
       <div>
@@ -359,9 +359,9 @@ function Step2({
                 style={{
                   padding: "6px 14px",
                   borderRadius: "100px",
-                  border: `1px solid ${selected ? "#e8d5b7" : "#1f1f1f"}`,
-                  background: selected ? "rgba(232,213,183,0.12)" : "transparent",
-                  color: selected ? "#e8d5b7" : "#555",
+                  border: `1px solid ${selected ? "var(--color-join-amber)" : "var(--color-join-border)"}`,
+                  background: selected ? "var(--color-join-amber-dim)" : "transparent",
+                  color: selected ? "var(--color-join-amber)" : "var(--color-join-muted)",
                   fontFamily: "var(--font-dm-mono)",
                   fontSize: "11px",
                   fontWeight: 600,
@@ -376,7 +376,7 @@ function Step2({
             );
           })}
         </div>
-        {errors.tools && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "8px", fontFamily: "var(--font-dm-mono)" }}>{errors.tools}</p>}
+        {errors.tools && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "8px", fontFamily: "var(--font-dm-mono)" }}>{errors.tools}</p>}
       </div>
 
       <div>
@@ -398,7 +398,7 @@ function Step2({
                   gap: "10px",
                   padding: "10px 14px",
                   borderRadius: "6px",
-                  border: `1px solid ${selected ? "#e8d5b7" : "#1f1f1f"}`,
+                  border: `1px solid ${selected ? "var(--color-join-amber)" : "var(--color-join-border)"}`,
                   background: selected ? "rgba(232,213,183,0.06)" : "transparent",
                   cursor: "pointer",
                   userSelect: "none",
@@ -410,58 +410,58 @@ function Step2({
                     width: "16px",
                     height: "16px",
                     borderRadius: "50%",
-                    border: `1.5px solid ${selected ? "#e8d5b7" : "#333"}`,
-                    background: selected ? "#e8d5b7" : "transparent",
+                    border: `1.5px solid ${selected ? "var(--color-join-amber)" : "var(--color-join-subtle)"}`,
+                    background: selected ? "var(--color-join-amber)" : "transparent",
                     flexShrink: 0,
                     transition: "all 0.15s",
                   }}
                 />
-                <span style={{ fontSize: "14px", color: selected ? "#f5f5f5" : "#888" }}>{opt}</span>
+                <span style={{ fontSize: "14px", color: selected ? "var(--color-join-text)" : "var(--color-join-body)" }}>{opt}</span>
               </div>
             );
           })}
         </div>
-        {errors.years && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.years}</p>}
+        {errors.years && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.years}</p>}
       </div>
 
       <div>
-        <label style={labelStyle}>Portfolio URL <span style={{ color: "#333" }}>(optional)</span></label>
+        <label style={labelStyle}>Portfolio URL <span style={{ color: "var(--color-join-subtle)" }}>(optional)</span></label>
         <input
           type="url"
           value={portfolio}
           onChange={(e) => { setPortfolio(e.target.value); setErrors((p) => ({ ...p, portfolio: "" })); }}
-          style={{ ...inputStyle, borderColor: errors.portfolio ? "#f87171" : "#1f1f1f" }}
+          style={{ ...inputStyle, borderColor: errors.portfolio ? "var(--color-status-error)" : "var(--color-join-border)" }}
           placeholder="https://..."
-          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.portfolio ? "#f87171" : "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.portfolio ? "#f87171" : "#1f1f1f"; }}
+          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.portfolio ? "var(--color-status-error)" : "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.portfolio ? "var(--color-status-error)" : "var(--color-join-border)"; }}
         />
-        {errors.portfolio && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.portfolio}</p>}
+        {errors.portfolio && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.portfolio}</p>}
       </div>
 
       <div>
-        <label style={labelStyle}>Social Handle <span style={{ color: "#333" }}>(optional)</span></label>
+        <label style={labelStyle}>Social Handle <span style={{ color: "var(--color-join-subtle)" }}>(optional)</span></label>
         <input
           type="text"
           value={social}
           onChange={(e) => setSocial(e.target.value)}
           style={inputStyle}
           placeholder="@yourhandle"
-          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "#1f1f1f"; }}
+          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = "var(--color-join-border)"; }}
         />
       </div>
 
       <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
-        <button onClick={onBack} style={ghostBtn}>← Back</button>
+        <button onClick={onBack} style={ghostBtn}>â† Back</button>
         <div role="button" tabIndex={0} onClick={handleNext} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} style={{ ...primaryBtn, flex: 1 }}>
-          Next — Your Submission →
+          Next â€” Your Submission â†’
         </div>
       </div>
     </div>
   );
 }
 
-// ── Step 3 ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Step 3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function Step3({
   data,
@@ -532,7 +532,7 @@ function Step3({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-      <p style={{ color: "#555", fontSize: "14px", fontStyle: "italic", margin: 0, lineHeight: 1.6 }}>
+      <p style={{ color: "var(--color-join-muted)", fontSize: "14px", fontStyle: "italic", margin: 0, lineHeight: 1.6 }}>
         Submit one piece for this application. If selected, this is the artwork that will enter the contest.
       </p>
 
@@ -545,12 +545,12 @@ function Step3({
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             style={{
-              border: `2px dashed ${isDragging ? "#e8d5b7" : errors.image ? "#f87171" : "#1f1f1f"}`,
+              border: `2px dashed ${isDragging ? "var(--color-join-amber)" : errors.image ? "var(--color-status-error)" : "var(--color-join-border)"}`,
               borderRadius: "10px",
               padding: "48px 24px",
               textAlign: "center",
               cursor: isUploading ? "wait" : "pointer",
-              background: isDragging ? "rgba(232,213,183,0.04)" : "transparent",
+              background: isDragging ? "var(--color-join-amber-dim2)" : "transparent",
               transition: "border-color 0.15s, background 0.15s",
             }}
           >
@@ -558,32 +558,32 @@ function Step3({
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
                 <div style={{
                   width: "32px", height: "32px", borderRadius: "50%",
-                  border: "2px solid #1f1f1f", borderTopColor: "#e8d5b7",
+                  border: "2px solid var(--color-join-border)", borderTopColor: "var(--color-join-amber)",
                   animation: "spin 0.8s linear infinite",
                 }} />
-                <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#555", letterSpacing: "0.08em" }}>
+                <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-muted)", letterSpacing: "0.08em" }}>
                   Uploading...
                 </span>
               </div>
             ) : (
               <>
-                <svg style={{ margin: "0 auto 16px", display: "block" }} width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg style={{ margin: "0 auto 16px", display: "block" }} width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-join-subtle)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="16 16 12 12 8 16" />
                   <line x1="12" y1="12" x2="12" y2="21" />
                   <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
                 </svg>
-                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "#555", margin: "0 0 6px", letterSpacing: "0.04em" }}>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "var(--color-join-muted)", margin: "0 0 6px", letterSpacing: "0.04em" }}>
                   Drag and drop or click to upload
                 </p>
-                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "#333", margin: 0, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  JPEG, PNG, or WebP — max 10MB
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-subtle)", margin: 0, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  JPEG, PNG, or WebP â€” max 10MB
                 </p>
               </>
             )}
           </div>
         ) : (
           <div style={{ position: "relative" }}>
-            <div style={{ position: "relative", width: "100%", aspectRatio: "1", maxHeight: "300px", borderRadius: "8px", overflow: "hidden", border: "1px solid #1f1f1f" }}>
+            <div style={{ position: "relative", width: "100%", aspectRatio: "1", maxHeight: "300px", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--color-join-border)" }}>
               <Image
                 src={uploadedImage.preview}
                 alt="Uploaded artwork preview"
@@ -601,7 +601,7 @@ function Step3({
                 marginTop: "8px",
                 fontFamily: "var(--font-dm-mono)",
                 fontSize: "11px",
-                color: "#f87171",
+                color: "var(--color-status-error)",
                 cursor: "pointer",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
@@ -611,7 +611,7 @@ function Step3({
             </div>
           </div>
         )}
-        {errors.image && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "6px", fontFamily: "var(--font-dm-mono)" }}>{errors.image}</p>}
+        {errors.image && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "6px", fontFamily: "var(--font-dm-mono)" }}>{errors.image}</p>}
         <input
           ref={fileInputRef}
           type="file"
@@ -627,19 +627,19 @@ function Step3({
           type="text"
           value={title}
           onChange={(e) => { setTitle(e.target.value); setErrors((p) => ({ ...p, title: "" })); }}
-          style={{ ...inputStyle, borderColor: errors.title ? "#f87171" : "#1f1f1f" }}
+          style={{ ...inputStyle, borderColor: errors.title ? "var(--color-status-error)" : "var(--color-join-border)" }}
           placeholder="Give your piece a title"
           maxLength={100}
-          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.title ? "#f87171" : "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.title ? "#f87171" : "#1f1f1f"; }}
+          onFocus={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.title ? "var(--color-status-error)" : "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLInputElement).style.borderColor = errors.title ? "var(--color-status-error)" : "var(--color-join-border)"; }}
         />
-        {errors.title && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.title}</p>}
+        {errors.title && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.title}</p>}
       </div>
 
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "6px" }}>
           <label style={{ ...labelStyle, marginBottom: 0 }}>The prompt or process you used *</label>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: prompt.length > 900 ? "#f87171" : "#333" }}>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: prompt.length > 900 ? "var(--color-status-error)" : "var(--color-join-subtle)" }}>
             {prompt.length}/1000
           </span>
         </div>
@@ -648,18 +648,18 @@ function Step3({
           onChange={(e) => { setPrompt(e.target.value); setErrors((p) => ({ ...p, prompt: "" })); }}
           rows={4}
           maxLength={1000}
-          placeholder="Describe the prompt, style references, settings, or technique — as much detail as you like."
-          style={{ ...inputStyle, resize: "vertical", borderColor: errors.prompt ? "#f87171" : "#1f1f1f" }}
-          onFocus={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.prompt ? "#f87171" : "#e8d5b7"; }}
-          onBlur={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.prompt ? "#f87171" : "#1f1f1f"; }}
+          placeholder="Describe the prompt, style references, settings, or technique â€” as much detail as you like."
+          style={{ ...inputStyle, resize: "vertical", borderColor: errors.prompt ? "var(--color-status-error)" : "var(--color-join-border)" }}
+          onFocus={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.prompt ? "var(--color-status-error)" : "var(--color-join-amber)"; }}
+          onBlur={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.prompt ? "var(--color-status-error)" : "var(--color-join-border)"; }}
         />
-        {errors.prompt && <p style={{ color: "#f87171", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.prompt}</p>}
+        {errors.prompt && <p style={{ color: "var(--color-status-error)", fontSize: "12px", marginTop: "4px", fontFamily: "var(--font-dm-mono)" }}>{errors.prompt}</p>}
       </div>
 
       <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
-        <button onClick={onBack} style={ghostBtn}>← Back</button>
+        <button onClick={onBack} style={ghostBtn}>â† Back</button>
         <div role="button" tabIndex={0} onClick={handleNext} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} style={{ ...primaryBtn, flex: 1 }}>
-          Next — Review Your Application →
+          Next â€” Review Your Application â†’
         </div>
       </div>
 
@@ -668,19 +668,19 @@ function Step3({
   );
 }
 
-// ── Step 4 — Review ────────────────────────────────────────────────────────────
+// â”€â”€ Step 4 â€” Review â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function ReviewSection({ title, onEdit, children }: { title: string; onEdit: () => void; children: React.ReactNode }) {
   return (
-    <div style={{ background: "#0d0d0d", border: "1px solid #1f1f1f", borderRadius: "8px", padding: "20px 24px", marginBottom: "16px" }}>
+    <div style={{ background: "var(--color-join-surface)", border: "1px solid var(--color-join-border)", borderRadius: "8px", padding: "20px 24px", marginBottom: "16px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-        <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#555" }}>{title}</span>
+        <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-join-muted)" }}>{title}</span>
         <span
           role="button"
           tabIndex={0}
           onClick={onEdit}
           onKeyDown={(e) => { if (e.key === "Enter") onEdit(); }}
-          style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "#e8d5b7", cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase" }}
+          style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-amber)", cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase" }}
         >
           Edit
         </span>
@@ -694,8 +694,8 @@ function ReviewRow({ label, value }: { label: string; value: string | null | und
   if (!value) return null;
   return (
     <div style={{ display: "flex", gap: "12px", marginBottom: "8px" }}>
-      <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#444", width: "120px", flexShrink: 0 }}>{label}</span>
-      <span style={{ fontSize: "13px", color: "#bbb", lineHeight: 1.5 }}>{value}</span>
+      <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-review-label)", width: "120px", flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: "13px", color: "var(--color-join-review-value)", lineHeight: 1.5 }}>{value}</span>
     </div>
   );
 }
@@ -721,10 +721,10 @@ function Step4({
 
   return (
     <div>
-      <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, color: "#f5f5f5", letterSpacing: "-0.03em", margin: "0 0 8px" }}>
+      <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.03em", margin: "0 0 8px" }}>
         Everything look right?
       </h2>
-      <p style={{ color: "#555", fontSize: "14px", margin: "0 0 28px" }}>Review your application before sending.</p>
+      <p style={{ color: "var(--color-join-muted)", fontSize: "14px", margin: "0 0 28px" }}>Review your application before sending.</p>
 
       <ReviewSection title="About You" onEdit={() => onGoToStep(1)}>
         <ReviewRow label="Name" value={data.name} />
@@ -734,8 +734,8 @@ function Step4({
 
       <ReviewSection title="Your Practice" onEdit={() => onGoToStep(2)}>
         <div style={{ marginBottom: "8px" }}>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#444", display: "block", marginBottom: "4px" }}>Bio</span>
-          <p style={{ fontSize: "13px", color: "#bbb", lineHeight: 1.6, margin: 0 }}>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-review-label)", display: "block", marginBottom: "4px" }}>Bio</span>
+          <p style={{ fontSize: "13px", color: "var(--color-join-review-value)", lineHeight: 1.6, margin: 0 }}>
             {bioTruncated && !bioExpanded ? bio.slice(0, 180) + "..." : bio}
             {bioTruncated && (
               <span
@@ -743,7 +743,7 @@ function Step4({
                 tabIndex={0}
                 onClick={() => setBioExpanded(!bioExpanded)}
                 onKeyDown={(e) => { if (e.key === "Enter") setBioExpanded(!bioExpanded); }}
-                style={{ color: "#e8d5b7", cursor: "pointer", marginLeft: "4px", fontFamily: "var(--font-dm-mono)", fontSize: "11px" }}
+                style={{ color: "var(--color-join-amber)", cursor: "pointer", marginLeft: "4px", fontFamily: "var(--font-dm-mono)", fontSize: "11px" }}
               >
                 {bioExpanded ? "show less" : "show more"}
               </span>
@@ -760,32 +760,32 @@ function Step4({
       <ReviewSection title="Your Submission" onEdit={() => onGoToStep(3)}>
         {uploadedImage && (
           <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
-            <div style={{ position: "relative", width: "80px", height: "80px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, border: "1px solid #1f1f1f" }}>
+            <div style={{ position: "relative", width: "80px", height: "80px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, border: "1px solid var(--color-join-border)" }}>
               <Image src={uploadedImage.preview} alt="Submission" fill className="object-cover" unoptimized />
             </div>
             <div>
-              <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#555", margin: "0 0 4px", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+              <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-muted)", margin: "0 0 4px", letterSpacing: "0.06em", textTransform: "uppercase" }}>
                 Uploaded
               </p>
-              <p style={{ fontSize: "13px", color: "#bbb", margin: 0 }}>Image ready</p>
+              <p style={{ fontSize: "13px", color: "var(--color-join-review-value)", margin: 0 }}>Image ready</p>
             </div>
           </div>
         )}
         <ReviewRow label="Title" value={data.submission_title} />
         <div>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#444", display: "block", marginBottom: "4px" }}>Prompt</span>
-          <p style={{ fontSize: "13px", color: "#bbb", lineHeight: 1.5, margin: 0 }}>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-review-label)", display: "block", marginBottom: "4px" }}>Prompt</span>
+          <p style={{ fontSize: "13px", color: "var(--color-join-review-value)", lineHeight: 1.5, margin: 0 }}>
             {(data.submission_prompt ?? "").slice(0, 100)}{(data.submission_prompt?.length ?? 0) > 100 ? "..." : ""}
           </p>
         </div>
       </ReviewSection>
 
-      <p style={{ fontSize: "12px", color: "#333", lineHeight: 1.6, margin: "20px 0 24px", fontStyle: "italic" }}>
+      <p style={{ fontSize: "12px", color: "var(--color-join-subtle)", lineHeight: 1.6, margin: "20px 0 24px", fontStyle: "italic" }}>
         By submitting you confirm this artwork is your own original AI-generated work and that you grant AI Art Arena the right to display it in the contest.
       </p>
 
       <div style={{ display: "flex", gap: "12px" }}>
-        <button onClick={onBack} style={ghostBtn}>← Back</button>
+        <button onClick={onBack} style={ghostBtn}>â† Back</button>
         <div
           role="button"
           tabIndex={0}
@@ -800,7 +800,7 @@ function Step4({
   );
 }
 
-// ── Success screen ─────────────────────────────────────────────────────────────
+// â”€â”€ Success screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function SuccessScreen({ email }: { email: string }) {
   return (
@@ -809,20 +809,20 @@ function SuccessScreen({ email }: { email: string }) {
         fontFamily: "var(--font-dm-mono)",
         fontSize: "28px",
         fontWeight: 700,
-        color: "#e8d5b7",
+        color: "var(--color-join-amber)",
         letterSpacing: "0.2em",
         marginBottom: "28px",
       }}>
         PENDING
       </div>
-      <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "2rem", fontWeight: 800, color: "#f5f5f5", letterSpacing: "-0.03em", margin: "0 0 16px" }}>
+      <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "2rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.03em", margin: "0 0 16px" }}>
         Application received.
       </h2>
-      <p style={{ color: "#888", fontSize: "15px", lineHeight: 1.7, margin: "0 0 8px", maxWidth: "420px", marginLeft: "auto", marginRight: "auto" }}>
+      <p style={{ color: "var(--color-join-body)", fontSize: "15px", lineHeight: 1.7, margin: "0 0 8px", maxWidth: "420px", marginLeft: "auto", marginRight: "auto" }}>
         Your work is under review. We will be in touch at {email} once a decision has been made.
       </p>
-      <p style={{ color: "#555", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px", maxWidth: "420px", marginLeft: "auto", marginRight: "auto" }}>
-        New contests open every week — keep creating.
+      <p style={{ color: "var(--color-join-muted)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px", maxWidth: "420px", marginLeft: "auto", marginRight: "auto" }}>
+        New contests open every week â€” keep creating.
       </p>
       <Link
         href="/"
@@ -831,19 +831,19 @@ function SuccessScreen({ email }: { email: string }) {
           fontSize: "12px",
           letterSpacing: "0.1em",
           textTransform: "uppercase",
-          color: "#e8d5b7",
+          color: "var(--color-join-amber)",
           textDecoration: "none",
           borderBottom: "1px solid rgba(232,213,183,0.4)",
           paddingBottom: "2px",
         }}
       >
-        Watch the Current Contest →
+        Watch the Current Contest â†’
       </Link>
     </div>
   );
 }
 
-// ── Main component ─────────────────────────────────────────────────────────────
+// â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function ArtistOnboarding() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -885,17 +885,17 @@ export function ArtistOnboarding() {
       }
       setIsDone(true);
     } catch {
-      toast.error("Network error — please try again.");
+      toast.error("Network error â€” please try again.");
       setIsSubmitting(false);
     }
   }
 
   return (
     <div style={{ maxWidth: "560px", margin: "0 auto" }}>
-      <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.75rem", fontWeight: 800, color: "#f5f5f5", letterSpacing: "-0.03em", margin: "0 0 8px" }}>
+      <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.75rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.03em", margin: "0 0 8px" }}>
         Compete as an Artist
       </h2>
-      <p style={{ color: "#888", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px" }}>
+      <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px" }}>
         Tell us about your work and submit a piece for consideration. If selected, it enters the next weekly contest.
       </p>
 

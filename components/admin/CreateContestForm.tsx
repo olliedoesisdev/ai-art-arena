@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 14px",
-  background: "#181820",
+  background: "var(--color-bg-surface2)",
   border: "1px solid rgba(139,92,246,0.25)",
   borderRadius: "8px",
-  color: "#eeeeff",
+  color: "var(--color-text)",
   fontSize: "0.875rem",
   outline: "none",
   boxSizing: "border-box",
@@ -20,7 +20,7 @@ const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: "0.8125rem",
   fontWeight: 500,
-  color: "#7878a0",
+  color: "var(--color-text-muted)",
   marginBottom: "6px",
 };
 
@@ -85,14 +85,14 @@ export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProp
         <label style={labelStyle}>Week Number</label>
         <input type="number" min="1" required value={formData.weekNumber} style={inputStyle}
           onChange={(e) => setFormData({ ...formData, weekNumber: parseInt(e.target.value) })} />
-        <p style={{ fontSize: "0.75rem", color: "#3a3a58", marginTop: "4px" }}>Suggested: {suggestedWeekNumber}</p>
+        <p style={{ fontSize: "0.75rem", color: "var(--color-text-dim)", marginTop: "4px" }}>Suggested: {suggestedWeekNumber}</p>
       </div>
 
       <div>
         <label style={labelStyle}>Number of Artworks</label>
         <input type="number" min="1" max="50" required value={formData.artworkCount} style={inputStyle}
           onChange={(e) => setFormData({ ...formData, artworkCount: Math.max(1, parseInt(e.target.value) || 1) })} />
-        <p style={{ fontSize: "0.75rem", color: "#3a3a58", marginTop: "4px" }}>How many artworks will be in this contest (1–50)</p>
+        <p style={{ fontSize: "0.75rem", color: "var(--color-text-dim)", marginTop: "4px" }}>How many artworks will be in this contest (1â€“50)</p>
       </div>
 
       <div>
@@ -111,21 +111,21 @@ export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProp
         <label style={labelStyle}>Status</label>
         <select required value={formData.status} style={inputStyle}
           onChange={(e) => setFormData({ ...formData, status: e.target.value as "active" | "archived" })}>
-          <option value="active">Active — live now</option>
-          <option value="archived">Archived — not accepting votes</option>
+          <option value="active">Active â€” live now</option>
+          <option value="archived">Archived â€” not accepting votes</option>
         </select>
       </div>
 
       {error && (
-        <div style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.875rem", color: "#f87171" }}>
+        <div style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.875rem", color: "var(--color-status-error)" }}>
           {error}
         </div>
       )}
 
       <div style={{ display: "flex", gap: "12px", paddingTop: "4px" }}>
         <button type="submit" disabled={isSubmitting} style={{
-          flex: 1, padding: "11px", background: isSubmitting ? "#3a3a58" : "#8b5cf6",
-          border: "none", borderRadius: "8px", color: "#fff",
+          flex: 1, padding: "11px", background: isSubmitting ? "var(--color-text-dim)" : "var(--color-purple)",
+          border: "none", borderRadius: "8px", color: "var(--color-text)",
           fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "0.9375rem",
           cursor: isSubmitting ? "not-allowed" : "pointer",
         }}>
@@ -134,7 +134,7 @@ export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProp
         <button type="button" onClick={() => router.back()} disabled={isSubmitting} style={{
           padding: "11px 20px", background: "transparent",
           border: "1px solid rgba(139,92,246,0.25)", borderRadius: "8px",
-          color: "#7878a0", fontSize: "0.875rem", cursor: "pointer",
+          color: "var(--color-text-muted)", fontSize: "0.875rem", cursor: "pointer",
         }}>
           Cancel
         </button>

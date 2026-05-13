@@ -39,7 +39,7 @@ function Avatar({ avatarUrl, name }: { avatarUrl?: string | null; name: string }
       width: "28px",
       height: "28px",
       borderRadius: "50%",
-      background: "#181820",
+      background: "var(--color-bg-surface2)",
       border: "1px solid rgba(139,92,246,0.15)",
       display: "flex",
       alignItems: "center",
@@ -48,7 +48,7 @@ function Avatar({ avatarUrl, name }: { avatarUrl?: string | null; name: string }
       fontFamily: "var(--font-dm-mono)",
       fontSize: "11px",
       fontWeight: 700,
-      color: "#a78bfa",
+      color: "var(--color-purple-light)",
     }}>
       {name.charAt(0).toUpperCase()}
     </div>
@@ -77,7 +77,7 @@ function CommentBubble({
   return (
     <div
       style={{
-        background: isAdminReply ? "rgba(139,92,246,0.06)" : "#111119",
+        background: isAdminReply ? "var(--color-purple-dim2)" : "var(--color-bg-surface)",
         border: isAdminReply
           ? "1px solid rgba(139,92,246,0.2)"
           : "1px solid rgba(139,92,246,0.1)",
@@ -92,7 +92,7 @@ function CommentBubble({
         <span style={{
           fontSize: "0.8125rem",
           fontWeight: 600,
-          color: isAdminReply ? "#a78bfa" : "#eeeeff",
+          color: isAdminReply ? "var(--color-purple-light)" : "var(--color-text)",
         }}>
           {authorName}
         </span>
@@ -102,7 +102,7 @@ function CommentBubble({
             fontWeight: 700,
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#8b5cf6",
+            color: "var(--color-purple)",
             background: "rgba(139,92,246,0.12)",
             padding: "2px 7px",
             borderRadius: "100px",
@@ -110,11 +110,11 @@ function CommentBubble({
             Admin
           </span>
         )}
-        <span style={{ fontSize: "0.6875rem", color: "#3a3a58", fontFamily: "var(--font-dm-mono)", marginLeft: "auto" }}>
+        <span style={{ fontSize: "0.6875rem", color: "var(--color-text-dim)", fontFamily: "var(--font-dm-mono)", marginLeft: "auto" }}>
           {timeAgo(createdAt)}
         </span>
       </div>
-      <p style={{ fontSize: "0.875rem", color: "#7878a0", lineHeight: 1.65, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+      <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", lineHeight: 1.65, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
         {body}
       </p>
       <ReactionBar commentId={id} initialCounts={reactions} />
@@ -129,7 +129,7 @@ interface Props {
 export function CommentList({ threads }: Props) {
   if (threads.length === 0) {
     return (
-      <p style={{ fontSize: "0.875rem", color: "#3a3a58", textAlign: "center", padding: "24px 0" }}>
+      <p style={{ fontSize: "0.875rem", color: "var(--color-text-dim)", textAlign: "center", padding: "24px 0" }}>
         No comments yet. Be the first to share your thoughts.
       </p>
     );

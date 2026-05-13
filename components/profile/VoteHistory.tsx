@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -165,7 +165,7 @@ export function VoteHistory({ votes }: Props) {
           margin: "0 auto 16px",
         }}>
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 3l2.5 5 5.5.8-4 3.9.94 5.5L10 15.7l-4.94 2.5.94-5.5L2 8.8l5.5-.8L10 3z" stroke="#8b5cf6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10 3l2.5 5 5.5.8-4 3.9.94 5.5L10 15.7l-4.94 2.5.94-5.5L2 8.8l5.5-.8L10 3z" stroke="var(--color-purple)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
         <p style={{

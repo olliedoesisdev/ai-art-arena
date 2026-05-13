@@ -133,7 +133,7 @@ export function ReactionBar({ commentId, initialCounts }: Props) {
                   fontSize: "11px",
                   fontFamily: "var(--font-dm-mono)",
                   fontWeight: 600,
-                  color: isActive ? "#a78bfa" : "#7878a0",
+                  color: isActive ? "var(--color-purple-light)" : "var(--color-text-muted)",
                   lineHeight: 1,
                   minWidth: "8px",
                   textAlign: "center",

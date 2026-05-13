@@ -1,21 +1,21 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import type { TopArtwork } from "@/lib/types";
 
 interface Props {
   artworks: TopArtwork[];
 }
 
-const RANK_COLOR = ["#fbbf24", "#b0b0c8", "#c07840"];
+const RANK_COLOR = ["var(--color-status-warning)", "var(--color-rank-silver)", "var(--color-rank-bronze)"];
 
 export function TopArtworksTable({ artworks }: Props) {
   if (artworks.length === 0) {
-    return <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No artworks yet.</p>;
+    return <p style={{ fontSize: "0.875rem", color: "var(--color-text-dim)" }}>No artworks yet.</p>;
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
       {artworks.map((artwork, i) => {
-        const rankColor = RANK_COLOR[i] ?? "#3a3a58";
+        const rankColor = RANK_COLOR[i] ?? "var(--color-text-dim)";
         const maxVotes = artworks[0].vote_count || 1;
         const pct = (artwork.vote_count / maxVotes) * 100;
 
@@ -27,7 +27,7 @@ export function TopArtworksTable({ artworks }: Props) {
               alignItems: "center",
               gap: "12px",
               padding: "10px 12px",
-              background: "#181820",
+              background: "var(--color-bg-surface2)",
               borderRadius: "8px",
             }}
           >
@@ -52,15 +52,15 @@ export function TopArtworksTable({ artworks }: Props) {
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#eeeeff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {artwork.title}
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
-                <div style={{ flex: 1, height: "3px", background: "#0d0d14", borderRadius: "100px", overflow: "hidden" }}>
+                <div style={{ flex: 1, height: "3px", background: "var(--color-bg-base)", borderRadius: "100px", overflow: "hidden" }}>
                   <div style={{ width: `${pct}%`, height: "100%", background: rankColor, borderRadius: "100px", transition: "width 0.3s" }} />
                 </div>
                 {artwork.contest_week !== null && (
-                  <span style={{ fontSize: "0.6875rem", color: "#3a3a58", fontFamily: "var(--font-dm-mono)", flexShrink: 0 }}>
+                  <span style={{ fontSize: "0.6875rem", color: "var(--color-text-dim)", fontFamily: "var(--font-dm-mono)", flexShrink: 0 }}>
                     Wk {artwork.contest_week}
                   </span>
                 )}

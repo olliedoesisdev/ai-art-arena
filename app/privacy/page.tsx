@@ -1,8 +1,8 @@
-import { Metadata } from "next";
+﻿import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — AI Art Arena",
+  title: "Privacy Policy â€” AI Art Arena",
   description: "How AI Art Arena handles your data.",
 };
 
@@ -16,7 +16,7 @@ export default function PrivacyPage() {
             fontWeight: 600,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "#a78bfa",
+            color: "var(--color-purple-light)",
             marginBottom: "16px",
           }}
         >
@@ -28,13 +28,13 @@ export default function PrivacyPage() {
             fontWeight: 800,
             fontSize: "clamp(2rem, 5vw, 3rem)",
             letterSpacing: "-0.03em",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             marginBottom: "8px",
           }}
         >
           Privacy Policy
         </h1>
-        <p style={{ fontSize: "0.8125rem", color: "#7878a0", marginBottom: "48px" }}>
+        <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginBottom: "48px" }}>
           Last updated: May 2026
         </p>
 
@@ -70,19 +70,19 @@ export default function PrivacyPage() {
                 fontFamily: "var(--font-syne)",
                 fontWeight: 700,
                 fontSize: "1.125rem",
-                color: "#eeeeff",
+                color: "var(--color-text)",
                 marginBottom: "10px",
               }}
             >
               {heading}
             </h2>
-            <p style={{ fontSize: "0.9375rem", color: "#7878a0", lineHeight: 1.7 }}>{body}</p>
+            <p style={{ fontSize: "0.9375rem", color: "var(--color-text-muted)", lineHeight: 1.7 }}>{body}</p>
           </section>
         ))}
 
         <Link
           href="/"
-          style={{ fontSize: "0.875rem", color: "#8b5cf6", textDecoration: "none" }}
+          style={{ fontSize: "0.875rem", color: "var(--color-purple)", textDecoration: "none" }}
         >
           &larr; Back to home
         </Link>

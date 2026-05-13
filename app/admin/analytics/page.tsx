@@ -1,4 +1,4 @@
-import { getAnalyticsSummary } from "@/lib/data/analytics";
+﻿import { getAnalyticsSummary } from "@/lib/data/analytics";
 import { MetricCard } from "@/components/admin/analytics/MetricCard";
 import { VoteTrendChart } from "@/components/admin/analytics/VoteTrendChart";
 import { ContestBarChart } from "@/components/admin/analytics/ContestBarChart";
@@ -6,11 +6,11 @@ import { EngagementDonut } from "@/components/admin/analytics/EngagementDonut";
 import { TopArtworksTable } from "@/components/admin/analytics/TopArtworksTable";
 import { ContestStatsTable } from "@/components/admin/analytics/ContestStatsTable";
 
-export const metadata = { title: "Analytics — Admin" };
+export const metadata = { title: "Analytics â€” Admin" };
 export const revalidate = 300;
 
 const card: React.CSSProperties = {
-  background: "#111119",
+  background: "var(--color-bg-surface)",
   border: "1px solid rgba(139,92,246,0.12)",
   borderRadius: "14px",
   padding: "24px",
@@ -19,7 +19,7 @@ const card: React.CSSProperties = {
 const cardLabel: React.CSSProperties = {
   fontSize: "0.8125rem",
   fontWeight: 600,
-  color: "#7878a0",
+  color: "var(--color-text-muted)",
   textTransform: "uppercase",
   letterSpacing: "0.08em",
   marginBottom: "20px",
@@ -48,10 +48,10 @@ export default async function AnalyticsPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       {/* Header */}
       <div>
-        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8b5cf6", marginBottom: "8px" }}>
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple)", marginBottom: "8px" }}>
           Admin
         </p>
-        <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "#eeeeff", letterSpacing: "-0.03em", margin: 0 }}>
+        <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-text)", letterSpacing: "-0.03em", margin: 0 }}>
           Analytics
         </h1>
       </div>
@@ -62,26 +62,26 @@ export default async function AnalyticsPage() {
           label="Total Votes"
           value={totalVotes}
           sub={weekTrend !== null ? `${weekTrend.startsWith("-") ? "" : "+"}${weekTrend}% vs last 7 days` : undefined}
-          color="#8b5cf6"
+          color="var(--color-purple)"
         />
         <MetricCard
           label="Avg per Contest"
           value={avgVotesPerContest.toFixed(1)}
           sub={`across ${totalContests} contest${totalContests !== 1 ? "s" : ""}`}
-          color="#a78bfa"
+          color="var(--color-purple-light)"
         />
         <MetricCard
           label="Avg per Artwork"
           value={avgVotesPerArtwork.toFixed(1)}
           sub={`across ${totalArtworks} artwork${totalArtworks !== 1 ? "s" : ""}`}
-          color="#34d399"
+          color="var(--color-status-success)"
         />
       </div>
 
       {/* Vote trend + engagement row */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "16px" }}>
         <div style={card}>
-          <p style={cardLabel}>Votes — last 30 days</p>
+          <p style={cardLabel}>Votes â€” last 30 days</p>
           <VoteTrendChart data={dailyVotes} days={30} />
         </div>
         <div style={card}>
@@ -94,7 +94,7 @@ export default async function AnalyticsPage() {
       <div style={card}>
         <p style={cardLabel}>Votes per Contest</p>
         <ContestBarChart data={contestStats} />
-        <p style={{ fontSize: "0.6875rem", color: "#3a3a58", marginTop: "10px", fontFamily: "var(--font-dm-mono)" }}>
+        <p style={{ fontSize: "0.6875rem", color: "var(--color-text-dim)", marginTop: "10px", fontFamily: "var(--font-dm-mono)" }}>
           Green bar = active contest
         </p>
       </div>
@@ -106,7 +106,7 @@ export default async function AnalyticsPage() {
           <TopArtworksTable artworks={topArtworks} />
         </div>
         <div style={card}>
-          <p style={cardLabel}>Votes — last 90 days</p>
+          <p style={cardLabel}>Votes â€” last 90 days</p>
           <VoteTrendChart data={dailyVotes} days={90} />
         </div>
       </div>

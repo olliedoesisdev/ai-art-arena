@@ -73,7 +73,7 @@ export async function CommentSection({ artworkId }: Props) {
             fontWeight: 600,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "#a78bfa",
+            color: "var(--color-purple-light)",
             marginBottom: "6px",
           }}
         >
@@ -84,7 +84,7 @@ export async function CommentSection({ artworkId }: Props) {
             fontFamily: "var(--font-syne)",
             fontWeight: 700,
             fontSize: "1.125rem",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             margin: 0,
           }}
         >
@@ -107,7 +107,7 @@ export async function CommentSection({ artworkId }: Props) {
       {/* Submit form */}
       <div
         style={{
-          background: "#111119",
+          background: "var(--color-bg-surface)",
           border: "1px solid rgba(139,92,246,0.12)",
           borderRadius: "14px",
           padding: "24px",
@@ -117,7 +117,7 @@ export async function CommentSection({ artworkId }: Props) {
           style={{
             fontSize: "0.8125rem",
             fontWeight: 600,
-            color: "#eeeeff",
+            color: "var(--color-text)",
             marginBottom: "20px",
           }}
         >

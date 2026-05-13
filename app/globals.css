@@ -44,6 +44,24 @@
   --color-rank-silver: #b0b0c8;
   --color-rank-bronze: #c07840;
 
+  /* ── Join / artist application warm palette ─────────────── */
+  --color-join-amber:       #e8d5b7;
+  --color-join-amber-dim:   rgba(232, 213, 183, 0.12);
+  --color-join-amber-dim2:  rgba(232, 213, 183, 0.04);
+  --color-join-amber-dim3:  rgba(232, 213, 183, 0.40);
+  --color-join-ink:         #0a0a0a;
+  --color-join-bg:          #0a0a0a;
+  --color-join-surface:     #0d0d0d;
+  --color-join-border:      #1f1f1f;
+  --color-join-card:        #111;
+  --color-join-card-icon:   #181818;
+  --color-join-muted:       #555;
+  --color-join-subtle:      #333;
+  --color-join-body:        #888;
+  --color-join-text:        #f5f5f5;
+  --color-join-review-label: #444;
+  --color-join-review-value: #bbb;
+
   /* ── Artwork card accents (cycled by index in ArtworkCard.tsx) ── */
   --color-card-accent-0: #7c3aed;
   --color-card-accent-1: #ff6b35;

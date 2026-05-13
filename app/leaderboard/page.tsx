@@ -1,4 +1,4 @@
-import { createPublicClient } from "@/lib/supabase/server";
+﻿import { createPublicClient } from "@/lib/supabase/server";
 import { SITE_URL } from "@/lib/site";
 import { LeaderboardList } from "@/components/leaderboard/LeaderboardList";
 import { LeaderboardFeatured } from "@/components/leaderboard/LeaderboardFeatured";
@@ -6,11 +6,11 @@ import { LeaderboardFeatured } from "@/components/leaderboard/LeaderboardFeature
 export const revalidate = 300;
 
 export const metadata = {
-  title: "Leaderboard — AI Art Arena",
+  title: "Leaderboard â€” AI Art Arena",
   description: "All-time highest-voted artworks across every AI Art Arena contest.",
   alternates: { canonical: `${SITE_URL}/leaderboard` },
   openGraph: {
-    title: "Leaderboard — AI Art Arena",
+    title: "Leaderboard â€” AI Art Arena",
     description: "All-time highest-voted artworks across every AI Art Arena contest.",
     url: `${SITE_URL}/leaderboard`,
     siteName: "AI Art Arena",
@@ -19,7 +19,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Leaderboard — AI Art Arena",
+    title: "Leaderboard â€” AI Art Arena",
     description: "All-time highest-voted artworks across every AI Art Arena contest.",
     images: [`${SITE_URL}/og-image.png`],
   },
@@ -74,7 +74,7 @@ export default async function LeaderboardPage() {
             fontWeight: 600,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "#a78bfa",
+            color: "var(--color-purple-light)",
             marginBottom: "16px",
           }}
         >
@@ -86,7 +86,7 @@ export default async function LeaderboardPage() {
             fontWeight: 800,
             fontSize: "clamp(2rem, 5vw, 3rem)",
             letterSpacing: "-0.03em",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             marginBottom: "48px",
           }}
         >
@@ -98,12 +98,12 @@ export default async function LeaderboardPage() {
             style={{
               textAlign: "center",
               padding: "80px 20px",
-              background: "#111119",
+              background: "var(--color-bg-surface)",
               border: "1px solid rgba(139,92,246,0.12)",
               borderRadius: "14px",
             }}
           >
-            <p style={{ fontSize: "0.875rem", color: "#7878a0" }}>
+            <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
               No votes have been cast yet. Be the first to vote!
             </p>
           </div>

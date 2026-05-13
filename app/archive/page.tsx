@@ -1,4 +1,4 @@
-import { createPublicClient } from "@/lib/supabase/server";
+﻿import { createPublicClient } from "@/lib/supabase/server";
 import { SITE_URL } from "@/lib/site";
 import { ArchiveCard } from "@/components/archive/ArchiveCard";
 import { Contest, Artwork } from "@/lib/types";
@@ -6,11 +6,11 @@ import { Contest, Artwork } from "@/lib/types";
 export const revalidate = 3600;
 
 export const metadata = {
-  title: "Archive — AI Art Arena",
+  title: "Archive â€” AI Art Arena",
   description: "Browse past AI Art Arena contests and their winning artworks.",
   alternates: { canonical: `${SITE_URL}/archive` },
   openGraph: {
-    title: "Archive — AI Art Arena",
+    title: "Archive â€” AI Art Arena",
     description: "Browse past AI Art Arena contests and their winning artworks.",
     url: `${SITE_URL}/archive`,
     siteName: "AI Art Arena",
@@ -19,7 +19,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Archive — AI Art Arena",
+    title: "Archive â€” AI Art Arena",
     description: "Browse past AI Art Arena contests and their winning artworks.",
     images: [`${SITE_URL}/og-image.png`],
   },
@@ -43,7 +43,7 @@ export default async function ArchivePage() {
             fontWeight: 600,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "#a78bfa",
+            color: "var(--color-purple-light)",
             marginBottom: "16px",
           }}
         >
@@ -55,7 +55,7 @@ export default async function ArchivePage() {
             fontWeight: 800,
             fontSize: "clamp(2rem, 5vw, 3rem)",
             letterSpacing: "-0.03em",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             marginBottom: "48px",
           }}
         >
@@ -67,12 +67,12 @@ export default async function ArchivePage() {
             style={{
               textAlign: "center",
               padding: "80px 20px",
-              background: "#111119",
+              background: "var(--color-bg-surface)",
               border: "1px solid rgba(139,92,246,0.12)",
               borderRadius: "14px",
             }}
           >
-            <p style={{ fontSize: "0.875rem", color: "#7878a0" }}>
+            <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
               No archived contests yet. Check back after the first contest ends.
             </p>
           </div>

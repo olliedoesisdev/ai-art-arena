@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
@@ -70,7 +70,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
       toast.success("Profile updated.");
       onClose();
     } catch {
-      toast.error("Network error — try again.");
+      toast.error(“Network error - try again.”);
     } finally {
       setIsSaving(false);
     }
@@ -246,7 +246,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
                 width: "20px",
                 height: "20px",
                 borderRadius: "50%",
-                background: "#fff",
+                background: "white",
                 transition: "left 0.2s",
               }} />
             </button>

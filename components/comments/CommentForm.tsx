@@ -72,7 +72,7 @@ export function CommentForm({ artworkId }: Props) {
           borderRadius: "10px",
           padding: "16px 20px",
           fontSize: "0.875rem",
-          color: "#34d399",
+          color: "var(--color-status-success)",
           display: "flex",
           alignItems: "center",
           gap: "10px",
@@ -103,7 +103,7 @@ export function CommentForm({ artworkId }: Props) {
       <div className="grid-comment-fields">
         <div>
           <label style={labelStyle} htmlFor="comment-name">
-            Name <span style={{ color: "#8b5cf6" }}>*</span>
+            Name <span style={{ color: "var(--color-purple)" }}>*</span>
           </label>
           <input
             id="comment-name"
@@ -121,7 +121,7 @@ export function CommentForm({ artworkId }: Props) {
         <div>
           <label style={labelStyle} htmlFor="comment-email">
             Email{" "}
-            <span style={{ color: "#3a3a58", fontWeight: 400 }}>(private, never shown)</span>
+            <span style={{ color: "var(--color-text-dim)", fontWeight: 400 }}>(private, never shown)</span>
           </label>
           <input
             id="comment-email"
@@ -137,7 +137,7 @@ export function CommentForm({ artworkId }: Props) {
 
       <div>
         <label style={labelStyle} htmlFor="comment-body">
-          Comment <span style={{ color: "#8b5cf6" }}>*</span>
+          Comment <span style={{ color: "var(--color-purple)" }}>*</span>
         </label>
         <textarea
           id="comment-body"
@@ -154,7 +154,7 @@ export function CommentForm({ artworkId }: Props) {
         <p
           style={{
             fontSize: "0.6875rem",
-            color: body.length > MAX_BODY * 0.9 ? "#fbbf24" : "#3a3a58",
+            color: body.length > MAX_BODY * 0.9 ? "var(--color-status-warning)" : "var(--color-text-dim)",
             textAlign: "right",
             marginTop: "4px",
             fontFamily: "var(--font-dm-mono)",
@@ -172,7 +172,7 @@ export function CommentForm({ artworkId }: Props) {
             borderRadius: "8px",
             padding: "10px 14px",
             fontSize: "0.8125rem",
-            color: "#f87171",
+            color: "var(--color-status-error)",
           }}
         >
           {errorMsg}
@@ -185,12 +185,12 @@ export function CommentForm({ artworkId }: Props) {
         style={{
           alignSelf: "flex-start",
           padding: "10px 24px",
-          background: status === "submitting" ? "rgba(139,92,246,0.4)" : "#8b5cf6",
+          background: status === "submitting" ? "var(--color-purple-dim)" : "var(--color-purple)",
           border: "none",
           borderRadius: "8px",
           fontSize: "0.875rem",
           fontWeight: 600,
-          color: "#eeeeff",
+          color: "var(--color-text)",
           cursor: status === "submitting" ? "not-allowed" : "pointer",
           transition: "background 0.15s",
         }}

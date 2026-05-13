@@ -1,9 +1,9 @@
-export default function GlobalLoading() {
+﻿export default function GlobalLoading() {
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "#08080e",
+        background: "var(--color-bg-base)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -16,7 +16,7 @@ export default function GlobalLoading() {
             height: "40px",
             borderRadius: "50%",
             border: "2px solid rgba(139,92,246,0.15)",
-            borderTopColor: "#8b5cf6",
+            borderTopColor: "var(--color-purple)",
             animation: "spin 0.8s linear infinite",
           }}
         />
@@ -26,7 +26,7 @@ export default function GlobalLoading() {
             fontSize: "12px",
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#3a3a58",
+            color: "var(--color-text-dim)",
           }}
         >
           Loading

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -43,7 +43,7 @@ export function ArchiveButton({ contestId }: { contestId: string }) {
       disabled={isArchiving}
       style={{
         fontSize: "0.8125rem", fontWeight: 500,
-        color: isArchiving ? "#3a3a58" : "#fbbf24",
+        color: isArchiving ? "var(--color-text-dim)" : "var(--color-status-warning)",
         background: "none", border: "none", cursor: isArchiving ? "not-allowed" : "pointer",
         padding: 0,
       }}

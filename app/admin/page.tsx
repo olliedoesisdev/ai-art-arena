@@ -1,13 +1,13 @@
-import { createAdminClient } from "@/lib/supabase/server";
+﻿import { createAdminClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-export const metadata = { title: "Admin — AI Art Arena" };
+export const metadata = { title: "Admin â€” AI Art Arena" };
 export const revalidate = 120;
 
 const card: React.CSSProperties = {
-  background: "#111119",
+  background: "var(--color-bg-surface)",
   border: "1px solid rgba(139,92,246,0.12)",
   borderRadius: "14px",
   padding: "24px",
@@ -47,10 +47,10 @@ export default async function AdminPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       <div>
-        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8b5cf6", marginBottom: "8px" }}>
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple)", marginBottom: "8px" }}>
           Overview
         </p>
-        <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "#eeeeff", letterSpacing: "-0.03em" }}>
+        <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-text)", letterSpacing: "-0.03em" }}>
           Dashboard
         </h1>
       </div>
@@ -58,32 +58,32 @@ export default async function AdminPage() {
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1px", background: "rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden", border: "1px solid rgba(139,92,246,0.12)" }}>
         {STATS.map(({ label, value, sub }) => (
-          <div key={label} style={{ background: "#111119", padding: "24px" }}>
-            <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "2rem", fontWeight: 500, color: "#eeeeff", letterSpacing: "-0.02em", marginBottom: "4px" }}>
+          <div key={label} style={{ background: "var(--color-bg-surface)", padding: "24px" }}>
+            <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "2rem", fontWeight: 500, color: "var(--color-text)", letterSpacing: "-0.02em", marginBottom: "4px" }}>
               {value}
             </div>
-            <div style={{ fontSize: "0.8125rem", color: "#7878a0", marginBottom: "2px" }}>{label}</div>
-            <div style={{ fontSize: "0.75rem", color: "#3a3a58" }}>{sub}</div>
+            <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginBottom: "2px" }}>{label}</div>
+            <div style={{ fontSize: "0.75rem", color: "var(--color-text-dim)" }}>{sub}</div>
           </div>
         ))}
       </div>
 
       {/* Quick actions */}
       <div style={card}>
-        <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Quick actions</p>
+        <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text-muted)", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Quick actions</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
           {[
-            { href: "/admin/contests/new", label: "New Contest", color: "#8b5cf6" },
-            { href: "/admin/artworks/upload", label: "Upload Artworks", color: "#34d399" },
-            { href: "/admin/analytics", label: "Analytics", color: "#a78bfa" },
-            { href: "/admin/contests", label: "Manage Contests", color: "#fbbf24" },
+            { href: "/admin/contests/new", label: "New Contest", color: "var(--color-purple)" },
+            { href: "/admin/artworks/upload", label: "Upload Artworks", color: "var(--color-status-success)" },
+            { href: "/admin/analytics", label: "Analytics", color: "var(--color-purple-light)" },
+            { href: "/admin/contests", label: "Manage Contests", color: "var(--color-status-warning)" },
           ].map(({ href, label, color }) => (
             <Link key={href} href={href} style={{
               display: "block", padding: "14px 18px", borderRadius: "10px",
               border: `1px solid ${color}30`, background: `${color}08`,
               color, fontSize: "0.875rem", fontWeight: 600, textDecoration: "none",
             }}>
-              {label} →
+              {label} â†’
             </Link>
           ))}
         </div>
@@ -93,25 +93,25 @@ export default async function AdminPage() {
         {/* Recent contests */}
         <div style={card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-            <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em" }}>Recent Contests</p>
-            <Link href="/admin/contests" style={{ fontSize: "0.75rem", color: "#8b5cf6", textDecoration: "none" }}>View all</Link>
+            <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Recent Contests</p>
+            <Link href="/admin/contests" style={{ fontSize: "0.75rem", color: "var(--color-purple)", textDecoration: "none" }}>View all</Link>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {(recentContests.data ?? []).length === 0 ? (
-              <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No contests yet</p>
+              <p style={{ fontSize: "0.875rem", color: "var(--color-text-dim)" }}>No contests yet</p>
             ) : (recentContests.data ?? []).map((c) => (
-              <div key={c.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "#181820", borderRadius: "8px" }}>
+              <div key={c.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--color-bg-surface2)", borderRadius: "8px" }}>
                 <div>
-                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "#eeeeff" }}>Week {c.week_number}</div>
-                  <div style={{ fontSize: "0.75rem", color: "#7878a0" }}>
-                    {new Date(c.start_date).toLocaleDateString()} — {new Date(c.end_date).toLocaleDateString()}
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>Week {c.week_number}</div>
+                  <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                    {new Date(c.start_date).toLocaleDateString()} â€” {new Date(c.end_date).toLocaleDateString()}
                   </div>
                 </div>
                 <span style={{
                   fontSize: "0.6875rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
                   padding: "3px 8px", borderRadius: "100px",
                   background: c.status === "active" ? "rgba(52,211,153,0.12)" : "rgba(139,92,246,0.08)",
-                  color: c.status === "active" ? "#34d399" : "#7878a0",
+                  color: c.status === "active" ? "var(--color-status-success)" : "var(--color-text-muted)",
                 }}>
                   {c.status}
                 </span>
@@ -123,27 +123,27 @@ export default async function AdminPage() {
         {/* Recent votes */}
         <div style={card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-            <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0", textTransform: "uppercase", letterSpacing: "0.08em" }}>Recent Votes</p>
-            <Link href="/admin/analytics" style={{ fontSize: "0.75rem", color: "#8b5cf6", textDecoration: "none" }}>Analytics</Link>
+            <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Recent Votes</p>
+            <Link href="/admin/analytics" style={{ fontSize: "0.75rem", color: "var(--color-purple)", textDecoration: "none" }}>Analytics</Link>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {(recentVotes.data ?? []).length === 0 ? (
-              <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No votes yet</p>
+              <p style={{ fontSize: "0.875rem", color: "var(--color-text-dim)" }}>No votes yet</p>
             ) : (recentVotes.data ?? []).map((v, i) => {
               const artworkRaw = Array.isArray(v.artworks) ? v.artworks[0] : v.artworks;
               const artwork = artworkRaw as { title: string; contests: { week_number: number }[] | null } | null;
               return (
-                <div key={v.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "8px 14px", background: "#181820", borderRadius: "8px" }}>
-                  <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "#3a3a58", minWidth: "20px" }}>
+                <div key={v.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "8px 14px", background: "var(--color-bg-surface2)", borderRadius: "8px" }}>
+                  <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "var(--color-text-dim)", minWidth: "20px" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "0.8125rem", color: "#eeeeff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <div style={{ fontSize: "0.8125rem", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {artwork?.title ?? "Unknown"}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "#7878a0" }}>Week {artwork?.contests?.[0]?.week_number ?? "?"}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Week {artwork?.contests?.[0]?.week_number ?? "?"}</div>
                   </div>
-                  <div style={{ fontSize: "0.6875rem", color: "#3a3a58" }}>
+                  <div style={{ fontSize: "0.6875rem", color: "var(--color-text-dim)" }}>
                     {new Date(v.created_at).toLocaleDateString()}
                   </div>
                 </div>

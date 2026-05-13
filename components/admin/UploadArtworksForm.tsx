@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -164,9 +164,9 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
   const filledCount = slots.filter((s) => s.uploadedUrl).length;
 
   const inputStyle: React.CSSProperties = {
-    width: "100%", padding: "10px 14px", background: "#181820",
+    width: "100%", padding: "10px 14px", background: "var(--color-bg-surface2)",
     border: "1px solid rgba(139,92,246,0.25)", borderRadius: "8px",
-    color: "#eeeeff", fontSize: "0.875rem", outline: "none",
+    color: "var(--color-text)", fontSize: "0.875rem", outline: "none",
     boxSizing: "border-box", colorScheme: "dark" as const,
   };
 
@@ -174,7 +174,7 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* Contest selector */}
       <div>
-        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 500, color: "#7878a0", marginBottom: "6px" }}>
+        <label style={{ display: "block", fontSize: "0.8125rem", fontWeight: 500, color: "var(--color-text-muted)", marginBottom: "6px" }}>
           Contest *
         </label>
         <select
@@ -190,10 +190,10 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
           }}
           style={inputStyle}
         >
-          <option value="">— Select a contest —</option>
+          <option value="">â€” Select a contest â€”</option>
           {contests.map((c) => (
             <option key={c.id} value={c.id}>
-              Week {c.week_number} ({c.status}) — {new Date(c.start_date).toLocaleDateString()}
+              Week {c.week_number} ({c.status}) â€” {new Date(c.start_date).toLocaleDateString()}
             </option>
           ))}
         </select>
@@ -202,11 +202,11 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
       {/* Artwork slots */}
       <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-          <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#7878a0" }}>
+          <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text-muted)" }}>
             Artworks ({filledCount}/{slots.length} ready)
           </p>
           <button type="button" onClick={addSlot} style={{
-            fontSize: "0.8125rem", fontWeight: 600, color: "#8b5cf6",
+            fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-purple)",
             background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.25)",
             borderRadius: "6px", padding: "6px 12px", cursor: "pointer",
           }}>
@@ -216,10 +216,10 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
           {slots.map((slot, i) => (
-            <div key={slot.id} style={{ background: "#181820", border: "1px solid rgba(139,92,246,0.15)", borderRadius: "12px", overflow: "hidden" }}>
+            <div key={slot.id} style={{ background: "var(--color-bg-surface2)", border: "1px solid rgba(139,92,246,0.15)", borderRadius: "12px", overflow: "hidden" }}>
               {/* Image zone */}
               <div
-                style={{ position: "relative", aspectRatio: "1", background: "#111119", cursor: "pointer" }}
+                style={{ position: "relative", aspectRatio: "1", background: "var(--color-bg-surface)", cursor: "pointer" }}
                 onClick={() => fileInputRefs.current[slot.id]?.click()}
               >
                 {slot.previewUrl ? (
@@ -227,22 +227,22 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
                     <Image src={slot.previewUrl} alt={slot.title || `Artwork ${i + 1}`} fill style={{ objectFit: "cover" }} unoptimized />
                     {slot.uploading && (
                       <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: "0.8125rem", color: "#eeeeff", fontWeight: 500 }}>Uploading...</span>
+                        <span style={{ fontSize: "0.8125rem", color: "var(--color-text)", fontWeight: 500 }}>Uploading...</span>
                       </div>
                     )}
                     {slot.uploadedUrl && !slot.uploading && (
-                      <div style={{ position: "absolute", top: "8px", right: "8px", background: "#34d399", color: "#08080e", fontSize: "0.6875rem", fontWeight: 700, padding: "2px 8px", borderRadius: "100px" }}>
+                      <div style={{ position: "absolute", top: "8px", right: "8px", background: "var(--color-status-success)", color: "var(--color-bg-base)", fontSize: "0.6875rem", fontWeight: 700, padding: "2px 8px", borderRadius: "100px" }}>
                         Ready
                       </div>
                     )}
                   </>
                 ) : (
-                  <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "#3a3a58" }}>
+                  <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "var(--color-text-dim)" }}>
                     <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 16v-8m-4 4h8M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span style={{ fontSize: "0.75rem", fontWeight: 500 }}>Click to upload</span>
-                    <span style={{ fontSize: "0.6875rem" }}>JPG PNG WebP — 10MB max</span>
+                    <span style={{ fontSize: "0.6875rem" }}>JPG PNG WebP â€” 10MB max</span>
                   </div>
                 )}
                 <input
@@ -254,7 +254,7 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
               </div>
 
               {slot.error && (
-                <p style={{ fontSize: "0.75rem", color: "#f87171", padding: "6px 12px 0" }}>{slot.error}</p>
+                <p style={{ fontSize: "0.75rem", color: "var(--color-status-error)", padding: "6px 12px 0" }}>{slot.error}</p>
               )}
 
               <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -274,7 +274,7 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
                 />
                 {slots.length > 1 && (
                   <button type="button" onClick={() => removeSlot(slot.id)}
-                    style={{ fontSize: "0.75rem", color: "#f87171", background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: 0 }}>
+                    style={{ fontSize: "0.75rem", color: "var(--color-status-error)", background: "none", border: "none", cursor: "pointer", textAlign: "left", padding: 0 }}>
                     Remove
                   </button>
                 )}
@@ -285,7 +285,7 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
       </div>
 
       {formError && (
-        <div style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.875rem", color: "#f87171" }}>
+        <div style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)", borderRadius: "8px", padding: "10px 14px", fontSize: "0.875rem", color: "var(--color-status-error)" }}>
           {formError}
         </div>
       )}
@@ -293,8 +293,8 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
       <div style={{ display: "flex", gap: "12px" }}>
         <button type="submit" disabled={isSubmitting || filledCount === 0} style={{
           flex: 1, padding: "11px",
-          background: isSubmitting || filledCount === 0 ? "#3a3a58" : "#8b5cf6",
-          border: "none", borderRadius: "8px", color: "#fff",
+          background: isSubmitting || filledCount === 0 ? "var(--color-text-dim)" : "var(--color-purple)",
+          border: "none", borderRadius: "8px", color: "var(--color-text)",
           fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "0.9375rem",
           cursor: isSubmitting || filledCount === 0 ? "not-allowed" : "pointer",
         }}>
@@ -303,7 +303,7 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
         <button type="button" onClick={() => router.back()} disabled={isSubmitting} style={{
           padding: "11px 20px", background: "transparent",
           border: "1px solid rgba(139,92,246,0.25)", borderRadius: "8px",
-          color: "#7878a0", fontSize: "0.875rem", cursor: "pointer",
+          color: "var(--color-text-muted)", fontSize: "0.875rem", cursor: "pointer",
         }}>
           Cancel
         </button>

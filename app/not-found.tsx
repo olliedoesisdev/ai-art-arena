@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -19,7 +19,7 @@ export default function NotFound() {
             fontWeight: 600,
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "#8b5cf6",
+            color: "var(--color-purple)",
             marginBottom: "16px",
           }}
         >
@@ -31,7 +31,7 @@ export default function NotFound() {
             fontWeight: 800,
             fontSize: "clamp(2rem, 5vw, 3rem)",
             letterSpacing: "-0.03em",
-            color: "#eeeeff",
+            color: "var(--color-text)",
             marginBottom: "12px",
           }}
         >
@@ -40,7 +40,7 @@ export default function NotFound() {
         <p
           style={{
             fontSize: "0.9375rem",
-            color: "#7878a0",
+            color: "var(--color-text-muted)",
             lineHeight: 1.65,
             marginBottom: "36px",
           }}
@@ -53,8 +53,8 @@ export default function NotFound() {
             fontFamily: "var(--font-syne)",
             fontWeight: 700,
             fontSize: "0.9375rem",
-            color: "#08080e",
-            background: "#fbbf24",
+            color: "var(--color-bg-base)",
+            background: "var(--color-status-warning)",
             padding: "11px 28px",
             borderRadius: "100px",
             textDecoration: "none",

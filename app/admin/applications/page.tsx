@@ -1,14 +1,14 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import type { ArtistApplication, ArtistApplicationStatus } from "@/lib/types";
 
 const STATUS_STYLES: Record<ArtistApplicationStatus, React.CSSProperties> = {
-  pending:    { background: "rgba(251,191,36,0.1)",  border: "1px solid rgba(251,191,36,0.3)",  color: "#fbbf24" },
-  approved:   { background: "rgba(52,211,153,0.1)",  border: "1px solid rgba(52,211,153,0.3)",  color: "#34d399" },
-  rejected:   { background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.3)", color: "#f87171" },
-  waitlisted: { background: "rgba(139,92,246,0.1)",  border: "1px solid rgba(139,92,246,0.3)",  color: "#a78bfa" },
+  pending:    { background: "rgba(251,191,36,0.1)",  border: "1px solid rgba(251,191,36,0.3)",  color: "var(--color-status-warning)" },
+  approved:   { background: "rgba(52,211,153,0.1)",  border: "1px solid rgba(52,211,153,0.3)",  color: "var(--color-status-success)" },
+  rejected:   { background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.3)", color: "var(--color-status-error)" },
+  waitlisted: { background: "rgba(139,92,246,0.1)",  border: "1px solid rgba(139,92,246,0.3)",  color: "var(--color-purple-light)" },
 };
 
 function StatusBadge({ status }: { status: ArtistApplicationStatus }) {
@@ -45,7 +45,7 @@ function ApplicationCard({
 
   return (
     <div style={{
-      background: "#111119",
+      background: "var(--color-bg-surface)",
       border: `1px solid ${app.status === "pending" ? "rgba(251,191,36,0.15)" : "rgba(139,92,246,0.1)"}`,
       borderRadius: "12px",
       overflow: "hidden",
@@ -58,24 +58,24 @@ function ApplicationCard({
 
         <div style={{ flex: 1, minWidth: "200px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "15px", fontWeight: 600, color: "#eeeeff" }}>{app.name}</span>
+            <span style={{ fontSize: "15px", fontWeight: 600, color: "var(--color-text)" }}>{app.name}</span>
             <StatusBadge status={app.status} />
           </div>
-          <p style={{ fontSize: "13px", color: "#7878a0", margin: "0 0 4px", fontFamily: "var(--font-dm-mono)" }}>{app.email}</p>
-          <p style={{ fontSize: "13px", color: "#eeeeff", margin: "0 0 4px", fontWeight: 500 }}>&quot;{app.submission_title}&quot;</p>
-          <p style={{ fontSize: "12px", color: "#3a3a58", margin: 0, fontFamily: "var(--font-dm-mono)" }}>
+          <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: "0 0 4px", fontFamily: "var(--font-dm-mono)" }}>{app.email}</p>
+          <p style={{ fontSize: "13px", color: "var(--color-text)", margin: "0 0 4px", fontWeight: 500 }}>&quot;{app.submission_title}&quot;</p>
+          <p style={{ fontSize: "12px", color: "var(--color-text-dim)", margin: 0, fontFamily: "var(--font-dm-mono)" }}>
             {app.art_style}{app.primary_tools?.length > 0 && <> &middot; {app.primary_tools.join(", ")}</>}
           </p>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px", flexShrink: 0 }}>
-          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "#3a3a58", margin: 0 }}>
+          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>
             {new Date(app.applied_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
           </p>
           <button
             onClick={() => setExpanded((v) => !v)}
             style={{
-              fontSize: "0.75rem", fontWeight: 600, color: "#a78bfa",
+              fontSize: "0.75rem", fontWeight: 600, color: "var(--color-purple-light)",
               background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.2)",
               borderRadius: "6px", padding: "4px 12px", cursor: "pointer",
             }}
@@ -90,46 +90,46 @@ function ApplicationCard({
         <div style={{ padding: "0 24px 24px", borderTop: "1px solid rgba(139,92,246,0.08)" }}>
           <div style={{ paddingTop: "20px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
             <div>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "#3a3a58", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Bio</p>
-              <p style={{ fontSize: "13px", color: "#7878a0", margin: 0, lineHeight: 1.6 }}>{app.artist_bio}</p>
+              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Bio</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: 0, lineHeight: 1.6 }}>{app.artist_bio}</p>
             </div>
             <div>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "#3a3a58", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Prompt</p>
-              <p style={{ fontSize: "13px", color: "#7878a0", margin: 0, lineHeight: 1.6 }}>{app.submission_prompt}</p>
+              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Prompt</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: 0, lineHeight: 1.6 }}>{app.submission_prompt}</p>
             </div>
             <div>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "#3a3a58", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Years using AI</p>
-              <p style={{ fontSize: "13px", color: "#7878a0", margin: 0 }}>{app.years_using_ai}</p>
+              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Years using AI</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: 0 }}>{app.years_using_ai}</p>
             </div>
             <div>
-              <p style={{ fontSize: "11px", fontWeight: 600, color: "#3a3a58", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Location</p>
-              <p style={{ fontSize: "13px", color: "#7878a0", margin: 0 }}>{app.location ?? "—"}</p>
+              <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Location</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: 0 }}>{app.location ?? "â€”"}</p>
             </div>
           </div>
 
           {(app.portfolio_url || app.social_handle) && (
             <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
               {app.portfolio_url && (
-                <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "13px", color: "#8b5cf6", textDecoration: "none" }}>
-                  Portfolio ↗
+                <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "13px", color: "var(--color-purple)", textDecoration: "none" }}>
+                  Portfolio â†—
                 </a>
               )}
               {app.social_handle && (
-                <span style={{ fontSize: "13px", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>{app.social_handle}</span>
+                <span style={{ fontSize: "13px", color: "var(--color-text-muted)", fontFamily: "var(--font-dm-mono)" }}>{app.social_handle}</span>
               )}
             </div>
           )}
 
           <div style={{ marginBottom: "16px" }}>
-            <p style={{ fontSize: "11px", fontWeight: 600, color: "#3a3a58", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Admin notes (sent in email)</p>
+            <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Admin notes (sent in email)</p>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Optional feedback for the applicant..."
               rows={3}
               style={{
-                width: "100%", background: "#181820", border: "1px solid rgba(139,92,246,0.2)",
-                borderRadius: "8px", padding: "10px 14px", fontSize: "13px", color: "#eeeeff",
+                width: "100%", background: "var(--color-bg-surface2)", border: "1px solid rgba(139,92,246,0.2)",
+                borderRadius: "8px", padding: "10px 14px", fontSize: "13px", color: "var(--color-text)",
                 outline: "none", resize: "vertical", fontFamily: "inherit", boxSizing: "border-box",
               }}
             />
@@ -141,7 +141,7 @@ function ApplicationCard({
               disabled={busy || app.status === "approved"}
               style={{
                 padding: "8px 18px", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)",
-                borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#34d399",
+                borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "var(--color-status-success)",
                 cursor: busy || app.status === "approved" ? "not-allowed" : "pointer", opacity: app.status === "approved" ? 0.5 : 1,
               }}
             >
@@ -152,7 +152,7 @@ function ApplicationCard({
               disabled={busy || app.status === "waitlisted"}
               style={{
                 padding: "8px 18px", background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.2)",
-                borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#a78bfa",
+                borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "var(--color-purple-light)",
                 cursor: busy || app.status === "waitlisted" ? "not-allowed" : "pointer", opacity: app.status === "waitlisted" ? 0.5 : 1,
               }}
             >
@@ -163,7 +163,7 @@ function ApplicationCard({
               disabled={busy || app.status === "rejected"}
               style={{
                 padding: "8px 18px", background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)",
-                borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "#f87171",
+                borderRadius: "8px", fontSize: "13px", fontWeight: 600, color: "var(--color-status-error)",
                 cursor: busy || app.status === "rejected" ? "not-allowed" : "pointer", opacity: app.status === "rejected" ? 0.5 : 1,
               }}
             >
@@ -217,15 +217,15 @@ export default function ApplicationsPage() {
   return (
     <div>
       <div style={{ marginBottom: "32px" }}>
-        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8b5cf6", margin: "0 0 8px" }}>
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple)", margin: "0 0 8px" }}>
           Admin
         </p>
         <div style={{ display: "flex", alignItems: "baseline", gap: "16px" }}>
-          <h1 style={{ fontFamily: "var(--font-syne)", fontSize: "1.75rem", fontWeight: 800, color: "#eeeeff", letterSpacing: "-0.03em", margin: 0 }}>
+          <h1 style={{ fontFamily: "var(--font-syne)", fontSize: "1.75rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.03em", margin: 0 }}>
             Artist Applications
           </h1>
           {pending > 0 && (
-            <span style={{ background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.3)", color: "#fbbf24", fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 700, padding: "2px 10px", borderRadius: "100px" }}>
+            <span style={{ background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.3)", color: "var(--color-status-warning)", fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 700, padding: "2px 10px", borderRadius: "100px" }}>
               {pending} pending
             </span>
           )}
@@ -246,7 +246,7 @@ export default function ApplicationsPage() {
                   cursor: "pointer", textTransform: "capitalize",
                   background: filter === f ? "rgba(139,92,246,0.15)" : "transparent",
                   border: filter === f ? "1px solid rgba(139,92,246,0.4)" : "1px solid rgba(139,92,246,0.12)",
-                  color: filter === f ? "#a78bfa" : "#3a3a58",
+                  color: filter === f ? "var(--color-purple-light)" : "var(--color-text-dim)",
                 }}
               >
                 {f} <span style={{ fontFamily: "var(--font-dm-mono)", opacity: 0.7 }}>({count})</span>
@@ -256,12 +256,12 @@ export default function ApplicationsPage() {
         </div>
       )}
 
-      {loading && <p style={{ fontSize: "14px", color: "#3a3a58" }}>Loading...</p>}
-      {error && <p style={{ fontSize: "14px", color: "#f87171" }}>{error}</p>}
+      {loading && <p style={{ fontSize: "14px", color: "var(--color-text-dim)" }}>Loading...</p>}
+      {error && <p style={{ fontSize: "14px", color: "var(--color-status-error)" }}>{error}</p>}
 
       {!loading && !error && visible.length === 0 && (
-        <div style={{ textAlign: "center", padding: "60px 20px", background: "#111119", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "12px" }}>
-          <p style={{ fontSize: "14px", color: "#7878a0", margin: 0 }}>
+        <div style={{ textAlign: "center", padding: "60px 20px", background: "var(--color-bg-surface)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "12px" }}>
+          <p style={{ fontSize: "14px", color: "var(--color-text-muted)", margin: 0 }}>
             {filter === "all" ? "No applications yet." : `No ${filter} applications.`}
           </p>
         </div>

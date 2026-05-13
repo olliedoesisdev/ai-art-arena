@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -70,7 +70,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
         {/* Type indicator */}
         <div style={{ flexShrink: 0 }}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 12V3M3 6l4-4 4 4" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M7 12V3M3 6l4-4 4 4" stroke="var(--color-status-success)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
 
@@ -125,7 +125,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
             {timeLabel}
           </span>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M2.5 6h7M6.5 3L9.5 6l-3 3" stroke="#34d399" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M2.5 6h7M6.5 3L9.5 6l-3 3" stroke="var(--color-status-success)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
       </div>
@@ -238,7 +238,7 @@ function DateDivider({ label }: { label: string }) {
         fontWeight: 700,
         letterSpacing: "0.14em",
         textTransform: "uppercase",
-        color: "#3a3a58",
+        color: "var(--color-text-dim)",
         whiteSpace: "nowrap",
       }}>
         {label}
@@ -345,7 +345,7 @@ export function ActivityFeed({ activityFeed, totalVotes, totalComments }: Props)
       {/* Feed */}
       {filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "48px 0" }}>
-          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "#3a3a58", fontStyle: "italic" }}>
+          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "var(--color-text-dim)", fontStyle: "italic" }}>
             No activity yet.
           </p>
         </div>

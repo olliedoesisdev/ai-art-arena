@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useCallback } from "react";
 
@@ -81,7 +81,7 @@ function AdminCommentCard({
   return (
     <div
       style={{
-        background: comment.is_admin_reply ? "rgba(139,92,246,0.05)" : "#181820",
+        background: comment.is_admin_reply ? "rgba(139,92,246,0.05)" : "var(--color-bg-surface2)",
         border: comment.is_admin_reply ? "1px solid rgba(139,92,246,0.2)" : "1px solid rgba(139,92,246,0.1)",
         borderLeft: comment.is_admin_reply ? "3px solid #8b5cf6" : undefined,
         borderRadius: "10px",
@@ -93,29 +93,29 @@ function AdminCommentCard({
       <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "8px", flexWrap: "wrap" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#eeeeff" }}>
+            <span style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text)" }}>
               {comment.author_name}
             </span>
             {comment.author_email && (
-              <span style={{ fontSize: "0.75rem", color: "#3a3a58", fontFamily: "var(--font-dm-mono)" }}>
+              <span style={{ fontSize: "0.75rem", color: "var(--color-text-dim)", fontFamily: "var(--font-dm-mono)" }}>
                 {comment.author_email}
               </span>
             )}
             {comment.is_admin_reply && (
               <span style={{
                 fontSize: "9px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
-                color: "#8b5cf6", background: "rgba(139,92,246,0.12)", padding: "2px 7px", borderRadius: "100px",
+                color: "var(--color-purple)", background: "rgba(139,92,246,0.12)", padding: "2px 7px", borderRadius: "100px",
               }}>
                 Admin
               </span>
             )}
-            <span style={{ fontSize: "0.6875rem", color: "#3a3a58", fontFamily: "var(--font-dm-mono)" }}>
+            <span style={{ fontSize: "0.6875rem", color: "var(--color-text-dim)", fontFamily: "var(--font-dm-mono)" }}>
               {timeAgo(comment.created_at)}
             </span>
             <span
               style={{
                 fontSize: "9px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
-                color: comment.is_approved ? "#34d399" : "#fbbf24",
+                color: comment.is_approved ? "var(--color-status-success)" : "var(--color-status-warning)",
                 background: comment.is_approved ? "rgba(52,211,153,0.08)" : "rgba(251,191,36,0.08)",
                 padding: "2px 7px", borderRadius: "100px",
               }}
@@ -132,7 +132,7 @@ function AdminCommentCard({
             disabled={busy}
             style={{
               fontSize: "0.75rem", fontWeight: 600,
-              color: comment.is_approved ? "#fbbf24" : "#34d399",
+              color: comment.is_approved ? "var(--color-status-warning)" : "var(--color-status-success)",
               background: comment.is_approved ? "rgba(251,191,36,0.08)" : "rgba(52,211,153,0.08)",
               border: comment.is_approved ? "1px solid rgba(251,191,36,0.2)" : "1px solid rgba(52,211,153,0.2)",
               borderRadius: "6px", padding: "4px 10px", cursor: busy ? "not-allowed" : "pointer",
@@ -145,7 +145,7 @@ function AdminCommentCard({
             <button
               onClick={() => setReplyOpen((o) => !o)}
               style={{
-                fontSize: "0.75rem", fontWeight: 600, color: "#a78bfa",
+                fontSize: "0.75rem", fontWeight: 600, color: "var(--color-purple-light)",
                 background: "rgba(139,92,246,0.08)", border: "1px solid rgba(139,92,246,0.2)",
                 borderRadius: "6px", padding: "4px 10px", cursor: "pointer",
               }}
@@ -159,8 +159,8 @@ function AdminCommentCard({
             disabled={busy}
             style={{
               fontSize: "0.75rem", fontWeight: 600,
-              color: confirmDelete ? "#eeeeff" : "#f87171",
-              background: confirmDelete ? "#f87171" : "rgba(248,113,113,0.08)",
+              color: confirmDelete ? "var(--color-text)" : "var(--color-status-error)",
+              background: confirmDelete ? "var(--color-status-error)" : "rgba(248,113,113,0.08)",
               border: "1px solid rgba(248,113,113,0.2)",
               borderRadius: "6px", padding: "4px 10px", cursor: busy ? "not-allowed" : "pointer",
             }}
@@ -172,7 +172,7 @@ function AdminCommentCard({
       </div>
 
       {/* Body */}
-      <p style={{ fontSize: "0.875rem", color: "#7878a0", lineHeight: 1.65, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+      <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", lineHeight: 1.65, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
         {comment.body}
       </p>
 
@@ -188,8 +188,8 @@ function AdminCommentCard({
             placeholder="Write your admin reply..."
             rows={3}
             style={{
-              width: "100%", background: "#111119", border: "1px solid rgba(139,92,246,0.25)",
-              borderRadius: "8px", padding: "10px 14px", fontSize: "0.875rem", color: "#eeeeff",
+              width: "100%", background: "var(--color-bg-surface)", border: "1px solid rgba(139,92,246,0.25)",
+              borderRadius: "8px", padding: "10px 14px", fontSize: "0.875rem", color: "var(--color-text)",
               outline: "none", resize: "vertical", fontFamily: "inherit",
             }}
           />
@@ -198,8 +198,8 @@ function AdminCommentCard({
               type="submit"
               disabled={busy || !replyBody.trim()}
               style={{
-                padding: "7px 18px", background: "#8b5cf6", border: "none", borderRadius: "6px",
-                fontSize: "0.8125rem", fontWeight: 600, color: "#eeeeff",
+                padding: "7px 18px", background: "var(--color-purple)", border: "none", borderRadius: "6px",
+                fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text)",
                 cursor: busy ? "not-allowed" : "pointer",
               }}
             >
@@ -210,7 +210,7 @@ function AdminCommentCard({
               onClick={() => { setReplyOpen(false); setReplyBody(""); }}
               style={{
                 padding: "7px 14px", background: "transparent", border: "1px solid rgba(139,92,246,0.2)",
-                borderRadius: "6px", fontSize: "0.8125rem", color: "#7878a0", cursor: "pointer",
+                borderRadius: "6px", fontSize: "0.8125rem", color: "var(--color-text-muted)", cursor: "pointer",
               }}
             >
               Cancel
@@ -288,7 +288,7 @@ export default function AdminCommentsPage() {
     borderRadius: "8px",
     border: "1px solid rgba(139,92,246,0.2)",
     background: disabled ? "rgba(139,92,246,0.04)" : "rgba(139,92,246,0.1)",
-    color: disabled ? "#3a3a58" : "#a78bfa",
+    color: disabled ? "var(--color-text-dim)" : "var(--color-purple-light)",
     fontSize: "0.8125rem",
     fontWeight: 600,
     cursor: disabled ? "not-allowed" : "pointer",
@@ -300,20 +300,20 @@ export default function AdminCommentsPage() {
       <div style={{ marginBottom: "32px" }}>
         <p style={{
           fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em",
-          textTransform: "uppercase", color: "#a78bfa", marginBottom: "8px",
+          textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "8px",
         }}>
           Moderation
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <h1 style={{
             fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem",
-            color: "#eeeeff", margin: 0,
+            color: "var(--color-text)", margin: 0,
           }}>
             Comments
           </h1>
           {totalPending > 0 && (
             <span style={{
-              fontSize: "0.75rem", fontWeight: 700, color: "#fbbf24",
+              fontSize: "0.75rem", fontWeight: 700, color: "var(--color-status-warning)",
               background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)",
               borderRadius: "100px", padding: "3px 10px",
             }}>
@@ -322,7 +322,7 @@ export default function AdminCommentsPage() {
           )}
           {totalCount > 0 && (
             <span style={{
-              fontSize: "0.75rem", fontWeight: 600, color: "#7878a0",
+              fontSize: "0.75rem", fontWeight: 600, color: "var(--color-text-muted)",
               fontFamily: "var(--font-dm-mono)",
             }}>
               {totalCount} total
@@ -332,13 +332,13 @@ export default function AdminCommentsPage() {
       </div>
 
       {loading && (
-        <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>Loading...</p>
+        <p style={{ fontSize: "0.875rem", color: "var(--color-text-dim)" }}>Loading...</p>
       )}
 
       {error && (
         <div style={{
           background: "rgba(248,113,113,0.06)", border: "1px solid rgba(248,113,113,0.2)",
-          borderRadius: "10px", padding: "14px 18px", fontSize: "0.875rem", color: "#f87171",
+          borderRadius: "10px", padding: "14px 18px", fontSize: "0.875rem", color: "var(--color-status-error)",
         }}>
           {error}
         </div>
@@ -346,10 +346,10 @@ export default function AdminCommentsPage() {
 
       {!loading && !error && groups.length === 0 && (
         <div style={{
-          background: "#111119", border: "1px solid rgba(139,92,246,0.12)",
+          background: "var(--color-bg-surface)", border: "1px solid rgba(139,92,246,0.12)",
           borderRadius: "14px", padding: "48px 24px", textAlign: "center",
         }}>
-          <p style={{ fontSize: "0.875rem", color: "#3a3a58" }}>No comments yet.</p>
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-dim)" }}>No comments yet.</p>
         </div>
       )}
 
@@ -360,9 +360,9 @@ export default function AdminCommentsPage() {
             disabled={page <= 1}
             style={btnStyle(page <= 1)}
           >
-            ← Prev
+            â† Prev
           </button>
-          <span style={{ fontSize: "0.8125rem", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>
+          <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", fontFamily: "var(--font-dm-mono)" }}>
             Page {page} of {totalPages}
           </span>
           <button
@@ -370,7 +370,7 @@ export default function AdminCommentsPage() {
             disabled={page >= totalPages}
             style={btnStyle(page >= totalPages)}
           >
-            Next →
+            Next â†’
           </button>
         </div>
       )}
@@ -384,13 +384,13 @@ export default function AdminCommentsPage() {
           return (
             <div key={group.artwork_id}>
               <p style={{
-                fontSize: "0.8125rem", fontWeight: 600, color: "#eeeeff",
+                fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text)",
                 marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px",
               }}>
-                <span style={{ color: "#3a3a58" }}>Artwork:</span>
+                <span style={{ color: "var(--color-text-dim)" }}>Artwork:</span>
                 {group.artwork_title}
                 <span style={{
-                  fontSize: "0.6875rem", fontFamily: "var(--font-dm-mono)", color: "#3a3a58",
+                  fontSize: "0.6875rem", fontFamily: "var(--font-dm-mono)", color: "var(--color-text-dim)",
                 }}>
                   ({group.comments.length})
                 </span>
@@ -432,9 +432,9 @@ export default function AdminCommentsPage() {
             disabled={page <= 1}
             style={btnStyle(page <= 1)}
           >
-            ← Prev
+            â† Prev
           </button>
-          <span style={{ fontSize: "0.8125rem", color: "#7878a0", fontFamily: "var(--font-dm-mono)" }}>
+          <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", fontFamily: "var(--font-dm-mono)" }}>
             Page {page} of {totalPages}
           </span>
           <button
@@ -442,7 +442,7 @@ export default function AdminCommentsPage() {
             disabled={page >= totalPages}
             style={btnStyle(page >= totalPages)}
           >
-            Next →
+            Next â†’
           </button>
         </div>
       )}
