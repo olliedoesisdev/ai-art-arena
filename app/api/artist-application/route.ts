@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { fullArtistApplicationSchema } from "@/lib/validators/join";
 import { sendArtistApplicationNotification } from "@/lib/email";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
+import { authRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   const requestId = generateRequestId();
@@ -10,6 +12,12 @@ export async function POST(request: NextRequest) {
   logger.info({ requestId, path: "/api/artist-application" }, "application request received");
 
   try {
+    const ipHash = hashIP(getClientIP(request));
+    const { success: allowed } = await authRateLimit.limit(`apply:${ipHash}`);
+    if (!allowed) {
+      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
+    }
+
     const body = await request.json();
     const parsed = fullArtistApplicationSchema.safeParse(body);
 

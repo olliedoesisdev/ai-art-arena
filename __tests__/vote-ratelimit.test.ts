@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import crypto from 'crypto'
 
 /**
@@ -120,58 +120,3 @@ describe('hashEmail', () => {
   })
 })
 
-describe('submit_vote RPC error_code → HTTP status mapping', () => {
-  const ERROR_CODE_MAP: Record<string, { status: number; error: string }> = {
-    CONTEST_NOT_FOUND:  { status: 404, error: 'Contest not found' },
-    CONTEST_NOT_ACTIVE: { status: 400, error: 'Contest is not active' },
-    ARTWORK_NOT_FOUND:  { status: 404, error: 'Artwork not found' },
-    ALREADY_VOTED:      { status: 409, error: 'Already voted on this contest' },
-  }
-
-  it('maps CONTEST_NOT_FOUND to 404', () => {
-    expect(ERROR_CODE_MAP['CONTEST_NOT_FOUND'].status).toBe(404)
-  })
-
-  it('maps CONTEST_NOT_ACTIVE to 400', () => {
-    expect(ERROR_CODE_MAP['CONTEST_NOT_ACTIVE'].status).toBe(400)
-  })
-
-  it('maps ARTWORK_NOT_FOUND to 404', () => {
-    expect(ERROR_CODE_MAP['ARTWORK_NOT_FOUND'].status).toBe(404)
-  })
-
-  it('maps ALREADY_VOTED to 409', () => {
-    expect(ERROR_CODE_MAP['ALREADY_VOTED'].status).toBe(409)
-  })
-
-  it('unknown error_code falls back to 500', () => {
-    const fallback = ERROR_CODE_MAP['UNKNOWN_CODE'] ?? { status: 500, error: 'Internal server error' }
-    expect(fallback.status).toBe(500)
-  })
-
-  it('success=true carries vote_count', () => {
-    const rpcRow = { success: true, error_code: null, vote_count: 42 }
-    expect(rpcRow.success).toBe(true)
-    expect(rpcRow.vote_count).toBe(42)
-  })
-
-  it('success=false carries no vote_count', () => {
-    const rpcRow = { success: false, error_code: 'ALREADY_VOTED', vote_count: 0 }
-    expect(rpcRow.success).toBe(false)
-    expect(ERROR_CODE_MAP[rpcRow.error_code].status).toBe(409)
-  })
-
-  it('p_email_hash parameter is optional (DEFAULT NULL) — null is valid', () => {
-    // The RPC signature: submit_vote(p_artwork_id, p_contest_id, p_user_id, p_ip_hash, p_email_hash DEFAULT NULL)
-    // Calling without email_hash should not error
-    const callArgs = {
-      p_artwork_id: '00000000-0000-0000-0000-000000000001',
-      p_contest_id: '00000000-0000-0000-0000-000000000002',
-      p_user_id: null,
-      p_ip_hash: IP_HASH,
-      // p_email_hash omitted — defaults to NULL in DB
-    }
-    expect(callArgs.p_ip_hash).toBeTruthy()
-    expect(callArgs.p_user_id).toBeNull()
-  })
-})

@@ -40,7 +40,7 @@ function applySecurityHeaders(response: NextResponse, nonce: string): NextRespon
 
   const scriptSrc = process.env.NODE_ENV === "development"
     ? `'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'`
-    : `'nonce-${nonce}' 'unsafe-inline'`;
+    : `'nonce-${nonce}'`;
 
   h.set(
     "Content-Security-Policy",

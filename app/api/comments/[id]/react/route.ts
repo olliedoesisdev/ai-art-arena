@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createPublicClient } from "@/lib/supabase/server";
 import { getClientIP, hashIP } from "@/lib/utils";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
+import { authRateLimit } from "@/lib/ratelimit";
 import { z } from "zod";
 
 const VALID_EMOJIS = ["like", "love", "laugh", "wow"] as const;
@@ -13,26 +15,32 @@ const ReactSchema = z.object({
 type Props = { params: Promise<{ id: string }> };
 
 export async function POST(request: Request, { params }: Props) {
+  const requestId = generateRequestId();
   const { id: commentId } = await params;
 
   if (!z.string().uuid().safeParse(commentId).success) {
-    return NextResponse.json({ error: "Invalid comment ID" }, { status: 400 });
+    return jsonResponse(requestId, { error: "Invalid comment ID" }, { status: 400 });
+  }
+
+  const ipHash = hashIP(getClientIP(request));
+  const { success: allowed } = await authRateLimit.limit(`react:${ipHash}`);
+  if (!allowed) {
+    return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return jsonResponse(requestId, { error: "Invalid JSON" }, { status: 400 });
   }
 
   const result = ReactSchema.safeParse(body);
   if (!result.success) {
-    return NextResponse.json({ error: "Invalid emoji" }, { status: 400 });
+    return jsonResponse(requestId, { error: "Invalid emoji" }, { status: 400 });
   }
 
   const { emoji } = result.data;
-  const ipHash = hashIP(getClientIP(request));
   const supabase = createPublicClient();
 
   // Check if comment exists and is approved
@@ -44,7 +52,7 @@ export async function POST(request: Request, { params }: Props) {
     .single();
 
   if (!comment) {
-    return NextResponse.json({ error: "Comment not found" }, { status: 404 });
+    return jsonResponse(requestId, { error: "Comment not found" }, { status: 404 });
   }
 
   // Check if this IP already reacted with this emoji (toggle off if so)
@@ -57,13 +65,12 @@ export async function POST(request: Request, { params }: Props) {
     .single();
 
   if (existing) {
-    // Toggle off — delete the reaction
     await supabase.from("comment_reactions").delete().eq("id", existing.id);
     const counts = await getReactionCounts(supabase, commentId);
-    return NextResponse.json({ reacted: false, counts }, { status: 200 });
+    logger.info({ requestId, commentId, emoji, action: "removed" }, "reaction toggled");
+    return jsonResponse(requestId, { reacted: false, counts });
   }
 
-  // Toggle on — insert
   await supabase.from("comment_reactions").insert({
     comment_id: commentId,
     emoji,
@@ -71,7 +78,8 @@ export async function POST(request: Request, { params }: Props) {
   });
 
   const counts = await getReactionCounts(supabase, commentId);
-  return NextResponse.json({ reacted: true, counts }, { status: 200 });
+  logger.info({ requestId, commentId, emoji, action: "added" }, "reaction toggled");
+  return jsonResponse(requestId, { reacted: true, counts });
 }
 
 async function getReactionCounts(

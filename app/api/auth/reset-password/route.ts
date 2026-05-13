@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { logger, generateRequestId } from "@/lib/logger";
+import { resetRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
 const Schema = z.object({
-  token: z.string().min(1),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  token: z.string().min(64).max(64),
+  password: z.string().min(8, "Password must be at least 8 characters").max(72),
 });
 
 export async function POST(request: Request) {
@@ -14,6 +16,12 @@ export async function POST(request: Request) {
   logger.info({ requestId }, "reset-password request received");
 
   try {
+    const ipHash = hashIP(getClientIP(request));
+    const { success: allowed } = await resetRateLimit.limit(ipHash);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests — try again later" }, { status: 429 });
+    }
+
     const body = await request.json();
     const result = Schema.safeParse(body);
 

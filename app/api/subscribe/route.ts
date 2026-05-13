@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { subscriberSchema } from "@/lib/validators/join";
 import { sendSubscriberWelcome } from "@/lib/email";
 import { logger } from "@/lib/logger";
+import { authRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   const requestId = `req_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -10,6 +12,12 @@ export async function POST(request: NextRequest) {
   logger.info({ requestId, path: "/api/subscribe" }, "subscribe request received");
 
   try {
+    const ipHash = hashIP(getClientIP(request));
+    const { success: allowed } = await authRateLimit.limit(`subscribe:${ipHash}`);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests — try again later" }, { status: 429 });
+    }
+
     const body = await request.json();
     const parsed = subscriberSchema.safeParse(body);
 
