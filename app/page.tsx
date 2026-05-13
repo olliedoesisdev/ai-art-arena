@@ -1,77 +1,8 @@
 import Link from "next/link";
-import { createPublicClient as createClient } from "@/lib/supabase/server";
 import { ArtMosaic } from "@/components/home/ArtMosaic";
 import { SITE_URL } from "@/lib/site";
 import { LastWinner } from "@/components/home/LastWinner";
-
-export const revalidate = 60;
-
-async function getHomeData() {
-  const supabase = createClient();
-
-  const [statsResult, mosaicResult, lastWinnerResult] = await Promise.all([
-    supabase.rpc("get_homepage_stats"),
-
-    supabase
-      .from("artworks")
-      .select("id, title, image_url, contest_id, contests!inner(status)")
-      .eq("contests.status", "active")
-      .limit(6),
-
-    // Use limit(1) + maybeSingle() so no error when no archived contests exist
-    supabase
-      .from("contests")
-      .select("id, week_number, artworks(id, title, image_url, vote_count, contest_id)")
-      .eq("status", "archived")
-      .order("week_number", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-  ]);
-
-  const stats =
-    statsResult.data && statsResult.data.length > 0
-      ? (statsResult.data[0] as {
-          total_votes: number;
-          total_artworks: number;
-          total_contests: number;
-          active_id: string | null;
-          active_week: number | null;
-        })
-      : null;
-
-  const mosaicArtworks = (mosaicResult.data ?? []).map((a) => ({
-    id: a.id,
-    title: a.title,
-    image_url: a.image_url,
-  }));
-
-  const lastWinnerContest = lastWinnerResult.data;
-  let lastWinner: {
-    id: string;
-    title: string;
-    image_url: string;
-    vote_count: number;
-    contest_id: string;
-  } | null = null;
-  let lastWinnerWeek: number | null = null;
-
-  if (lastWinnerContest) {
-    const artworks = lastWinnerContest.artworks as Array<{
-      id: string;
-      title: string;
-      image_url: string;
-      vote_count: number;
-      contest_id: string;
-    }>;
-    const winner = artworks?.sort((a, b) => b.vote_count - a.vote_count)[0] ?? null;
-    if (winner) {
-      lastWinner = winner;
-      lastWinnerWeek = lastWinnerContest.week_number;
-    }
-  }
-
-  return { stats, mosaicArtworks, lastWinner, lastWinnerWeek };
-}
+import { getHomeData } from "@/lib/data/home";
 
 const HOW_IT_WORKS = [
   {
