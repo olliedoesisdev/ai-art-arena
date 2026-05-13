@@ -1,7 +1,7 @@
 # CLAUDE.md — AI Art Arena
 # Machine-readable context file. Read this ENTIRE file before writing any code.
 # This file is the source of truth. If a conversation conflicts with this file, this file wins.
-# Last updated: 2026-05-06
+# Last updated: 2026-05-13
 
 ---
 
@@ -441,9 +441,12 @@ All routes under `/api/v1/`. Never `/api/`.
 200  { success: true, vote_count: number }
 400  { error: "Invalid input", details: ZodError }
 400  { error: "Contest is not active" }
+400  { error: "Unable to verify request origin" }
 404  { error: "Contest not found" } or { error: "Artwork not found" }
 409  { error: "Already voted on this contest" }
-429  { error: "Rate limit exceeded", reset_at: string }
+429  { error: string, reset_at: string, isAuthenticated: boolean }
+      error message varies: authenticated users get a personal cooldown message,
+      anonymous users get a device-scoped message prompting them to sign in.
 500  { error: "Internal server error" }
 ```
 
