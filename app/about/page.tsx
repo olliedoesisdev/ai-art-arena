@@ -435,21 +435,39 @@ export default function AboutPage() {
                 <p style={{ margin: 0 }}>
                   Week one is live. Voting works. The contest runs, the archive records results,
                   the leaderboard tracks all-time champions, and the background jobs cycle
-                  everything automatically. The infrastructure is production-grade â€” 19
-                  tracked migrations, atomic database functions, three layers of duplicate-vote
-                  prevention, database-level constraints, and a full security audit completed
-                  this week.
+                  everything automatically. The infrastructure is production-grade: 19 tracked
+                  migrations applied in order, an atomic SECURITY DEFINER database function
+                  for votes, three independent layers of duplicate-vote prevention enforced at
+                  the database level, a per-request nonce on every CSP header, middleware that
+                  blocks unauthenticated and non-admin users from every admin route before they
+                  touch a single server component, and a full two-job CI/CD pipeline that runs
+                  type-check, lint, unit tests, build, and Playwright end-to-end tests on every
+                  pull request before anything reaches production.
                 </p>
                 <p style={{ margin: 0 }}>
-                  The gap between this project and a production app at a well-funded startup
+                  The vote path specifically: a Zod-validated request hits a Redis sliding-window
+                  rate limiter keyed per contest per identity before a single database call is
+                  made. The database function checks contest status, artwork membership, and three
+                  duplicate-vote vectors in one atomic read, then inserts and increments in the
+                  same transaction. The entire operation runs in around 40 milliseconds. When
+                  something goes wrong, a structured Pino log with a request ID and an
+                  X-Request-Id response header tie the server trace to the client error. Sentry
+                  catches anything that gets past the explicit error handling.
+                </p>
+                <p style={{ margin: 0 }}>
+                  What is not finished: the ArtworkCard component uses inline style props with
+                  hardcoded values instead of the design token system defined in
+                  tailwind.config.ts. The Playwright end-to-end specs cover navigation and
+                  basic voting flow but not the full rate-limit or archive paths end-to-end
+                  against a real server. Migration files use a YYYYMMDD timestamp format that
+                  creates a collision risk if two migrations land on the same day. These are
+                  known, tracked, and next in the queue.
+                </p>
+                <p style={{ margin: 0 }}>
+                  The gap between this project and the infrastructure of a well-funded startup
                   is execution depth and time, not fundamental approach. The technology is
-                  identical. The architectural thinking is the same. That gap closes with hours,
-                  and the hours are going in.
-                </p>
-                <p style={{ margin: 0 }}>
-                  What this project demonstrates right now: I understand how to identify the
-                  right tool for a real problem, implement it correctly, and build systems
-                  that hold up under scrutiny. That is the job.
+                  the same. The architectural thinking is the same. The gaps are specific,
+                  named, and shrinking. That is the job.
                 </p>
               </div>
             </div>

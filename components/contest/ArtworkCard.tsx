@@ -101,6 +101,21 @@ export function ArtworkCard({
 
   const clickable = !effectivelyVoted && !contestEnded;
 
+  // Border and shadow depend on the runtime accent colour — must stay inline
+  const cardStyle: React.CSSProperties = {
+    border: isUserVote
+      ? `1.5px solid ${accent}`
+      : hovered && clickable
+      ? `1.5px solid ${accent}60`
+      : "1.5px solid rgba(255,255,255,0.08)",
+    transform: isUserVote ? "translateY(-4px)" : hovered && clickable ? "translateY(-2px)" : "none",
+    boxShadow: isUserVote
+      ? `0 12px 40px ${accent}28`
+      : hovered && clickable
+      ? `0 8px 24px ${accent}16`
+      : "none",
+  };
+
   return (
     <article
       onClick={clickable ? handleVote : undefined}
@@ -113,120 +128,56 @@ export function ArtworkCard({
       tabIndex={clickable ? 0 : undefined}
       aria-label={clickable ? `Vote for ${artwork.title}` : undefined}
       aria-pressed={isUserVote ? true : undefined}
-      style={{
-        background: "rgba(255,255,255,0.03)",
-        border: isUserVote
-          ? `1.5px solid ${accent}`
-          : hovered && clickable
-          ? `1.5px solid ${accent}60`
-          : "1.5px solid rgba(255,255,255,0.08)",
-        borderRadius: "16px",
-        overflow: "hidden",
-        transition: "border-color 0.25s, transform 0.2s, box-shadow 0.3s",
-        transform: isUserVote ? "translateY(-4px)" : hovered && clickable ? "translateY(-2px)" : "none",
-        boxShadow: isUserVote
-          ? `0 12px 40px ${accent}28`
-          : hovered && clickable
-          ? `0 8px 24px ${accent}16`
-          : "none",
-        cursor: clickable ? "pointer" : "default",
-        position: "relative",
-      }}
+      className="relative overflow-hidden rounded-[16px] bg-white/[0.03] transition-[border-color,transform,box-shadow] duration-200"
+      style={{ ...cardStyle, cursor: clickable ? "pointer" : "default" }}
     >
       {/* Image — links to artwork detail page, stops vote click propagation */}
       <Link
         href={`/artwork/${artwork.id}`}
         onClick={(e) => e.stopPropagation()}
-        style={{ display: "block", textDecoration: "none" }}
+        className="block no-underline"
       >
-      <div className="group" style={{ position: "relative", aspectRatio: "1", overflow: "hidden" }}>
-        <Image
-          src={artwork.image_url}
-          alt={artwork.title}
-          fill
-          sizes="(max-width: 768px) 50vw, 33vw"
-          priority={index < 2}
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+        <div className="group relative aspect-square overflow-hidden">
+          <Image
+            src={artwork.image_url}
+            alt={artwork.title}
+            fill
+            sizes="(max-width: 768px) 50vw, 33vw"
+            priority={index < 2}
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
 
-        {/* YOUR VOTE badge */}
-        {isUserVote && (
-          <div
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              background: accent,
-              color: "var(--color-bg-base)",
-              fontSize: "10px",
-              fontFamily: "var(--font-dm-mono)",
-              fontWeight: 700,
-              padding: "3px 8px",
-              borderRadius: "4px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            Your vote
-          </div>
-        )}
+          {/* YOUR VOTE badge */}
+          {isUserVote && (
+            <div
+              className="absolute right-[10px] top-[10px] rounded-[4px] px-2 py-[3px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-bg-base)]"
+              style={{ background: accent }}
+            >
+              Your vote
+            </div>
+          )}
 
-        {/* LEADING / WINNER badge */}
-        {isLeading && showResults && !isUserVote && (
-          <div
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              background: "rgba(251,191,36,0.92)", /* status-warning at 92% — no alpha token */
-              color: "var(--color-bg-base)",
-              fontSize: "10px",
-              fontFamily: "var(--font-dm-mono)",
-              fontWeight: 700,
-              padding: "3px 8px",
-              borderRadius: "4px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            {contestEnded ? "Winner" : "Leading"}
-          </div>
-        )}
-      </div>
+          {/* LEADING / WINNER badge */}
+          {isLeading && showResults && !isUserVote && (
+            <div className="absolute right-[10px] top-[10px] rounded-[4px] bg-[var(--color-status-warning)]/90 px-2 py-[3px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-bg-base)]">
+              {contestEnded ? "Winner" : "Leading"}
+            </div>
+          )}
+        </div>
       </Link>
 
       {/* Body */}
-      <div style={{ padding: "16px" }}>
+      <div className="p-4">
         {/* Title */}
-        <div
-          style={{
-            fontFamily: "var(--font-syne)",
-            fontSize: "1rem",
-            fontWeight: 700,
-            color: "var(--color-text)",
-            marginBottom: "4px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
+        <div className="mb-1 overflow-hidden text-ellipsis whitespace-nowrap font-sans text-base font-bold text-[var(--color-text)]">
           {artwork.title}
         </div>
 
         {/* Prompt */}
         {artwork.prompt && (
           <div
-            style={{
-              fontSize: "11px",
-              fontFamily: "var(--font-dm-mono)",
-              color: "rgba(255,255,255,0.35)",
-              lineHeight: 1.55,
-              marginBottom: "14px",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
+            className="mb-[14px] overflow-hidden font-mono text-[11px] leading-[1.55] text-white/35"
+            style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}
           >
             {artwork.prompt}
           </div>
@@ -234,40 +185,22 @@ export function ArtworkCard({
 
         {/* Results: bar + counts — shown after voting or when ended */}
         {showResults && (
-          <div style={{ marginBottom: "12px" }}>
-            <div
-              style={{
-                height: "3px",
-                background: "rgba(255,255,255,0.08)",
-                borderRadius: "2px",
-                overflow: "hidden",
-              }}
-            >
+          <div className="mb-3">
+            <div className="h-[3px] overflow-hidden rounded-[2px] bg-white/[0.08]">
               <div
+                className="h-full rounded-[2px] transition-[width] duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
                 style={{
-                  height: "100%",
                   width: `${pct}%`,
                   background: isUserVote ? accent : isLeading ? "var(--color-status-warning)" : "var(--color-purple)",
-                  borderRadius: "2px",
-                  transition: "width 0.8s cubic-bezier(0.4,0,0.2,1)",
                 }}
               />
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: "6px",
-                fontFamily: "var(--font-dm-mono)",
-                fontSize: "11px",
-                color: "rgba(255,255,255,0.35)",
-              }}
-            >
+            <div className="mt-[6px] flex justify-between font-mono text-[11px] text-white/35">
               <span>
                 <LiveVoteCount artworkId={artwork.id} initialCount={voteCount} />
                 {" votes"}
               </span>
-              <span style={{ color: isUserVote ? accent : "rgba(255,255,255,0.35)" }}>
+              <span style={{ color: isUserVote ? accent : undefined }}>
                 {pct}%
               </span>
             </div>
@@ -278,24 +211,11 @@ export function ArtworkCard({
         {isUserVote && (
           <button
             onClick={(e) => { e.stopPropagation(); handleShare(); }}
+            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[var(--radius-sm)] px-0 py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "6px",
-              width: "100%",
-              padding: "9px",
               background: copied ? `${accent}20` : "rgba(255,255,255,0.04)",
               border: `1px solid ${copied ? accent : "rgba(255,255,255,0.1)"}`,
-              borderRadius: "8px",
               color: copied ? accent : "rgba(255,255,255,0.4)",
-              fontFamily: "var(--font-dm-mono)",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              cursor: "pointer",
-              transition: "background 0.2s, border-color 0.2s, color 0.2s",
-              marginTop: "8px",
             }}
           >
             {copied ? "LINK COPIED ✓" : "SHARE →"}
@@ -311,17 +231,9 @@ export function ArtworkCard({
           />
         )}
 
-        {/* Quiet vote count when voted but this isn't the user's pick */}
+        {/* Quiet vote count when voted but this is not the user's pick */}
         {effectivelyVoted && !isUserVote && !showResults && (
-          <div
-            style={{
-              textAlign: "center",
-              fontFamily: "var(--font-dm-mono)",
-              fontSize: "11px",
-              color: "rgba(255,255,255,0.25)",
-              padding: "9px 0",
-            }}
-          >
+          <div className="py-[9px] text-center font-mono text-[11px] text-white/25">
             <LiveVoteCount artworkId={artwork.id} initialCount={voteCount} /> votes
           </div>
         )}
@@ -342,19 +254,11 @@ function VoteButtonInline({
 }) {
   return (
     <div
+      className="w-full rounded-[var(--radius-sm)] px-0 py-[9px] text-center font-mono text-[12px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
       style={{
-        width: "100%",
-        padding: "9px",
         background: hovered ? `${accent}20` : "rgba(255,255,255,0.06)",
         border: `1px solid ${hovered ? accent : "rgba(255,255,255,0.12)"}`,
-        borderRadius: "8px",
         color: hovered ? accent : "var(--color-text)",
-        fontFamily: "var(--font-dm-mono)",
-        fontSize: "12px",
-        fontWeight: 600,
-        letterSpacing: "0.08em",
-        textAlign: "center",
-        transition: "background 0.2s, border-color 0.2s, color 0.2s",
         cursor: isVoting ? "wait" : "pointer",
         pointerEvents: "none", // click handled by parent article
       }}
