@@ -1,28 +1,30 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { SITE_URL } from "@/lib/site";
 import { JsonLd } from "@/components/layout/JsonLd";
+import { BlogCarousel } from "@/components/blog/BlogCarousel";
+import { BLOG_POSTS } from "@/lib/blog";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "About - Oliver | Full Stack Developer | AI Art Arena",
+  title: "About — Oliver White | Full Stack Developer",
   description:
-    "Oliver built AI Art Arena - a production Next.js 14 voting platform for AI-generated artwork. Every tool in the stack solved a real problem. Read why each technology was chosen.",
+    "Oliver White built AI Art Arena — a production Next.js 14 voting platform for AI-generated artwork. Every tool in the stack solved a real problem.",
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
-    title: "About - Oliver | Full Stack Developer | AI Art Arena",
+    title: "About — Oliver White | Full Stack Developer",
     description:
-      "A production Next.js 14 + Supabase voting platform built from scratch. Every architectural decision explained: the problem, the solution, and who else solved it the same way.",
+      "A production Next.js 14 + Supabase voting platform built from scratch. Every architectural decision explained.",
     url: `${SITE_URL}/about`,
     siteName: "AI Art Arena",
-    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "AI Art Arena - built by Oliver" }],
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "AI Art Arena — built by Oliver White" }],
     type: "profile",
   },
   twitter: {
     card: "summary_large_image",
-    title: "About - Oliver | AI Art Arena",
-    description:
-      "Production Next.js 14 + Supabase voting platform. Every tool in the stack solved a real problem.",
+    title: "About — Oliver White | AI Art Arena",
+    description: "Production Next.js 14 + Supabase voting platform. Every tool solved a real problem.",
     images: [`${SITE_URL}/og-image.png`],
   },
 };
@@ -30,379 +32,412 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Oliver",
+  name: "Oliver White",
   url: SITE_URL,
   jobTitle: "Full Stack Developer",
   description:
-    "Self-taught full stack developer. Built AI Art Arena - a production Next.js 14 voting platform for AI-generated artwork - using PostgreSQL, Supabase, NextAuth, Upstash Redis, Inngest, and Vercel.",
-  knowsAbout: [
-    "Next.js",
-    "TypeScript",
-    "PostgreSQL",
-    "Supabase",
-    "React",
-    "Tailwind CSS",
-    "Vercel",
-    "Redis",
-    "NextAuth",
-  ],
-  mainEntityOfPage: {
-    "@type": "WebPage",
-    "@id": `${SITE_URL}/about`,
-  },
+    "Self-taught full stack developer. Built AI Art Arena — a production Next.js 14 voting platform for AI-generated artwork.",
+  knowsAbout: ["Next.js", "TypeScript", "PostgreSQL", "Supabase", "React", "Tailwind CSS", "Vercel", "Redis", "NextAuth"],
+  mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/about` },
   worksFor: {
     "@type": "CreativeWork",
     name: "AI Art Arena",
     url: SITE_URL,
-    description:
-      "A weekly voting contest for AI-generated artwork. One vote per contest, live real-time counts, automated weekly cycling.",
+    description: "A weekly voting contest for AI-generated artwork.",
   },
 };
 
-const decisions = [
+// ─── Stack data ────────────────────────────────────────────────────────────────
+
+interface StackItem {
+  name: string;
+  role: string;
+  blurb: string;
+  blogSlug: string;
+  color: string;
+  icon: string;
+}
+
+const STACK: StackItem[] = [
   {
-    tech: "Next.js 14",
-    problem:
-      "I needed a framework that could serve fast, SEO-friendly pages for the contest and archive but still handle real-time interactivity for voting without a full page reload.",
-    solution:
-      "Next.js App Router let me solve both at once. Archive pages and contest details are Server Components: the HTML is generated on the server, loads instantly, and search engines can index every past contest. The vote button is a Client Component - it is the only piece that ships JavaScript to the browser. The rest of the page is pure, fast HTML. That distinction is not just a performance trick. It is an architectural discipline that keeps the codebase clean and the user experience fast.",
-    company: "TikTok",
-    parallel:
-      "TikTok built their web app on Next.js for exactly this reason. The feed is mostly static - fast server-rendered HTML. The like button, comments, and share interactions are isolated client components. Same split. Same reasoning. Twitch, Hulu, Nike, and OpenAI made the same call.",
+    name: "Next.js 14",
+    role: "Framework",
+    blurb: "App Router Server Components keep 95% of the codebase off the browser. Contest pages are ISR-cached HTML. Only 8 Client Components ship JavaScript.",
+    blogSlug: "nextjs-server-client-split",
+    color: "#a78bfa",
+    icon: "▲",
   },
   {
-    tech: "Supabase + PostgreSQL",
-    problem:
-      "The moment I decided users could vote, I had a data problem. I needed to store users, artworks, contests, and votes and the relationships between them. A vote belongs to a user. A user can only cast one vote per contest. An artwork belongs to a contest. I needed a real relational database, not a JSON blob.",
-    solution:
-      "Supabase gave me PostgreSQL with Row Level Security built in. RLS means the database itself enforces the rules - a user cannot read another user's vote history, a user cannot insert a second vote for the same contest, and those constraints live at the database layer, not in application code. On top of that, I wrote a single atomic PostgreSQL function - submit_vote - that checks contest status, verifies the artwork, detects duplicate votes, inserts the vote row, and increments the vote count in one transaction. What used to be five sequential round trips is one call at around 40ms. No race conditions. No partial writes.",
-    company: "Reddit",
-    parallel:
-      "Reddit denormalizes upvote counts on posts using the same approach - maintaining a running count at write time rather than running a COUNT query across all votes on every page load. Mozilla and PwC both run on Supabase. The RLS security model is the same pattern healthcare and fintech companies use because they cannot rely on application code alone to protect sensitive data.",
+    name: "Supabase",
+    role: "Database + Storage",
+    blurb: "PostgreSQL with RLS enforced at the database layer. One atomic SECURITY DEFINER function replaced 5 sequential queries — dropping vote latency from ~200ms to ~40ms and eliminating a race condition.",
+    blogSlug: "submit-vote-postgresql-race-condition",
+    color: "#34d399",
+    icon: "⬡",
   },
   {
-    tech: "NextAuth v5",
-    problem:
-      "I needed users to be able to sign in, stay signed in across sessions, and have their identity attached to their votes. I also needed two sign-in methods: GitHub OAuth for developers, and magic link email for everyone else. And I needed session data available on the server - not just the browser - so Server Components could check who is logged in before rendering.",
-    solution:
-      "NextAuth v5 handles all of it. OAuth flow, magic link generation and verification, secure session tokens, server-side session access. I did not write authentication from scratch - that would be the wrong decision. Authentication is one of the highest-risk areas in any application. Using a battle-tested library and wiring it correctly into the Next.js App Router required real understanding of how sessions flow between server and client.",
-    company: "Vercel",
-    parallel:
-      "Vercel themselves use NextAuth in their documentation examples and internal tooling. It is the authentication standard across the Next.js ecosystem because reinventing auth at the application layer is a security liability. The companies that build their own auth from scratch are the ones that end up in breach headlines.",
+    name: "NextAuth v5",
+    role: "Authentication",
+    blurb: "Ground-up v5 rewrite wired into App Router. auth() works in Server Components, middleware, and API routes. GitHub OAuth + Credentials, with role attached to the session token.",
+    blogSlug: "nextauth-v5-app-router",
+    color: "#f472b6",
+    icon: "🔑",
   },
   {
-    tech: "Upstash Redis",
-    problem:
-      "Votes had to be limited. Without enforcement, a single person with a script could vote thousands of times in an hour and corrupt every contest result. I also needed protection on authentication - limiting failed sign-in attempts to prevent brute force attacks. Application-level checks are not enough because they do not persist across server restarts and do not handle distributed traffic accurately.",
-    solution:
-      "Upstash gives me serverless Redis - a persistent, fast key-value store I can write to from any edge function or API route. I implemented a sliding window rate limiter on the vote endpoint: one vote per IP address per contest per 24-hour window. The sliding window algorithm is more accurate than a fixed window because it does not reset abruptly at midnight - it tracks the rolling 24 hours. When someone hits the limit, they get a 429 response with the exact time their window resets. Authenticated users are keyed by email hash for stronger signal than IP alone.",
-    company: "Stripe",
-    parallel:
-      "Stripe protects every API endpoint with Redis-based sliding window rate limiting. So does GitHub. So does Cloudflare. The pattern is identical: track request counts in Redis with a TTL-based key per identifier, reject requests that exceed the threshold. What I built for vote protection is architecturally the same system that protects payment APIs processing billions of dollars.",
+    name: "Upstash Redis",
+    role: "Rate Limiting",
+    blurb: "Sliding window rate limiting across 5 limiters. Vote keys are scoped per-contest per identity — email hash for authenticated users, IP hash for anonymous. One vote. Full stop.",
+    blogSlug: "rate-limiting-sliding-window-redis",
+    color: "#fbbf24",
+    icon: "⚡",
   },
   {
-    tech: "Resend",
-    problem:
-      "I needed automated emails to actually work. When a user uses magic link authentication, they get a sign-in link. Those emails have to arrive instantly, land in the inbox - not spam - and come from my own domain. Setting up raw SMTP is a deliverability nightmare. Using a bulk email service sends the wrong signals to spam filters.",
-    solution:
-      "Resend is built specifically for transactional email - emails triggered by user actions, not marketing blasts. I wired it into the NextAuth magic link flow. Emails go out from my domain, with proper SPF and DKIM records, through infrastructure built for exactly this use case. The developer experience is clean: a single API call, and the email is in the inbox.",
-    company: "Airbnb",
-    parallel:
-      "Airbnb sends hundreds of millions of transactional emails - booking confirmations, host notifications, payment receipts. Their infrastructure separates transactional email from marketing email for exactly the reason I chose Resend: deliverability depends on reputation, and reputation depends on sending the right type of email through the right infrastructure. Resend was built by engineers who came from Stripe - a company that cannot afford email failures on payment receipts.",
+    name: "TypeScript + Zod",
+    role: "Types + Validation",
+    blurb: "Strict mode throughout. Zod validates every API input at the boundary before anything touches Redis or the database. UUIDs, not strings — injection attempts rejected before they form a query.",
+    blogSlug: "typescript-zod-api-validation",
+    color: "#60a5fa",
+    icon: "{}",
   },
   {
-    tech: "Inngest",
-    problem:
-      "Contests need to archive automatically when their end date passes and a new one needs to open immediately after. Vote reminder emails need to go out 24 hours before a contest closes. These are time-based background jobs - they cannot run inside a web request and cannot rely on cron jobs that need a persistent server.",
-    solution:
-      "Inngest handles background jobs in a serverless environment. The archive function runs hourly, checks whether any active contest has passed its end date, flips the status to archived, and fires an event that triggers the next contest creation. The vote reminder function runs hourly and emails subscribed users when a contest is within 24 hours of closing. All of this happens automatically - no manual intervention, no server to babysit.",
-    company: "Vercel",
-    parallel:
-      "Serverless background job queues are the standard pattern for any Next.js app deployed on Vercel because there is no persistent server process. The same architecture powers automated workflows at companies running on Vercel's infrastructure - event-driven functions that trigger on schedule or on application events, not long-running processes.",
+    name: "Inngest",
+    role: "Background Jobs",
+    blurb: "Event-driven contest automation in a serverless environment. archive-contest fires contest/archived, which triggers create-next-contest. Automatic retries, step-level observability, no cron hacks.",
+    blogSlug: "inngest-background-jobs-serverless",
+    color: "#84cc16",
+    icon: "↻",
   },
   {
-    tech: "Vercel",
-    problem:
-      "I needed deployment that did not require managing servers. Every push to main needs to update the live site. Every pull request needs a preview URL so I can test changes before they go live. Images need to be served from a CDN. Environment variables need to be managed securely.",
-    solution:
-      "Vercel handles all of it natively. Push to main, site deploys in under a minute. Open a pull request, get a unique preview URL automatically. Environment variables are stored encrypted and injected at build time. The Next.js Image component routes through Vercel's image optimization pipeline - it converts artwork to WebP, resizes for the device, and caches at the edge. A 4MB PNG becomes a 200KB WebP delivered from a server milliseconds from the user.",
-    company: "The Washington Post",
-    parallel:
-      "The Washington Post rebuilt their frontend on Next.js and Vercel because their old deployment pipeline was slow and brittle. Now their newsroom can publish and the site updates in seconds through the same git-push-to-deploy model I use. Loom, HashiCorp, and OpenAI all deploy the same way. The pattern scales from a weekly art contest to a national newspaper.",
+    name: "Vercel",
+    role: "Deployment + CDN",
+    blurb: "next/image routes through Vercel's transformation pipeline — a 4MB PNG becomes 180KB WebP, edge-cached for a year. Git push deploys in under 60 seconds.",
+    blogSlug: "vercel-nextjs-image-optimization",
+    color: "#eeeeff",
+    icon: "◈",
   },
   {
-    tech: "TypeScript",
-    problem:
-      "When writing a vote API that touches the database, I need to know exactly what shape the data coming in looks like. When passing artwork data from a Server Component to a Client Component, I need to know what fields exist. Without types, a typo in a field name is a runtime bug that only surfaces when a user hits it. With types, it is a compile error caught before the code ships.",
-    solution:
-      "TypeScript is enabled in strict mode throughout the entire codebase. The database schema has corresponding TypeScript interfaces. Every API route validates its input against a Zod schema - which generates TypeScript types from runtime validation rules. The result is a codebase where the shape of data is documented in the code itself, and the compiler enforces that documentation.",
-    company: "Google",
-    parallel:
-      "Google, Airbnb, Slack, and Microsoft all mandated TypeScript across their codebases after experiencing the maintenance cost of large untyped JavaScript projects. Airbnb published a study showing TypeScript would have caught 38% of their production bugs before deployment. Strict mode is not optional polish - it is the baseline expectation at any serious engineering organisation.",
+    name: "CSP + Security Headers",
+    role: "Security",
+    blurb: "Six security headers on every response via middleware. unsafe-eval is gated to NODE_ENV=development only — React needs it for dev tooling, production strips it completely.",
+    blogSlug: "csp-nextjs-unsafe-eval",
+    color: "#f87171",
+    icon: "🛡",
   },
   {
-    tech: "Tailwind CSS",
-    problem:
-      "I needed a consistent visual language across every page - same spacing scale, same colour palette, same font sizing - without writing and maintaining a separate CSS file for every component. I also needed the styles to live next to the markup so I could see exactly what a component looks like without jumping between files.",
-    solution:
-      "Tailwind utility classes mean every styling decision is visible in the JSX. The design tokens - violet for primary actions, dark surfaces for cards, monospace for numbers and stats - are applied consistently across every component because they come from the same scale defined once in globals.css. There is no CSS specificity to debug, no dead styles to audit, no import order to manage.",
-    company: "GitHub",
-    parallel:
-      "GitHub, Shopify, OpenAI, and Vercel all use Tailwind as the foundation of their design systems. GitHub migrated their internal component library to Tailwind because co-locating styles with components made the codebase faster to work in and easier for new engineers to understand. Shopify's Polaris component system is built on the same philosophy.",
+    name: "Pino + Sentry",
+    role: "Observability",
+    blurb: "Structured JSON logs with a requestId threaded through every API route. X-Request-Id response header ties server traces to client errors. Sentry catches anything that escapes explicit handling.",
+    blogSlug: "structured-logging-pino-request-id",
+    color: "#c4b5fd",
+    icon: "◉",
+  },
+  {
+    name: "Row Level Security",
+    role: "Data Access Control",
+    blurb: "RLS policies enforce access rules at the database layer — not in application code. Votes are insert-only. No updates, no deletes. A compromised route still can't modify data it shouldn't.",
+    blogSlug: "supabase-rls-security-model",
+    color: "#34d399",
+    icon: "⬢",
   },
 ];
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-text-dim)]">
-      {children}
-    </p>
-  );
-}
+const STATS = [
+  { value: "19", label: "Migrations", sub: "tracked in order" },
+  { value: "40ms", label: "Vote latency", sub: "p50 after RPC refactor" },
+  { value: "8", label: "Client components", sub: "rest is server-rendered HTML" },
+  { value: "3×", label: "Duplicate prevention", sub: "IP + user_id + email hash" },
+];
 
 export default function AboutPage() {
+  const carouselPosts = [...BLOG_POSTS]
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .slice(0, 8)
+    .map(({ slug, title, excerpt, tags, publishedAt, readingTime }) => ({
+      slug, title, excerpt, tags, publishedAt, readingTime,
+    }));
+
   return (
     <>
       <JsonLd data={jsonLd} />
 
-      <div className="animate-page pb-[120px]">
+      <div className="animate-page" style={{ paddingBottom: "100px" }}>
 
-        {/* HERO */}
-        <section className="relative border-b border-[var(--color-border-subtle)] py-16 sm:py-20">
+        {/* ── HERO ─────────────────────────────────────────────────────── */}
+        <section
+          style={{
+            borderBottom: "1px solid var(--color-border-subtle)",
+            paddingTop: "72px",
+            paddingBottom: "72px",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        >
+          {/* grid texture */}
           <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-[0.018]"
+            aria-hidden
             style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)",
+              position: "absolute", inset: 0, opacity: 0.018,
+              backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)",
               backgroundSize: "48px 48px",
+              pointerEvents: "none",
             }}
           />
-          <div className="shell relative">
-            <p className="mb-6 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-purple-light)]">
-              Oliver - Full Stack Developer
+          <div className="shell" style={{ position: "relative" }}>
+            <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "20px" }}>
+              Oliver White — Full Stack Developer
             </p>
-            <h1 className="mb-7 max-w-[760px] font-sans text-[clamp(2rem,6vw,3.75rem)] font-extrabold leading-[1.05] tracking-[-0.04em] text-[var(--color-text)]">
-              Every tool here
-              <br />
-              <span className="text-[var(--color-text-dim)]">solved a real problem.</span>
+            <h1 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(2.25rem,6vw,4rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--color-text)", margin: "0 0 24px", lineHeight: 1.02, maxWidth: "800px" }}>
+              Every tool here<br />
+              <span style={{ color: "var(--color-text-dim)" }}>solved a real problem.</span>
             </h1>
-            <p className="max-w-[620px] text-[1.0625rem] leading-[1.72] text-[var(--color-text-muted)]">
-              AI Art Arena is a live, production web application - a weekly voting contest for
-              AI-generated artwork. I did not choose this tech stack because it looked impressive
-              on a CV. I chose each piece because I had a problem, and it was the right tool to
-              solve it. That is how every serious product gets built.
+            <p style={{ fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)", maxWidth: "580px", margin: "0 0 36px" }}>
+              AI Art Arena is a live production voting contest for AI-generated artwork. I chose each piece of the stack because I had a problem, and it was the right tool to solve it.
             </p>
-          </div>
-        </section>
-
-        {/* THE BUILDER */}
-        <section className="border-b border-[var(--color-border-subtle)] py-16 sm:py-20">
-          <div className="shell">
-            <div className="grid-about">
-              <div>
-                <SectionLabel>The builder</SectionLabel>
-              </div>
-              <div className="flex flex-col gap-6 text-[1.0625rem] leading-[1.72] text-[var(--color-text-muted)]">
-                <p>
-                  Three years ago I was selling life insurance. No computer science degree.
-                  No bootcamp. No head start. What I had was a stubborn need to understand
-                  how things work and the willingness to keep going when they did not.
-                </p>
-                <p>
-                  I taught myself to code the way most things worth knowing get learned - by
-                  building something, running into a problem, figuring out the solution, and
-                  building something harder next. React first, then Next.js, then what a
-                  database actually is and why it matters, then authentication, security,
-                  deployment, performance. Each layer required the one before it.
-                </p>
-                <p>
-                  Necessity is the mother of invention. I wanted to build a voting platform,
-                  so I needed to store data. I needed to store data, so I learned PostgreSQL.
-                  I needed users to sign in, so I learned authentication. I needed to prevent
-                  abuse, so I learned rate limiting. Every technology on this project exists
-                  because the project demanded it. That is the only reason to learn anything.
-                </p>
-              </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+              <a
+                href="https://github.com/olliedoesisdev/ai-art-arena"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 20px", background: "var(--color-purple-dim)", border: "1px solid var(--color-border-mid)", borderRadius: "100px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 600, color: "var(--color-purple-light)", textDecoration: "none", letterSpacing: "0.06em" }}
+              >
+                View source
+              </a>
+              <Link
+                href="/blog"
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 20px", background: "transparent", border: "1px solid var(--color-border-subtle)", borderRadius: "100px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 600, color: "var(--color-text-muted)", textDecoration: "none", letterSpacing: "0.06em" }}
+              >
+                Read the blog →
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* THE STACK */}
-        <section className="border-b border-[var(--color-border-subtle)] py-16 sm:py-20">
+        {/* ── STATS STRIP ──────────────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid var(--color-border-subtle)" }}>
           <div className="shell">
-            <div className="grid-about">
-              <div>
-                <SectionLabel>The stack</SectionLabel>
-                <p className="mt-2 font-mono text-[11px] leading-[1.55] text-[var(--color-text-dim)]">
-                  Problem.
-                  <br />
-                  Solution.
-                  <br />
-                  Who else did it.
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+              {STATS.map((s, i) => (
+                <div
+                  key={s.label}
+                  style={{
+                    padding: "28px 24px",
+                    borderRight: i < STATS.length - 1 ? "1px solid var(--color-border-subtle)" : "none",
+                  }}
+                >
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "2rem", fontWeight: 500, color: "var(--color-purple-light)", margin: "0 0 4px", letterSpacing: "-0.03em" }}>{s.value}</p>
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", margin: "0 0 2px" }}>{s.label}</p>
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>{s.sub}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── THE BUILDER ──────────────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid var(--color-border-subtle)", padding: "64px 0" }}>
+          <div className="shell">
+            <div className="grid-about-reverse">
+              <div style={{ maxWidth: "600px" }}>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "20px" }}>
+                  The builder
                 </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px", fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)" }}>
+                  <p style={{ margin: 0 }}>
+                    Three years ago I was selling life insurance. No CS degree. No bootcamp. What I had was a stubborn need to understand how things work.
+                  </p>
+                  <p style={{ margin: 0 }}>
+                    I taught myself to code by building things, running into problems, and figuring out solutions. React first, then Next.js, then databases, authentication, security, deployment. Each layer required the one before it.
+                  </p>
+                  <p style={{ margin: 0 }}>
+                    Every technology on this project exists because the project demanded it. That is the only reason to learn anything.
+                  </p>
+                </div>
               </div>
 
-              <div className="flex flex-col gap-16">
-                {decisions.map(({ tech, problem, solution, company, parallel }, i) => (
-                  <article
-                    key={tech}
-                    className="animate-card"
-                    style={{ "--card-delay": `${i * 40}ms` } as React.CSSProperties}
-                  >
-                    <div className="mb-6">
-                      <span className="rounded-[var(--radius-pill)] bg-[var(--color-purple-dim)] px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--color-purple-light)]">
-                        {tech}
-                      </span>
+              {/* Visual: timeline */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+                {[
+                  { year: "2023", event: "First React app" },
+                  { year: "2023", event: "Next.js + TypeScript" },
+                  { year: "2024", event: "PostgreSQL + Auth" },
+                  { year: "2024", event: "Production deployment" },
+                  { year: "2025", event: "Security & observability" },
+                  { year: "2026", event: "AI Art Arena live" },
+                ].map((item, i, arr) => (
+                  <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                      <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: i === arr.length - 1 ? "var(--color-purple)" : "var(--color-border-mid)", marginTop: "6px" }} />
+                      {i < arr.length - 1 && <div style={{ width: "1px", height: "32px", background: "var(--color-border-subtle)" }} />}
                     </div>
-
-                    <div className="mb-5">
-                      <p className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--color-text-dim)]">
-                        The problem
-                      </p>
-                      <p className="text-[0.9375rem] leading-[1.72] text-[var(--color-text-muted)]">
-                        {problem}
-                      </p>
+                    <div style={{ paddingBottom: i < arr.length - 1 ? "8px" : 0 }}>
+                      <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-text-dim)", margin: "0 0 2px", letterSpacing: "0.08em" }}>{item.year}</p>
+                      <p style={{ fontSize: "0.875rem", color: i === arr.length - 1 ? "var(--color-text)" : "var(--color-text-muted)", margin: 0, fontWeight: i === arr.length - 1 ? 600 : 400 }}>{item.event}</p>
                     </div>
-
-                    <div className="mb-5">
-                      <p className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--color-text-dim)]">
-                        How it solved it
-                      </p>
-                      <p className="text-[0.9375rem] leading-[1.72] text-[var(--color-text)]">
-                        {solution}
-                      </p>
-                    </div>
-
-                    <div className="rounded-[10px] border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-6 py-5">
-                      <p className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--color-text-dim)]">
-                        {company} did this too
-                      </p>
-                      <p className="text-[0.875rem] leading-[1.65] text-[var(--color-text-muted)]">
-                        {parallel}
-                      </p>
-                    </div>
-                  </article>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* ON USING AI */}
-        <section className="border-b border-[var(--color-border-subtle)] bg-[var(--color-purple-dim2)] py-16 sm:py-20">
+        {/* ── THE STACK ────────────────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid var(--color-border-subtle)", padding: "64px 0" }}>
           <div className="shell">
-            <div className="grid-about">
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "36px" }}>
               <div>
-                <SectionLabel>On using AI</SectionLabel>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "8px" }}>
+                  The stack
+                </p>
+                <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: 0 }}>
+                  10 tools. 10 problems solved.
+                </h2>
               </div>
-              <div className="flex flex-col gap-6 text-[1.0625rem] leading-[1.72] text-[var(--color-text-muted)]">
-                <p>
-                  I use Claude as a development tool - the same way I use TypeScript, a linter,
-                  or a debugger. It helps me write code faster and explore implementation options.
-                  Every architectural decision, technology choice, security tradeoff, and product
-                  direction on this project was mine.
+              <Link
+                href="/blog"
+                style={{ fontFamily: "var(--font-dm-mono)", fontSize: "12px", color: "var(--color-purple-light)", textDecoration: "none", letterSpacing: "0.06em" }}
+              >
+                Read the deep dives →
+              </Link>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "12px" }}>
+              {STACK.map((item) => (
+                <Link
+                  key={item.name}
+                  href={`/blog/${item.blogSlug}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <article
+                    style={{
+                      background: "var(--color-bg-surface)",
+                      border: "1px solid var(--color-border-subtle)",
+                      borderRadius: "12px",
+                      padding: "20px 22px",
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px",
+                      transition: "border-color 0.2s, background 0.2s, transform 0.2s",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.borderColor = item.color + "50";
+                      el.style.background = "var(--color-bg-surface2)";
+                      el.style.transform = "translateY(-2px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.borderColor = "var(--color-border-subtle)";
+                      el.style.background = "var(--color-bg-surface)";
+                      el.style.transform = "none";
+                    }}
+                  >
+                    {/* Header row */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span style={{ width: "32px", height: "32px", borderRadius: "8px", background: item.color + "18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", flexShrink: 0 }}>
+                          {item.icon}
+                        </span>
+                        <div>
+                          <p style={{ fontFamily: "var(--font-syne)", fontSize: "0.9375rem", fontWeight: 700, color: "var(--color-text)", margin: 0, lineHeight: 1.2 }}>{item.name}</p>
+                          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: item.color, margin: 0, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>{item.role}</p>
+                        </div>
+                      </div>
+                      <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>→</span>
+                    </div>
+
+                    {/* Blurb */}
+                    <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", lineHeight: 1.65, margin: 0, flex: 1 }}>
+                      {item.blurb}
+                    </p>
+
+                    {/* Read more */}
+                    <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: item.color, fontWeight: 600, letterSpacing: "0.06em" }}>
+                      Deep dive →
+                    </span>
+                  </article>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── BLOG CAROUSEL ────────────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid var(--color-border-subtle)", padding: "64px 0" }}>
+          <div className="shell">
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "28px" }}>
+              <div>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "8px" }}>
+                  Writing
                 </p>
-                <p>
-                  The architect is human. The tools are modern. That is how professional
-                  development works in 2026, and pretending otherwise does not make someone a
-                  better developer - it just makes them a slower one.
+                <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: 0 }}>
+                  Real problems. Real solutions.
+                </h2>
+              </div>
+              <Link
+                href="/blog"
+                style={{ fontFamily: "var(--font-dm-mono)", fontSize: "12px", color: "var(--color-purple-light)", textDecoration: "none", letterSpacing: "0.06em" }}
+              >
+                All {BLOG_POSTS.length} posts →
+              </Link>
+            </div>
+
+            <div style={{ maxWidth: "600px" }}>
+              <BlogCarousel posts={carouselPosts} />
+            </div>
+          </div>
+        </section>
+
+        {/* ── ON USING AI ──────────────────────────────────────────────── */}
+        <section style={{ borderBottom: "1px solid var(--color-border-subtle)", padding: "64px 0", background: "var(--color-purple-dim2)" }}>
+          <div className="shell">
+            <div style={{ maxWidth: "640px" }}>
+              <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "20px" }}>
+                On using AI
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "18px", fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)" }}>
+                <p style={{ margin: 0 }}>
+                  I use Claude as a development tool — the same way I use TypeScript, a linter, or a debugger. Every architectural decision, security tradeoff, and product direction was mine.
                 </p>
-                <p>
-                  What AI cannot do is understand the problem I am trying to solve. It cannot
-                  decide that one vote per IP per 24 hours is the right constraint for this
-                  platform. It cannot decide that database-level security matters more than
-                  shipping a week faster. It cannot look at five sequential database queries
-                  and understand why collapsing them into one atomic function is the right
-                  call - not just for performance, but for correctness under concurrent load.
-                  Those decisions require understanding the system. That understanding is mine.
+                <p style={{ margin: 0 }}>
+                  What AI cannot do is understand the problem I am trying to solve. It cannot decide that three independent duplicate-vote layers are necessary. It cannot look at five sequential database queries and understand why one atomic function is the right call — not just for performance, but for correctness under concurrent load. Those decisions require understanding the system. That understanding is mine.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* WHERE THINGS STAND */}
-        <section className="border-b border-[var(--color-border-subtle)] py-16 sm:py-20">
+        {/* ── CTA ──────────────────────────────────────────────────────── */}
+        <section style={{ padding: "64px 0" }}>
           <div className="shell">
-            <div className="grid-about">
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "32px" }}>
               <div>
-                <SectionLabel>Where things stand</SectionLabel>
-              </div>
-              <div className="flex flex-col gap-6 text-[1.0625rem] leading-[1.72] text-[var(--color-text-muted)]">
-                <p>
-                  Week one is live. Voting works. The contest runs, the archive records results,
-                  the leaderboard tracks all-time champions, and the background jobs cycle
-                  everything automatically. The infrastructure is production-grade: 19 tracked
-                  migrations applied in order, an atomic SECURITY DEFINER database function
-                  for votes, three independent layers of duplicate-vote prevention enforced at
-                  the database level, a per-request nonce on every CSP header, middleware that
-                  blocks unauthenticated and non-admin users from every admin route before a
-                  single server component executes, a consistent design token system applied
-                  across all components with inline styles only where values are genuinely
-                  runtime-dynamic, and a full two-job CI/CD pipeline that runs type-check,
-                  lint, unit tests, build, and Playwright end-to-end tests on every pull
-                  request before anything reaches production.
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "12px" }}>
+                  Work together
                 </p>
-                <p>
-                  The vote path specifically: a Zod-validated request hits a Redis sliding-window
-                  rate limiter keyed per contest per identity before a single database call is
-                  made. The database function checks contest status, artwork membership, and three
-                  duplicate-vote vectors in one atomic read, then inserts and increments in the
-                  same transaction. The entire operation runs in around 40 milliseconds. When
-                  something goes wrong, a structured Pino log with a request ID and an
-                  X-Request-Id response header tie the server trace to the client error. Sentry
-                  catches anything that gets past the explicit error handling.
-                </p>
-                <p>
-                  What is not finished: the Playwright end-to-end specs cover navigation and
-                  basic voting flow but not the full rate-limit or archive paths end-to-end
-                  against a real server. Some unit tests exercise local reimplementations of
-                  functions rather than importing the real ones, which limits their ability to
-                  catch drift. Migration files use a YYYYMMDD timestamp format with no time
-                  component, creating a collision risk if two migrations land on the same day.
-                  These are known, tracked, and next in the queue.
-                </p>
-                <p>
-                  The gap between this project and the infrastructure of a well-funded startup
-                  is execution depth and time, not fundamental approach. The technology is
-                  the same. The architectural thinking is the same. The gaps are specific,
-                  named, and shrinking. That is the job.
+                <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(1.5rem,3vw,2rem)", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: "0 0 10px" }}>
+                  Let&apos;s build something real.
+                </h2>
+                <p style={{ fontSize: "1rem", color: "var(--color-text-muted)", margin: 0, maxWidth: "400px" }}>
+                  I take on client work. If you need a developer who solves problems instead of copying solutions — reach out.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="bg-[var(--color-purple-dim2)] py-16 sm:py-20">
-          <div className="shell">
-            <div className="grid-about">
-              <div>
-                <SectionLabel>Work together</SectionLabel>
-              </div>
-              <div className="flex flex-col gap-8 text-[1.0625rem] leading-[1.72] text-[var(--color-text-muted)]">
-                <p>
-                  I take on client work. If you need a developer who solves problems instead
-                  of copying solutions - someone who understands every layer of the stack and
-                  treats your project with the same seriousness as their own - reach out.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <a
-                    href="mailto:hello@olliedoesis.dev"
-                    className="inline-flex items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-purple)] px-7 py-3 font-sans text-[0.9375rem] font-bold tracking-[0.01em] text-[var(--color-text)] no-underline transition-colors duration-200"
-                  >
-                    Get in touch
-                  </a>
-                  <a
-                    href="https://github.com/olliedoesisdev/ai-art-arena"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-border-mid)] bg-transparent px-7 py-3 font-sans text-[0.9375rem] font-semibold text-[var(--color-purple-light)] no-underline transition-[border-color,color] duration-200"
-                  >
-                    View source on GitHub
-                  </a>
-                </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+                <a
+                  href="mailto:hello@olliedoesis.dev"
+                  style={{ display: "inline-flex", alignItems: "center", padding: "12px 28px", background: "var(--color-purple)", borderRadius: "100px", fontFamily: "var(--font-syne)", fontSize: "0.9375rem", fontWeight: 700, color: "#fff", textDecoration: "none", letterSpacing: "0.01em" }}
+                >
+                  Get in touch
+                </a>
+                <a
+                  href="https://github.com/olliedoesisdev/ai-art-arena"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "inline-flex", alignItems: "center", padding: "12px 28px", background: "transparent", border: "1px solid var(--color-border-mid)", borderRadius: "100px", fontFamily: "var(--font-syne)", fontSize: "0.9375rem", fontWeight: 600, color: "var(--color-purple-light)", textDecoration: "none" }}
+                >
+                  View source on GitHub
+                </a>
               </div>
             </div>
           </div>

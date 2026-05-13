@@ -263,6 +263,17 @@ body {
   .grid-about { grid-template-columns: 1fr 320px; gap: 48px; }
 }
 
+/* ── About page: content left, visual right ──────────────── */
+.grid-about-reverse {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .grid-about-reverse { grid-template-columns: 1fr 240px; gap: 64px; }
+}
+
 /* ── Contest page grid texture ───────────────────────────── */
 .contest-grid-texture {
   position: fixed;
