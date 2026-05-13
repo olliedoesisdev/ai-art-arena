@@ -107,7 +107,7 @@ function JoinHubInner() {
 
               {/* Subscriber card */}
               <div style={cardBase}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "var(--color-join-card-icon)", border: "1px solid #222", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "var(--color-join-card-icon)", border: "1px solid var(--color-join-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-join-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                     <polyline points="22,6 12,13 2,6" />
@@ -155,7 +155,7 @@ function JoinHubInner() {
 
               {/* Artist card */}
               <div style={cardBase}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "var(--color-join-card-icon)", border: "1px solid #222", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "var(--color-join-card-icon)", border: "1px solid var(--color-join-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-join-amber)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 export default function ProfileError() {
   return (
@@ -10,12 +10,12 @@ export default function ProfileError() {
           fontWeight: 600,
           letterSpacing: "0.12em",
           textTransform: "uppercase",
-          color: "#3a3a58",
+          color: "var(--color-text-dim)",
           marginBottom: "12px",
         }}>
           Profile unavailable
         </p>
-        <p style={{ color: "#7878a0", fontSize: "14px" }}>
+        <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
           This profile could not be loaded. It may be private or deleted.
         </p>
       </div>

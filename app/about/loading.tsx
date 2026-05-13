@@ -1,5 +1,5 @@
 ﻿const pulse: React.CSSProperties = {
-  background: "linear-gradient(90deg, #111119 25%, #181820 50%, #111119 75%)",
+  background: "linear-gradient(90deg, var(--color-bg-surface) 25%, var(--color-bg-surface2) 50%, var(--color-bg-surface) 75%)",
   backgroundSize: "200% 100%",
   animation: "shimmer 1.5s infinite",
   borderRadius: "8px",

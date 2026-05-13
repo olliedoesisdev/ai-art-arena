@@ -1,4 +1,4 @@
-import { createPublicClient } from "@/lib/supabase/server";
+﻿import { createPublicClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -42,7 +42,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
   const totalVotes = artworks.reduce((sum, a) => sum + a.vote_count, 0);
   const winner = artworks[0] ?? null;
 
-  const RANK_COLORS: Record<number, string> = { 0: "#fbbf24", 1: "#b0b0c8", 2: "#c07840" };
+  const RANK_COLORS: Record<number, string> = { 0: "var(--color-status-warning)", 1: "var(--color-rank-silver)", 2: "var(--color-rank-bronze)" };
 
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
@@ -55,7 +55,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
             alignItems: "center",
             gap: "6px",
             fontSize: "0.8125rem",
-            color: "#7878a0",
+            color: "var(--color-text-muted)",
             textDecoration: "none",
             marginBottom: "32px",
           }}
@@ -71,7 +71,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
               fontWeight: 600,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
               marginBottom: "8px",
             }}
           >
@@ -83,7 +83,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
               fontWeight: 800,
               fontSize: "clamp(2rem, 5vw, 3rem)",
               letterSpacing: "-0.03em",
-              color: "#eeeeff",
+              color: "var(--color-text)",
               marginBottom: "16px",
             }}
           >
@@ -95,12 +95,12 @@ export default async function ArchiveWeekPage({ params }: Props) {
                 fontFamily: "var(--font-dm-mono)",
                 fontSize: "1.25rem",
                 fontWeight: 500,
-                color: "#eeeeff",
+                color: "var(--color-text)",
               }}
             >
               {totalVotes.toLocaleString()}
             </span>
-            <span style={{ fontSize: "0.8125rem", color: "#7878a0" }}>total votes cast</span>
+            <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>total votes cast</span>
           </div>
         </div>
 
@@ -111,7 +111,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
               display: "flex",
               gap: "28px",
               alignItems: "center",
-              background: "#111119",
+              background: "var(--color-bg-surface)",
               border: "1px solid rgba(251,191,36,0.2)",
               borderRadius: "14px",
               padding: "20px",
@@ -148,7 +148,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
                   fontWeight: 700,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "#fbbf24",
+                  color: "var(--color-status-warning)",
                   background: "rgba(251,191,36,0.08)",
                   border: "1px solid rgba(251,191,36,0.2)",
                   padding: "3px 10px",
@@ -163,21 +163,21 @@ export default async function ArchiveWeekPage({ params }: Props) {
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
                   fontSize: "1.25rem",
-                  color: "#eeeeff",
+                  color: "var(--color-text)",
                   marginBottom: "6px",
                 }}
               >
                 {winner.title}
               </h2>
               {winner.prompt && (
-                <p style={{ fontSize: "0.8125rem", color: "#7878a0", lineHeight: 1.5, marginBottom: "8px" }}>
+                <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", lineHeight: 1.5, marginBottom: "8px" }}>
                   &ldquo;{winner.prompt}&rdquo;
                 </p>
               )}
-              <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", color: "#a78bfa" }}>
+              <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", color: "var(--color-purple-light)" }}>
                 {winner.vote_count.toLocaleString()} votes
                 {totalVotes > 0 && (
-                  <span style={{ color: "#3a3a58" }}>
+                  <span style={{ color: "var(--color-text-dim)" }}>
                     {" "}({((winner.vote_count / totalVotes) * 100).toFixed(1)}%)
                   </span>
                 )}
@@ -193,17 +193,17 @@ export default async function ArchiveWeekPage({ params }: Props) {
             fontWeight: 600,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
-            color: "#a78bfa",
+            color: "var(--color-purple-light)",
             marginBottom: "20px",
           }}
         >
           Final standings
         </p>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "1px", background: "rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden", border: "1px solid rgba(139,92,246,0.12)" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1px", background: "var(--color-border-subtle)", borderRadius: "14px", overflow: "hidden", border: "1px solid var(--color-border-subtle)" }}>
           {artworks.map((artwork, index) => {
             const pct = totalVotes > 0 ? ((artwork.vote_count / totalVotes) * 100).toFixed(1) : "0";
-            const rankColor = RANK_COLORS[index] ?? "#3a3a58";
+            const rankColor = RANK_COLORS[index] ?? "var(--color-text-dim)";
             return (
               <div
                 key={artwork.id}
@@ -212,7 +212,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
                   alignItems: "center",
                   gap: "16px",
                   padding: "14px 20px",
-                  background: "#111119",
+                  background: "var(--color-bg-surface)",
                 }}
               >
                 {/* Rank */}
@@ -241,7 +241,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
                     style={{
                       fontSize: "0.875rem",
                       fontWeight: 600,
-                      color: "#eeeeff",
+                      color: "var(--color-text)",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
@@ -250,12 +250,12 @@ export default async function ArchiveWeekPage({ params }: Props) {
                   >
                     {artwork.title}
                   </p>
-                  <div style={{ height: "3px", background: "#1f1f2a", borderRadius: "100px", overflow: "hidden" }}>
+                  <div style={{ height: "3px", background: "var(--color-bg-surface3)", borderRadius: "100px", overflow: "hidden" }}>
                     <div
                       style={{
                         height: "100%",
                         width: `${pct}%`,
-                        background: index === 0 ? "#fbbf24" : "#8b5cf6",
+                        background: index === 0 ? "var(--color-status-warning)" : "var(--color-purple)",
                         borderRadius: "100px",
                       }}
                     />
@@ -264,10 +264,10 @@ export default async function ArchiveWeekPage({ params }: Props) {
 
                 {/* Votes */}
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", color: "#eeeeff", fontWeight: 500 }}>
+                  <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", color: "var(--color-text)", fontWeight: 500 }}>
                     {artwork.vote_count.toLocaleString()}
                   </span>
-                  <span style={{ display: "block", fontFamily: "var(--font-dm-mono)", fontSize: "0.6875rem", color: "#3a3a58" }}>
+                  <span style={{ display: "block", fontFamily: "var(--font-dm-mono)", fontSize: "0.6875rem", color: "var(--color-text-dim)" }}>
                     {pct}%
                   </span>
                 </div>
@@ -281,11 +281,11 @@ export default async function ArchiveWeekPage({ params }: Props) {
           <div key={artwork.id} style={{ marginTop: "48px" }}>
             <p style={{
               fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em",
-              textTransform: "uppercase", color: "#3a3a58", marginBottom: "2px",
+              textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "2px",
             }}>
               {artwork.title}
             </p>
-            <div style={{ height: "1px", background: "rgba(139,92,246,0.1)", marginBottom: "0" }} />
+            <div style={{ height: "1px", background: "var(--color-border-subtle)", marginBottom: "0" }} />
             <CommentSection artworkId={artwork.id} />
           </div>
         ))}

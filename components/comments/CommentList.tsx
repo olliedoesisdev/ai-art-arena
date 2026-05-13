@@ -81,7 +81,7 @@ function CommentBubble({
         border: isAdminReply
           ? "1px solid rgba(139,92,246,0.2)"
           : "1px solid rgba(139,92,246,0.1)",
-        borderLeft: isAdminReply ? "3px solid #8b5cf6" : undefined,
+        borderLeft: isAdminReply ? "3px solid var(--color-purple)" : undefined,
         borderRadius: "10px",
         padding: "14px 16px",
         marginLeft: isReply ? "32px" : "0",

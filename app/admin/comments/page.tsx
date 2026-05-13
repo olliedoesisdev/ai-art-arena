@@ -83,7 +83,7 @@ function AdminCommentCard({
       style={{
         background: comment.is_admin_reply ? "rgba(139,92,246,0.05)" : "var(--color-bg-surface2)",
         border: comment.is_admin_reply ? "1px solid rgba(139,92,246,0.2)" : "1px solid rgba(139,92,246,0.1)",
-        borderLeft: comment.is_admin_reply ? "3px solid #8b5cf6" : undefined,
+        borderLeft: comment.is_admin_reply ? "3px solid var(--color-purple)" : undefined,
         borderRadius: "10px",
         padding: "14px 16px",
         marginLeft: isReply ? "24px" : "0",

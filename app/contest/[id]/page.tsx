@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { Metadata } from "next";
@@ -143,7 +143,7 @@ export default async function ContestPage({ params }: Props) {
               gap: "10px",
               fontFamily: "var(--font-dm-mono)",
               fontSize: "13px",
-              color: "#06b6d4",
+              color: "var(--color-card-accent-2)",
             }}
           >
             <span>✓</span>
@@ -162,7 +162,7 @@ export default async function ContestPage({ params }: Props) {
               marginBottom: "32px",
               fontFamily: "var(--font-dm-mono)",
               fontSize: "13px",
-              color: "#a78bfa",
+              color: "var(--color-purple-light)",
             }}
           >
             This contest has ended — results are final.
@@ -197,12 +197,12 @@ export default async function ContestPage({ params }: Props) {
             style={{
               textAlign: "center",
               padding: "80px 20px",
-              background: "#111119",
-              border: "1px solid rgba(139,92,246,0.12)",
+              background: "var(--color-bg-surface)",
+              border: "1px solid var(--color-border-subtle)",
               borderRadius: "14px",
             }}
           >
-            <p style={{ fontSize: "0.875rem", color: "#7878a0" }}>
+            <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
               No artworks have been uploaded for this contest yet. Check back soon.
             </p>
           </div>
@@ -211,8 +211,8 @@ export default async function ContestPage({ params }: Props) {
         <div
           style={{
             marginTop: "64px",
-            background: "#111119",
-            border: "1px solid #1f1f1f",
+            background: "var(--color-bg-surface)",
+            border: "1px solid var(--color-join-border)",
             borderRadius: "12px",
             padding: "32px 36px",
             display: "flex",
@@ -223,10 +223,10 @@ export default async function ContestPage({ params }: Props) {
           }}
         >
           <div>
-            <h3 style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "#eeeeff", letterSpacing: "-0.02em", margin: "0 0 6px" }}>
+            <h3 style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 6px" }}>
               Want to compete?
             </h3>
-            <p style={{ color: "#7878a0", fontSize: "14px", margin: 0 }}>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
               Apply to enter your AI artwork in next week&apos;s contest.
             </p>
           </div>
@@ -238,7 +238,7 @@ export default async function ContestPage({ params }: Props) {
                 background: "transparent",
                 border: "1px solid rgba(232,213,183,0.4)",
                 borderRadius: "6px",
-                color: "#e8d5b7",
+                color: "var(--color-join-amber)",
                 fontFamily: "var(--font-dm-mono)",
                 fontSize: "11px",
                 fontWeight: 600,
@@ -254,9 +254,9 @@ export default async function ContestPage({ params }: Props) {
               href="/join?track=artist"
               style={{
                 padding: "10px 20px",
-                background: "#e8d5b7",
+                background: "var(--color-join-amber)",
                 borderRadius: "6px",
-                color: "#0a0a0a",
+                color: "var(--color-join-ink)",
                 fontFamily: "var(--font-dm-mono)",
                 fontSize: "11px",
                 fontWeight: 700,

@@ -1,4 +1,4 @@
-import { createPublicClient } from "@/lib/supabase/server";
+﻿import { createPublicClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -70,7 +70,7 @@ export default async function ArtworkPage({ params }: Props) {
             alignItems: "center",
             gap: "6px",
             fontSize: "0.8125rem",
-            color: "#7878a0",
+            color: "var(--color-text-muted)",
             textDecoration: "none",
             marginBottom: "32px",
             fontFamily: "var(--font-dm-mono)",
@@ -112,7 +112,7 @@ export default async function ArtworkPage({ params }: Props) {
                 fontWeight: 600,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                color: "#a78bfa",
+                color: "var(--color-purple-light)",
                 margin: 0,
               }}>
                 Week {contest.week_number} &mdash; {contestEnded ? "Final results" : "Voting open"}
@@ -125,7 +125,7 @@ export default async function ArtworkPage({ params }: Props) {
               fontWeight: 800,
               fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
               letterSpacing: "-0.03em",
-              color: "#eeeeff",
+              color: "var(--color-text)",
               margin: 0,
               lineHeight: 1.1,
             }}>
@@ -149,11 +149,11 @@ export default async function ArtworkPage({ params }: Props) {
                 fontFamily: "var(--font-dm-mono)",
                 fontWeight: 500,
                 fontSize: "1.25rem",
-                color: "#eeeeff",
+                color: "var(--color-text)",
               }}>
                 <LiveVoteCount artworkId={artwork.id} initialCount={artwork.vote_count} />
               </span>
-              <span style={{ fontSize: "0.8125rem", color: "#7878a0" }}>
+              <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
                 {artwork.vote_count === 1 ? "vote" : "votes"}
               </span>
             </div>
@@ -162,8 +162,8 @@ export default async function ArtworkPage({ params }: Props) {
             {artwork.prompt && (
               <div
                 style={{
-                  background: "#111119",
-                  border: "1px solid rgba(139,92,246,0.12)",
+                  background: "var(--color-bg-surface)",
+                  border: "1px solid var(--color-border-subtle)",
                   borderRadius: "12px",
                   padding: "20px 24px",
                 }}
@@ -173,14 +173,14 @@ export default async function ArtworkPage({ params }: Props) {
                   fontWeight: 600,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
-                  color: "#3a3a58",
+                  color: "var(--color-text-dim)",
                   marginBottom: "10px",
                 }}>
                   Prompt
                 </p>
                 <p style={{
                   fontSize: "0.9375rem",
-                  color: "#7878a0",
+                  color: "var(--color-text-muted)",
                   lineHeight: 1.7,
                   fontFamily: "var(--font-dm-mono)",
                   margin: 0,
@@ -199,11 +199,11 @@ export default async function ArtworkPage({ params }: Props) {
                   alignItems: "center",
                   justifyContent: "center",
                   padding: "12px 28px",
-                  background: "#8b5cf6",
+                  background: "var(--color-purple)",
                   borderRadius: "100px",
                   fontSize: "0.9375rem",
                   fontWeight: 700,
-                  color: "#ffffff",
+                  color: "var(--color-text)",
                   textDecoration: "none",
                   alignSelf: "flex-start",
                   letterSpacing: "0.01em",

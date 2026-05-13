@@ -54,7 +54,7 @@ export function ArtMosaic({ artworks }: { artworks: MosaicArtwork[] }) {
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(to bottom, transparent 40%, #08080e 100%)",
+            "linear-gradient(to bottom, transparent 40%, var(--color-bg-base) 100%)",
           pointerEvents: "none",
         }}
       />
