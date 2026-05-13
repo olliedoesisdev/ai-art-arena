@@ -294,6 +294,22 @@ body {
   transform: translateY(-2px);
 }
 
+/* ── Homepage: build section 2-col at wide viewport ─────── */
+.build-section-grid {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+  .build-section-grid { grid-template-columns: 1fr 1fr; gap: 80px; }
+}
+
+/* ── Homepage: blog carousel 2-col at wide viewport ─────── */
+.blog-carousel-grid {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+  .blog-carousel-grid { grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+}
+
 /* ── Contest page grid texture ───────────────────────────── */
 .contest-grid-texture {
   position: fixed;
