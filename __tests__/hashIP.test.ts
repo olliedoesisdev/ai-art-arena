@@ -26,4 +26,22 @@ describe('hashIP', () => {
     const hash2 = hashIP('1.1.1.1')
     expect(hash1).not.toBe(hash2)
   })
+
+  it('null input returns a valid 32-char hex hash via __no_ip__ sentinel', () => {
+    process.env.IP_HASH_SALT = 'test-salt'
+    const result = hashIP(null)
+    expect(result).toHaveLength(32)
+    expect(result).toMatch(/^[0-9a-f]+$/)
+  })
+
+  it('null input is deterministic', () => {
+    process.env.IP_HASH_SALT = 'test-salt'
+    expect(hashIP(null)).toBe(hashIP(null))
+  })
+
+  it('null input hash differs from any real IP hash — no collision bypass', () => {
+    process.env.IP_HASH_SALT = 'test-salt'
+    expect(hashIP(null)).not.toBe(hashIP('127.0.0.1'))
+    expect(hashIP(null)).not.toBe(hashIP('0.0.0.0'))
+  })
 })
