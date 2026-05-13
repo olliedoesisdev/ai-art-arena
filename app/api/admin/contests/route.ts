@@ -1,7 +1,7 @@
-import { createAdminClient } from "@/lib/supabase/server";
+﻿import { createAdminClient } from "@/lib/supabase/server";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { adminRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
 import { z } from "zod";
@@ -28,11 +28,11 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return jsonResponse(requestId, { error: "Unauthorized" }, { status: 401 });
     }
 
     if (session.user.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });
     }
 
     // Rate limit admin actions
@@ -40,14 +40,14 @@ export async function POST(request: NextRequest) {
     const ipHash = hashIP(ip);
     const { success } = await adminRateLimit.limit(`admin:${ipHash}`);
     if (!success) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+      return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
     }
 
     const body = await request.json();
     const result = CreateContestSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: result.error.issues[0].message },
         { status: 400 }
       );
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (existingContest) {
-      return NextResponse.json({ error: `Week ${week_number} already exists` }, { status: 409 });
+      return jsonResponse(requestId, { error: `Week ${week_number} already exists` }, { status: 409 });
     }
 
     if (status === "active") {
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         .eq("status", "active");
 
       if (activeContests && activeContests.length > 0) {
-        return NextResponse.json(
+        return jsonResponse(requestId, 
           { error: `There is already an active contest (Week ${activeContests[0].week_number}). Archive it first.` },
           { status: 409 }
         );
@@ -96,13 +96,13 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       logger.error({ requestId, error: insertError }, 'contest creation error');
-      return NextResponse.json({ error: "Failed to create contest" }, { status: 500 });
+      return jsonResponse(requestId, { error: "Failed to create contest" }, { status: 500 });
     }
 
     logger.info({ requestId, ms: Date.now() - start, contestId: newContest.id }, 'contest created');
-    return NextResponse.json({ success: true, contest: newContest });
+    return jsonResponse(requestId, { success: true, contest: newContest });
   } catch (error) {
     logger.error({ requestId, ms: Date.now() - start, error }, 'admin contests unhandled error');
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

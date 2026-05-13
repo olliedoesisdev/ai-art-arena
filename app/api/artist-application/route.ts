@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { fullArtistApplicationSchema } from "@/lib/validators/join";
 import { sendArtistApplicationNotification } from "@/lib/email";
-import { logger } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
-  const requestId = `req_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  const requestId = generateRequestId();
   const start = Date.now();
   logger.info({ requestId, path: "/api/artist-application" }, "application request received");
 
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const parsed = fullArtistApplicationSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: "Invalid input", details: parsed.error.flatten().fieldErrors },
         { status: 400 }
       );
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       logger.error({ requestId, error }, "application insert error");
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: "Failed to save application. Please try again." },
         { status: 500 }
       );
@@ -70,9 +70,9 @@ export async function POST(request: NextRequest) {
     })();
 
     logger.info({ requestId, ms: Date.now() - start, status: 201 }, "application response sent");
-    return NextResponse.json({ success: true }, { status: 201 });
+    return jsonResponse(requestId, { success: true }, { status: 201 });
   } catch (error) {
     logger.error({ requestId, error }, "application route error");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

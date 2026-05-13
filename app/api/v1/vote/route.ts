@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+﻿import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { VoteSchema } from '@/lib/validators'
@@ -18,14 +18,14 @@ export async function POST(request: Request) {
     try {
       body = await request.json()
     } catch {
-      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+      return jsonResponse(requestId, { error: 'Invalid JSON' }, { status: 400 })
     }
 
     // 2. Zod validate — reject before touching DB or Redis
     const result = VoteSchema.safeParse(body)
     if (!result.success) {
       logger.warn({ requestId, issues: result.error.issues }, 'vote validation failed')
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: 'Invalid input', details: result.error.issues },
         { status: 400 }
       )
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     const clientIP = getClientIP(request)
     if (!clientIP) {
       logger.warn({ requestId }, 'vote rejected: no IP headers')
-      return NextResponse.json({ error: 'Unable to verify request origin' }, { status: 400 })
+      return jsonResponse(requestId, { error: 'Unable to verify request origin' }, { status: 400 })
     }
     const ipHash = hashIP(clientIP)
 
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       reset = rl.reset
     } catch (rlError) {
       logger.error({ requestId, rlError }, 'rate limit check failed')
-      return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+      return jsonResponse(requestId, { error: 'Internal server error' }, { status: 500 })
     }
 
     if (!allowed) {
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
         : `This device has already voted today. Sign in with your email to vote from any device. Next vote available in ${hoursUntilReset} hour${hoursUntilReset !== 1 ? 's' : ''}.`
 
       logger.warn({ requestId, rateLimitKey, isAuthenticated: !!userEmail }, 'vote rate limited')
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         {
           error: errorMessage,
           reset_at: resetDate.toISOString(),
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
 
     if (error) {
       logger.error({ requestId, error }, 'submit_vote RPC error')
-      return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+      return jsonResponse(requestId, { error: 'Internal server error' }, { status: 500 })
     }
 
     const row = data as { success: boolean; error_code: string | null; vote_count: number }
@@ -114,7 +114,7 @@ export async function POST(request: Request) {
       }
       const mapped = map[row.error_code ?? ''] ?? { status: 500, error: 'Internal server error' }
       logger.warn({ requestId, error_code: row.error_code }, 'vote rejected by RPC')
-      return NextResponse.json({ error: mapped.error }, { status: mapped.status })
+      return jsonResponse(requestId, { error: mapped.error }, { status: mapped.status })
     }
 
     // 7. Revalidate contest page ISR cache, return 200
@@ -122,10 +122,10 @@ export async function POST(request: Request) {
 
     const ms = Date.now() - start
     logger.info({ requestId, ms, vote_count: row.vote_count }, 'vote accepted')
-    return NextResponse.json({ success: true, vote_count: row.vote_count })
+    return jsonResponse(requestId, { success: true, vote_count: row.vote_count })
   } catch (error) {
     const ms = Date.now() - start
     logger.error({ requestId, ms, error }, 'vote unhandled error')
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return jsonResponse(requestId, { error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -1,7 +1,7 @@
-import { createAdminClient } from "@/lib/supabase/server";
+﻿import { createAdminClient } from "@/lib/supabase/server";
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { adminRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
 
@@ -18,17 +18,17 @@ export async function POST(_request: NextRequest, context: RouteContext) {
     const session = await auth();
 
     if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return jsonResponse(requestId, { error: "Unauthorized" }, { status: 401 });
     }
 
     if (session.user.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
+      return jsonResponse(requestId, { error: "Forbidden - Admin access required" }, { status: 403 });
     }
 
     const ipHash = hashIP(getClientIP(_request));
     const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
     if (!rateLimitOk) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+      return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
     }
 
     const supabase = createAdminClient();
@@ -44,17 +44,17 @@ export async function POST(_request: NextRequest, context: RouteContext) {
 
     if (updateError) {
       logger.error({ requestId, error: updateError }, 'contest archive error');
-      return NextResponse.json({ error: "Failed to archive contest" }, { status: 500 });
+      return jsonResponse(requestId, { error: "Failed to archive contest" }, { status: 500 });
     }
 
     if (!updatedContest) {
-      return NextResponse.json({ error: "Contest not found" }, { status: 404 });
+      return jsonResponse(requestId, { error: "Contest not found" }, { status: 404 });
     }
 
     logger.info({ requestId, ms: Date.now() - start, contestId: id }, 'contest archived');
-    return NextResponse.json({ success: true, contest: updatedContest });
+    return jsonResponse(requestId, { success: true, contest: updatedContest });
   } catch (error) {
     logger.error({ requestId, ms: Date.now() - start, error }, 'archive unhandled error');
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

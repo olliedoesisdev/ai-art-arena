@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { createPublicClient } from "@/lib/supabase/server";
 import { CreateCommentSchema } from "@/lib/validators";
 import { getClientIP, hashIP } from "@/lib/utils";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { sendCommentNotification } from "@/lib/email";
 import { auth } from "@/auth";
 
@@ -16,14 +16,14 @@ export async function POST(request: Request) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+      return jsonResponse(requestId, { error: "Invalid JSON" }, { status: 400 });
     }
 
     // Validate
     const result = CreateCommentSchema.safeParse(body);
     if (!result.success) {
       logger.warn({ requestId, issues: result.error.issues }, "comment validation failed");
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: "Invalid input", details: result.error.issues },
         { status: 400 }
       );
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
     if ((count ?? 0) > 0) {
       logger.warn({ requestId, ipHash }, "comment rate limited");
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: "Please wait before submitting another comment" },
         { status: 429 }
       );
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
 
     if (insertError) {
       logger.error({ requestId, insertError }, "comment insert failed");
-      return NextResponse.json({ error: "Failed to save comment" }, { status: 500 });
+      return jsonResponse(requestId, { error: "Failed to save comment" }, { status: 500 });
     }
 
     const ms = Date.now() - start;
@@ -118,10 +118,10 @@ export async function POST(request: Request) {
       })();
     }
 
-    return NextResponse.json({ success: true }, { status: 201 });
+    return jsonResponse(requestId, { success: true }, { status: 201 });
   } catch (err) {
     const ms = Date.now() - start;
     logger.error({ requestId, ms, err }, "comment unhandled error");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

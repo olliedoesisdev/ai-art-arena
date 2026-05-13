@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { resetRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
 import bcrypt from "bcryptjs";
@@ -20,17 +20,17 @@ export async function POST(request: Request) {
     const ipHash = hashIP(getClientIP(request));
     const { success } = await resetRateLimit.limit(ipHash);
     if (!success) {
-      return NextResponse.json({ error: "Too many requests — try again later" }, { status: 429 });
+      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
     }
 
     let body: unknown;
     try { body = await request.json(); } catch {
-      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+      return jsonResponse(requestId, { error: "Invalid JSON" }, { status: 400 });
     }
 
     const result = Schema.safeParse(body);
     if (!result.success) {
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: result.error.issues[0].message },
         { status: 400 }
       );
@@ -52,13 +52,13 @@ export async function POST(request: Request) {
       .single();
 
     if (!tokenRow) {
-      return NextResponse.json({ error: "Invalid or expired reset link" }, { status: 400 });
+      return jsonResponse(requestId, { error: "Invalid or expired reset link" }, { status: 400 });
     }
     if (tokenRow.used_at) {
-      return NextResponse.json({ error: "This reset link has already been used" }, { status: 400 });
+      return jsonResponse(requestId, { error: "This reset link has already been used" }, { status: 400 });
     }
     if (new Date(tokenRow.expires_at) < new Date()) {
-      return NextResponse.json({ error: "This reset link has expired — please request a new one" }, { status: 400 });
+      return jsonResponse(requestId, { error: "This reset link has expired — please request a new one" }, { status: 400 });
     }
 
     // Mark token used before changing the password (fail-safe ordering)
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
 
     if (authError) {
       logger.error({ requestId, authError }, "auth password update failed");
-      return NextResponse.json({ error: "Failed to update password" }, { status: 500 });
+      return jsonResponse(requestId, { error: "Failed to update password" }, { status: 500 });
     }
 
     // Keep our users table password_hash in sync
@@ -86,9 +86,9 @@ export async function POST(request: Request) {
       .eq("id", tokenRow.user_id);
 
     logger.info({ requestId, userId: tokenRow.user_id }, "password reset complete");
-    return NextResponse.json({ success: true });
+    return jsonResponse(requestId, { success: true });
   } catch (error) {
     logger.error({ requestId, error }, "reset confirm unhandled error");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

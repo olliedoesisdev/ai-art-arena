@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { authRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
 import { z } from "zod";
@@ -19,14 +19,14 @@ export async function POST(request: Request) {
     const ipHash = hashIP(getClientIP(request));
     const { success } = await authRateLimit.limit(`magic-link:${ipHash}`);
     if (!success) {
-      return NextResponse.json({ error: "Too many requests — try again later" }, { status: 429 });
+      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
     }
 
     const body = await request.json();
     const result = Schema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+      return jsonResponse(requestId, { error: "Invalid email" }, { status: 400 });
     }
 
     const { email, callbackUrl } = result.data;
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     // Always respond success to prevent email enumeration
     if (!user || !user.password_hash) {
       logger.info({ requestId }, "magic-link: unknown email or OAuth-only account");
-      return NextResponse.json({ success: true });
+      return jsonResponse(requestId, { success: true });
     }
 
     // Generate a secure token valid for 1 hour
@@ -80,9 +80,9 @@ export async function POST(request: Request) {
     });
 
     logger.info({ requestId, email }, "magic-link sent");
-    return NextResponse.json({ success: true });
+    return jsonResponse(requestId, { success: true });
   } catch (error) {
     logger.error({ requestId, error }, "magic-link unhandled error");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

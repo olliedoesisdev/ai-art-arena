@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/server";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { z } from "zod";
 
 const PAGE_SIZE = 50;
@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const requestId = generateRequestId();
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });
   }
 
   const { searchParams } = new URL(request.url);
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
   if (error) {
     logger.error({ requestId, error }, "admin comments fetch failed");
-    return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Failed to fetch comments" }, { status: 500 });
   }
 
   type RawRow = {
@@ -76,7 +76,7 @@ export async function GET(request: Request) {
   const totalCount = count ?? 0;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  return NextResponse.json({ groups, page, totalPages, totalCount });
+  return jsonResponse(requestId, { groups, page, totalPages, totalCount });
 }
 
 // POST — insert an admin reply (auto-approved, is_admin_reply = true)
@@ -90,17 +90,17 @@ export async function POST(request: Request) {
   const requestId = generateRequestId();
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });
   }
 
   let body: unknown;
   try { body = await request.json(); } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return jsonResponse(requestId, { error: "Invalid JSON" }, { status: 400 });
   }
 
   const result = AdminReplySchema.safeParse(body);
   if (!result.success) {
-    return NextResponse.json({ error: "Invalid input", details: result.error.issues }, { status: 400 });
+    return jsonResponse(requestId, { error: "Invalid input", details: result.error.issues }, { status: 400 });
   }
 
   const supabase = createAdminClient();
@@ -116,8 +116,8 @@ export async function POST(request: Request) {
 
   if (error) {
     logger.error({ requestId, error }, "admin reply insert failed");
-    return NextResponse.json({ error: "Failed to post reply" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Failed to post reply" }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true }, { status: 201 });
+  return jsonResponse(requestId, { success: true }, { status: 201 });
 }

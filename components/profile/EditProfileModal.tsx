@@ -70,7 +70,7 @@ export function EditProfileModal({ profile, onClose, onSaved }: Props) {
       toast.success("Profile updated.");
       onClose();
     } catch {
-      toast.error(“Network error - try again.”);
+      toast.error("Network error - try again.");
     } finally {
       setIsSaving(false);
     }

@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/server";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { adminRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
 import { Resend } from "resend";
@@ -19,25 +19,25 @@ export async function PATCH(request: Request, { params }: Params) {
   const session = await auth();
 
   if (!session?.user || session.user.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });
   }
 
   const ipHash = hashIP(getClientIP(request));
   const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
   if (!rateLimitOk) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
   }
 
   const { id } = await params;
 
   let body: unknown;
   try { body = await request.json(); } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return jsonResponse(requestId, { error: "Invalid JSON" }, { status: 400 });
   }
 
   const result = PatchSchema.safeParse(body);
   if (!result.success) {
-    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    return jsonResponse(requestId, { error: "Invalid input" }, { status: 400 });
   }
 
   const { status, admin_notes } = result.data;
@@ -50,7 +50,7 @@ export async function PATCH(request: Request, { params }: Params) {
     .single();
 
   if (fetchError || !application) {
-    return NextResponse.json({ error: "Application not found" }, { status: 404 });
+    return jsonResponse(requestId, { error: "Application not found" }, { status: 404 });
   }
 
   const { error: updateError } = await supabase
@@ -64,7 +64,7 @@ export async function PATCH(request: Request, { params }: Params) {
 
   if (updateError) {
     logger.error({ requestId, id, error: updateError }, "application update failed");
-    return NextResponse.json({ error: "Update failed" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Update failed" }, { status: 500 });
   }
 
   // Send email notification on terminal status changes
@@ -105,5 +105,5 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 
   logger.info({ requestId, id, status }, "application updated");
-  return NextResponse.json({ success: true, status });
+  return jsonResponse(requestId, { success: true, status });
 }

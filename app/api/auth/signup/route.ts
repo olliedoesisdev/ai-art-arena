@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { authRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
 import bcrypt from "bcryptjs";
@@ -20,14 +20,14 @@ export async function POST(request: Request) {
     const ipHash = hashIP(getClientIP(request));
     const { success } = await authRateLimit.limit(`signup:${ipHash}`);
     if (!success) {
-      return NextResponse.json({ error: "Too many requests — try again later" }, { status: 429 });
+      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
     }
 
     const body = await request.json();
     const result = SignUpSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: result.error.issues[0].message },
         { status: 400 }
       );
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       .single();
 
     if (existing) {
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: "An account with this email already exists" },
         { status: 409 }
       );
@@ -65,12 +65,12 @@ export async function POST(request: Request) {
     if (authError || !authData.user) {
       logger.error({ requestId, authError }, "auth user creation failed");
       if (authError?.message?.includes("already been registered")) {
-        return NextResponse.json(
+        return jsonResponse(requestId, 
           { error: "An account with this email already exists" },
           { status: 409 }
         );
       }
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: "Failed to create account" },
         { status: 500 }
       );
@@ -91,16 +91,16 @@ export async function POST(request: Request) {
       logger.error({ requestId, insertError }, "users table insert failed");
       // Clean up the auth user we just created
       await adminClient.auth.admin.deleteUser(authData.user.id);
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: "Failed to create account" },
         { status: 500 }
       );
     }
 
     logger.info({ requestId, email }, "signup success");
-    return NextResponse.json({ success: true });
+    return jsonResponse(requestId, { success: true });
   } catch (error) {
     logger.error({ requestId, error }, "signup unhandled error");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

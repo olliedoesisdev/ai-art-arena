@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { resetRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
 import { sendPasswordResetEmail } from "@/lib/email";
@@ -21,17 +21,17 @@ export async function POST(request: Request) {
     const ipHash = hashIP(getClientIP(request));
     const { success } = await resetRateLimit.limit(ipHash);
     if (!success) {
-      return NextResponse.json({ error: "Too many requests — try again later" }, { status: 429 });
+      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
     }
 
     let body: unknown;
     try { body = await request.json(); } catch {
-      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+      return jsonResponse(requestId, { error: "Invalid JSON" }, { status: 400 });
     }
 
     const result = Schema.safeParse(body);
     if (!result.success) {
-      return NextResponse.json({ error: "Valid email required" }, { status: 400 });
+      return jsonResponse(requestId, { error: "Valid email required" }, { status: 400 });
     }
 
     const { email } = result.data;
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
     if (!user) {
       logger.info({ requestId }, "reset requested for unknown email — silent ok");
-      return NextResponse.json({ success: true });
+      return jsonResponse(requestId, { success: true });
     }
 
     // Invalidate any existing unused tokens for this user
@@ -71,16 +71,16 @@ export async function POST(request: Request) {
 
     if (insertError) {
       logger.error({ requestId, insertError }, "failed to insert reset token");
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+      return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
     }
 
     // Fire-and-forget — never block the response on email delivery
     void sendPasswordResetEmail({ email, token: rawToken, expiresInMinutes: TOKEN_TTL_MINUTES });
 
     logger.info({ requestId }, "reset token issued");
-    return NextResponse.json({ success: true });
+    return jsonResponse(requestId, { success: true });
   } catch (error) {
     logger.error({ requestId, error }, "reset request unhandled error");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

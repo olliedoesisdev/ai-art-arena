@@ -1,8 +1,8 @@
-import { NextResponse, NextRequest } from "next/server";
+﻿import { NextResponse, NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { adminRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
 
@@ -29,20 +29,20 @@ export async function POST(request: NextRequest) {
     const session = await auth();
 
     if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      return jsonResponse(requestId, { error: "Unauthorized" }, { status: 403 });
     }
 
     const ipHash = hashIP(getClientIP(request));
     const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
     if (!rateLimitOk) {
-      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+      return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
     }
 
     const body = await request.json();
     const result = UploadArtworksSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json({ error: "Invalid input", details: result.error.issues }, { status: 400 });
+      return jsonResponse(requestId, { error: "Invalid input", details: result.error.issues }, { status: 400 });
     }
 
     const { artworks } = result.data;
@@ -57,11 +57,11 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (contestError || !contest) {
-      return NextResponse.json({ error: "Contest not found" }, { status: 404 });
+      return jsonResponse(requestId, { error: "Contest not found" }, { status: 404 });
     }
 
     if (artworks.length > contest.artwork_count) {
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: `This contest allows at most ${contest.artwork_count} artworks` },
         { status: 400 }
       );
@@ -81,13 +81,13 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       logger.error({ requestId, error: insertError }, 'artwork insertion error');
-      return NextResponse.json({ error: "Failed to upload artworks" }, { status: 500 });
+      return jsonResponse(requestId, { error: "Failed to upload artworks" }, { status: 500 });
     }
 
     logger.info({ requestId, ms: Date.now() - start, count: insertedArtworks.length }, 'artworks uploaded');
-    return NextResponse.json({ success: true, data: insertedArtworks, count: insertedArtworks.length });
+    return jsonResponse(requestId, { success: true, data: insertedArtworks, count: insertedArtworks.length });
   } catch (error) {
     logger.error({ requestId, ms: Date.now() - start, error }, 'artworks unhandled error');
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }

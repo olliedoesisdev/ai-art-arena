@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createClient } from "@/lib/supabase/server";
 import { CreateContestSchema } from "@/lib/validators";
-import { logger, generateRequestId } from "@/lib/logger";
+import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 
 export async function POST(request: Request) {
   const requestId = generateRequestId();
@@ -13,14 +13,14 @@ export async function POST(request: Request) {
     const session = await auth();
 
     if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      return jsonResponse(requestId, { error: "Unauthorized" }, { status: 403 });
     }
 
     const body = await request.json();
     const result = CreateContestSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json(
+      return jsonResponse(requestId, 
         { error: "Invalid input", details: result.error.issues },
         { status: 400 }
       );
@@ -42,13 +42,13 @@ export async function POST(request: Request) {
 
     if (error) {
       logger.error({ requestId, error }, 'contest creation error');
-      return NextResponse.json({ error: "Failed to create contest" }, { status: 500 });
+      return jsonResponse(requestId, { error: "Failed to create contest" }, { status: 500 });
     }
 
     logger.info({ requestId, ms: Date.now() - start, contestId: contest.id }, 'contest created');
-    return NextResponse.json({ success: true, data: contest });
+    return jsonResponse(requestId, { success: true, data: contest });
   } catch (error) {
     logger.error({ requestId, ms: Date.now() - start, error }, 'admin contest unhandled error');
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return jsonResponse(requestId, { error: "Internal server error" }, { status: 500 });
   }
 }
