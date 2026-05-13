@@ -1,11 +1,12 @@
 ﻿import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
+import * as Sentry from '@sentry/nextjs'
 import { createClient } from '@/lib/supabase/server'
 import { VoteSchema } from '@/lib/validators'
 import { voteRateLimit, buildVoteRateLimitKey, hashEmail } from '@/lib/ratelimit'
 import { getClientIP, hashIP } from '@/lib/utils'
 import { auth } from '@/auth'
-import { logger, generateRequestId } from '@/lib/logger'
+import { logger, generateRequestId, jsonResponse } from '@/lib/logger'
 
 export async function POST(request: Request) {
   const requestId = generateRequestId()
@@ -106,14 +107,23 @@ export async function POST(request: Request) {
     const row = data as { success: boolean; error_code: string | null; vote_count: number }
 
     if (!row.success) {
+      const EXPECTED_CODES = new Set(['ALREADY_VOTED', 'CONTEST_NOT_ACTIVE'])
       const map: Record<string, { status: number; error: string }> = {
-        CONTEST_NOT_FOUND: { status: 404, error: 'Contest not found' },
+        CONTEST_NOT_FOUND:  { status: 404, error: 'Contest not found' },
         CONTEST_NOT_ACTIVE: { status: 400, error: 'Contest is not active' },
         ARTWORK_NOT_FOUND:  { status: 404, error: 'Artwork not found' },
         ALREADY_VOTED:      { status: 409, error: 'Already voted on this contest' },
       }
       const mapped = map[row.error_code ?? ''] ?? { status: 500, error: 'Internal server error' }
       logger.warn({ requestId, error_code: row.error_code }, 'vote rejected by RPC')
+
+      if (!EXPECTED_CODES.has(row.error_code ?? '')) {
+        Sentry.captureMessage(`submit_vote unexpected error_code: ${row.error_code ?? 'null'}`, {
+          level: 'error',
+          extra: { requestId, artwork_id, contest_id, error_code: row.error_code },
+        })
+      }
+
       return jsonResponse(requestId, { error: mapped.error }, { status: mapped.status })
     }
 
