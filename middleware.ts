@@ -1,7 +1,26 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
+import type { NextAuthRequest } from "next-auth";
 
-export default auth(() => {
+export default auth((req: NextAuthRequest) => {
+  const { pathname } = req.nextUrl;
+
+  if (pathname.startsWith("/admin")) {
+    const session = req.auth;
+    if (!session) {
+      const signInUrl = req.nextUrl.clone();
+      signInUrl.pathname = "/signin";
+      signInUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(signInUrl);
+    }
+    if ((session.user as { role?: string })?.role !== "admin") {
+      const homeUrl = req.nextUrl.clone();
+      homeUrl.pathname = "/";
+      homeUrl.searchParams.delete("callbackUrl");
+      return NextResponse.redirect(homeUrl);
+    }
+  }
+
   return applySecurityHeaders(NextResponse.next());
 });
 
