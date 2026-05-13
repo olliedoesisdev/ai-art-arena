@@ -3,6 +3,7 @@ import { ArtMosaic } from "@/components/home/ArtMosaic";
 import { SITE_URL } from "@/lib/site";
 import { LastWinner } from "@/components/home/LastWinner";
 import { getHomeData } from "@/lib/data/home";
+import { JsonLd } from "@/components/layout/JsonLd";
 
 const HOW_IT_WORKS = [
   {
@@ -41,10 +42,7 @@ export default async function HomePage() {
 
   return (
     <div className="animate-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       {/* Hero */}
       <section style={{ paddingTop: "100px", paddingBottom: "60px" }}>
         <div className="shell" style={{ textAlign: "center" }}>

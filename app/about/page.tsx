@@ -1,5 +1,6 @@
 ﻿import { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
+import { JsonLd } from "@/components/layout/JsonLd";
 
 export const revalidate = 3600;
 
@@ -155,10 +156,7 @@ const decisions = [
 export default function AboutPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
 
       <div className="animate-page" style={{ paddingBottom: "120px" }}>
 

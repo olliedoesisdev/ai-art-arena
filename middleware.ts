@@ -21,10 +21,15 @@ export default auth((req: NextAuthRequest) => {
     }
   }
 
-  return applySecurityHeaders(NextResponse.next());
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const res = NextResponse.next({
+    request: { headers: new Headers(req.headers) },
+  });
+  res.headers.set("x-nonce", nonce);
+  return applySecurityHeaders(res, nonce);
 });
 
-function applySecurityHeaders(response: NextResponse): NextResponse {
+function applySecurityHeaders(response: NextResponse, nonce: string): NextResponse {
   const h = response.headers;
 
   h.set("X-Frame-Options", "DENY");
@@ -33,12 +38,15 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
   h.set("Referrer-Policy", "strict-origin-when-cross-origin");
   h.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
 
-  // CSP — unsafe-inline required for Next.js hydration and heavy inline style usage in this codebase
+  const scriptSrc = process.env.NODE_ENV === "development"
+    ? `'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'`
+    : `'nonce-${nonce}' 'unsafe-inline'`;
+
   h.set(
     "Content-Security-Policy",
     [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
+      `script-src 'self' ${scriptSrc}`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://*.supabase.co https://avatars.githubusercontent.com",
       "font-src 'self' https://fonts.gstatic.com",

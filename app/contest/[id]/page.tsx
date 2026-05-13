@@ -7,6 +7,7 @@ import { SITE_URL } from "@/lib/site";
 import { StatsStrip } from "@/components/contest/StatsStrip";
 import { VoteAlert } from "@/components/contest/VoteAlert";
 import { ArtworkCard } from "@/components/contest/ArtworkCard";
+import { JsonLd } from "@/components/layout/JsonLd";
 
 export const revalidate = 60;
 
@@ -111,10 +112,7 @@ export default async function ContestPage({ params }: Props) {
 
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <div className="shell">
         <ContestHeader
           weekNumber={contest.week_number}
