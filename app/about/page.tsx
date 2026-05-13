@@ -308,7 +308,9 @@ export default function AboutPage() {
                   style={{ textDecoration: "none" }}
                 >
                   <article
+                    className="stack-card"
                     style={{
+                      "--card-hover-border": item.color + "50",
                       background: "var(--color-bg-surface)",
                       border: "1px solid var(--color-border-subtle)",
                       borderRadius: "12px",
@@ -317,21 +319,8 @@ export default function AboutPage() {
                       display: "flex",
                       flexDirection: "column",
                       gap: "12px",
-                      transition: "border-color 0.2s, background 0.2s, transform 0.2s",
                       cursor: "pointer",
-                    }}
-                    onMouseEnter={(e) => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.borderColor = item.color + "50";
-                      el.style.background = "var(--color-bg-surface2)";
-                      el.style.transform = "translateY(-2px)";
-                    }}
-                    onMouseLeave={(e) => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.borderColor = "var(--color-border-subtle)";
-                      el.style.background = "var(--color-bg-surface)";
-                      el.style.transform = "none";
-                    }}
+                    } as React.CSSProperties}
                   >
                     {/* Header row */}
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>

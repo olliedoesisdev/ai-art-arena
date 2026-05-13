@@ -141,24 +141,16 @@ export default function BlogIndexPage() {
               className="animate-card"
             >
               <article
+                className="blog-post-row"
                 style={{
                   padding: "28px 32px",
                   background: "var(--color-bg-surface)",
                   border: "1px solid var(--color-border-subtle)",
                   borderRadius: i === 0 ? "14px 14px 4px 4px" : i === sorted.length - 1 ? "4px 4px 14px 14px" : "4px",
-                  transition: "border-color 0.2s, background 0.2s",
                   display: "flex",
                   alignItems: "flex-start",
                   gap: "24px",
                   flexWrap: "wrap",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "var(--color-border-mid)";
-                  (e.currentTarget as HTMLElement).style.background = "var(--color-bg-surface2)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "var(--color-border-subtle)";
-                  (e.currentTarget as HTMLElement).style.background = "var(--color-bg-surface)";
                 }}
               >
                 {/* Number */}
