@@ -1,5 +1,4 @@
 ﻿import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
 import { VoteSchema } from "@/lib/validators";
@@ -11,6 +10,7 @@ import {
 import { getClientIP, hashIP } from "@/lib/utils";
 import { auth } from "@/auth";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request) {
   const requestId = generateRequestId();
@@ -30,8 +30,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Zod validate — reject before touching DB or Redis
-    //    Schema now only requires `artwork_id`; contest_id is derived below.
+    // 2. Zod validate — reject before touching DB or Redis.
+    //    Schema only requires `artwork_id`; the submit_vote RPC derives
+    //    contest_id from it server-side (see migration 20240020).
     const result = VoteSchema.safeParse(body);
     if (!result.success) {
       logger.warn(
@@ -46,45 +47,7 @@ export async function POST(request: Request) {
     }
     const { artwork_id } = result.data;
 
-    // 3. Derive contest_id from artwork_id (single indexed PK lookup).
-    //
-    //    We do this BEFORE rate limiting because the rate-limit key is
-    //    scoped per contest — without contest_id we cannot key correctly.
-    //
-    //    The lookup also acts as an early existence check: an attacker
-    //    poking at random artwork UUIDs gets a 404 here without ever
-    //    consuming a rate-limit token.
-    const supabase = await createClient();
-    const { data: artworkRow, error: lookupError } = await supabase
-      .from("artworks")
-      .select("contest_id")
-      .eq("id", artwork_id)
-      .maybeSingle();
-
-    if (lookupError) {
-      logger.error({ requestId, lookupError }, "artwork lookup failed");
-      return jsonResponse(
-        requestId,
-        { error: "Internal server error" },
-        { status: 500 },
-      );
-    }
-
-    if (!artworkRow) {
-      logger.warn(
-        { requestId, artwork_id },
-        "vote rejected: artwork not found",
-      );
-      return jsonResponse(
-        requestId,
-        { error: "Artwork not found" },
-        { status: 404 },
-      );
-    }
-
-    const contest_id = artworkRow.contest_id as string;
-
-    // 4. Resolve identity — email for authed users, IP for anonymous.
+    // 3. Resolve identity — email for authed users, IP for anonymous.
     //    Auth failure is non-fatal: treat as anonymous rather than throwing.
     let userEmail: string | null = null;
     let userId: string | null = null;
@@ -96,7 +59,7 @@ export async function POST(request: Request) {
       // stay anonymous
     }
 
-    // 5. Hash IP — reject if no IP headers (prevents hash collision)
+    // 4. Hash IP — reject if no IP headers (prevents hash collision)
     const clientIP = getClientIP(request);
     if (!clientIP) {
       logger.warn({ requestId }, "vote rejected: no IP headers");
@@ -108,9 +71,10 @@ export async function POST(request: Request) {
     }
     const ipHash = hashIP(clientIP);
 
-    // 6. Rate limit — keyed by email hash for authed users, IP hash for anon.
-    //    Uses the contest_id we derived in step 3.
-    const rateLimitKey = buildVoteRateLimitKey(userEmail, ipHash, contest_id);
+    // 5. Rate limit — keyed by email hash for authed users, IP hash for anon.
+    //    Scope is per-identity globally (not per-contest); since only one
+    //    contest is active at a time this is effectively identical.
+    const rateLimitKey = buildVoteRateLimitKey(userEmail, ipHash);
     let allowed: boolean, reset: number;
     try {
       const rl = await voteRateLimit.limit(rateLimitKey);
@@ -149,13 +113,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // 7. Call submit_vote RPC (atomic — no sequential queries)
+    // 6. Call submit_vote RPC — single atomic call. The function derives
+    //    contest_id from artwork_id internally, runs the three-layer duplicate
+    //    check, inserts the vote and bumps the denormalised counter.
     const emailHash = userEmail ? hashEmail(userEmail) : null;
 
+    const supabase = await createClient();
     const { data, error } = await supabase
       .rpc("submit_vote", {
         p_artwork_id: artwork_id,
-        p_contest_id: contest_id,
         p_user_id: userId,
         p_ip_hash: ipHash,
         p_email_hash: emailHash,
@@ -175,6 +141,7 @@ export async function POST(request: Request) {
       success: boolean;
       error_code: string | null;
       vote_count: number;
+      contest_id: string | null;
     };
 
     if (!row.success) {
@@ -190,7 +157,7 @@ export async function POST(request: Request) {
         error: "Internal server error",
       };
       logger.warn(
-        { requestId, error_code: row.error_code },
+        { requestId, error_code: row.error_code, contest_id: row.contest_id },
         "vote rejected by RPC",
       );
 
@@ -202,7 +169,7 @@ export async function POST(request: Request) {
             extra: {
               requestId,
               artwork_id,
-              contest_id,
+              contest_id: row.contest_id,
               error_code: row.error_code,
             },
           },
@@ -216,11 +183,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // 8. Revalidate contest page ISR cache, return 200
-    revalidatePath(`/contest/${contest_id}`);
+    // 7. Revalidate the contest page ISR cache. contest_id was derived inside
+    //    the RPC and handed back on the success row — no extra round-trip.
+    //    Defensive fallback: if the RPC ever returns NULL on success (shouldn't
+    //    happen given the migration), skip revalidation rather than crashing.
+    if (row.contest_id) {
+      revalidatePath(`/contest/${row.contest_id}`);
+    }
 
     const ms = Date.now() - start;
-    logger.info({ requestId, ms, vote_count: row.vote_count }, "vote accepted");
+    logger.info(
+      { requestId, ms, vote_count: row.vote_count, contest_id: row.contest_id },
+      "vote accepted",
+    );
     return jsonResponse(requestId, {
       success: true,
       vote_count: row.vote_count,
