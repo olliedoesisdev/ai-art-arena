@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 // Vote validation
+// NOTE: contest_id is no longer accepted from the client — the route handler
+// derives it server-side from artwork_id. This prevents a malicious client
+// from voting on an artwork while claiming a different contest, and it also
+// shrinks the public API surface.
 export const VoteSchema = z.object({
   artwork_id: z.string().uuid("Invalid artwork ID"),
-  contest_id: z.string().uuid("Invalid contest ID"),
 });
 
 // Contest creation validation (admin only)
@@ -32,7 +35,18 @@ export const UpdateProfileSchema = z.object({
 // Comment submission validation
 export const CreateCommentSchema = z.object({
   artwork_id: z.string().uuid("Invalid artwork ID"),
-  name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be 50 characters or fewer"),
-  email: z.string().email("Invalid email address").max(254).optional().or(z.literal("")),
-  body: z.string().min(5, "Comment must be at least 5 characters").max(500, "Comment must be 500 characters or fewer"),
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be 50 characters or fewer"),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .max(254)
+    .optional()
+    .or(z.literal("")),
+  body: z
+    .string()
+    .min(5, "Comment must be at least 5 characters")
+    .max(500, "Comment must be 500 characters or fewer"),
 });
