@@ -10,12 +10,12 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "About — Oliver White | Full Stack Developer",
   description:
-    "Oliver White built AI Art Arena — a production Next.js 14 voting platform for AI-generated artwork. Every tool in the stack solved a real problem.",
+    "Oliver White builds fast. Sales background, self-taught developer, Directed Output workflow. AI Art Arena is the proof of concept — live, production, every decision deliberate.",
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
     title: "About — Oliver White | Full Stack Developer",
     description:
-      "A production Next.js 14 + Supabase voting platform built from scratch. Every architectural decision explained.",
+      "Self-taught developer with a sales background and a Directed Output workflow. AI Art Arena is the proof of concept — production Next.js 14 + Supabase, shipped fast.",
     url: `${SITE_URL}/about`,
     siteName: "AI Art Arena",
     images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "AI Art Arena — built by Oliver White" }],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "About — Oliver White | AI Art Arena",
-    description: "Production Next.js 14 + Supabase voting platform. Every tool solved a real problem.",
+    description: "Self-taught developer. Directed Output workflow. This site is the proof of concept.",
     images: [`${SITE_URL}/og-image.png`],
   },
 };
@@ -36,14 +36,14 @@ const jsonLd = {
   url: SITE_URL,
   jobTitle: "Full Stack Developer",
   description:
-    "Self-taught full stack developer. Built AI Art Arena — a production Next.js 14 voting platform for AI-generated artwork.",
+    "Self-taught full stack developer. Former sales professional. Directed Output workflow — uses AI as a tool, not a collaborator. Built AI Art Arena as the proof of concept.",
   knowsAbout: ["Next.js", "TypeScript", "PostgreSQL", "Supabase", "React", "Tailwind CSS", "Vercel", "Redis", "NextAuth"],
   mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/about` },
   worksFor: {
     "@type": "CreativeWork",
     name: "AI Art Arena",
     url: SITE_URL,
-    description: "A weekly voting contest for AI-generated artwork.",
+    description: "A weekly voting contest for AI-generated artwork. Built fast, built right.",
   },
 };
 
@@ -187,11 +187,11 @@ export default function AboutPage() {
               Oliver White — Full Stack Developer
             </p>
             <h1 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(2.25rem,6vw,4rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--color-text)", margin: "0 0 24px", lineHeight: 1.02, maxWidth: "800px" }}>
-              Every tool here<br />
-              <span style={{ color: "var(--color-text-dim)" }}>solved a real problem.</span>
+              Good tools.<br />
+              <span style={{ color: "var(--color-text-dim)" }}>Clear decisions. Ships fast.</span>
             </h1>
             <p style={{ fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)", maxWidth: "580px", margin: "0 0 36px" }}>
-              AI Art Arena is a live production voting contest for AI-generated artwork. I chose each piece of the stack because I had a problem, and it was the right tool to solve it.
+              AI Art Arena is a live, production voting contest built from scratch. Every tool in this stack was chosen because the project demanded it — and AI was one of those tools.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
               <a
@@ -243,13 +243,13 @@ export default function AboutPage() {
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "18px", fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)" }}>
                   <p style={{ margin: 0 }}>
-                    Three years ago I was selling life insurance. No CS degree. No bootcamp. What I had was a stubborn need to understand how things work.
+                    Three years ago I was selling life insurance. No CS degree, no bootcamp. I retrained deliberately — building real things, running into real problems, and learning exactly what each problem required.
                   </p>
                   <p style={{ margin: 0 }}>
-                    I taught myself to code by building things, running into problems, and figuring out solutions. React first, then Next.js, then databases, authentication, security, deployment. Each layer required the one before it.
+                    Sales taught me something that most developers miss: the work is not the code. The work is understanding what someone needs, deciding what to build, and getting it in front of them. Code is just the fastest path between those two points.
                   </p>
                   <p style={{ margin: 0 }}>
-                    Every technology on this project exists because the project demanded it. That is the only reason to learn anything.
+                    AI Art Arena exists because I needed a production project that demonstrated the full stack under real conditions. It is that. Every decision in it was made for a reason, and I can explain every one of them.
                   </p>
                 </div>
               </div>
@@ -378,19 +378,25 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── ON USING AI ──────────────────────────────────────────────── */}
+        {/* ── DIRECTED OUTPUT ──────────────────────────────────────────── */}
         <section style={{ borderBottom: "1px solid var(--color-border-subtle)", padding: "64px 0", background: "var(--color-purple-dim2)" }}>
           <div className="shell">
             <div style={{ maxWidth: "640px" }}>
               <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "20px" }}>
-                On using AI
+                Directed Output
               </p>
+              <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.375rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: "0 0 24px" }}>
+                AI is a tool. I am the operator.
+              </h2>
               <div style={{ display: "flex", flexDirection: "column", gap: "18px", fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)" }}>
                 <p style={{ margin: 0 }}>
-                  I use Claude as a development tool — the same way I use TypeScript, a linter, or a debugger. Every architectural decision, security tradeoff, and product direction was mine.
+                  The calculator did not replace mathematicians. It removed the arithmetic friction so they could solve harder problems faster. AI does the same thing for software development — it removes execution bottlenecks so judgment, taste, and direction can operate at higher speed.
                 </p>
                 <p style={{ margin: 0 }}>
-                  What AI cannot do is understand the problem I am trying to solve. It cannot decide that three independent duplicate-vote layers are necessary. It cannot look at five sequential database queries and understand why one atomic function is the right call — not just for performance, but for correctness under concurrent load. Those decisions require understanding the system. That understanding is mine.
+                  I use Claude the same way I use TypeScript or a linter: I give it precise instructions, evaluate the output, take what works, and discard what does not. Every architectural decision in this project — the three-layer duplicate-vote prevention, the atomic RPC replacing five sequential queries, the security header configuration — was mine. Those decisions require understanding the system. The tool does not have that understanding. I do.
+                </p>
+                <p style={{ margin: 0 }}>
+                  The competitive gap in this industry is not AI versus developers. It is developers using AI versus developers who are not.
                 </p>
               </div>
             </div>
@@ -408,8 +414,8 @@ export default function AboutPage() {
                 <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(1.5rem,3vw,2rem)", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: "0 0 10px" }}>
                   Let&apos;s build something real.
                 </h2>
-                <p style={{ fontSize: "1rem", color: "var(--color-text-muted)", margin: 0, maxWidth: "400px" }}>
-                  I take on client work. If you need a developer who solves problems instead of copying solutions — reach out.
+                <p style={{ fontSize: "1rem", color: "var(--color-text-muted)", margin: 0, maxWidth: "440px" }}>
+                  I take on client work. If you need someone who ships fast, makes deliberate decisions, and can explain every one of them — reach out.
                 </p>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
