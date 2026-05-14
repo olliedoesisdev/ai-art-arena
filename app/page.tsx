@@ -381,7 +381,7 @@ export default async function HomePage() {
                 lineHeight: 1.1,
               }}>
                 Real problems.<br />
-                <span style={{ color: "var(--color-text-dim)" }}>Real solutions.</span>
+                <span style={{ color: "var(--color-text-muted)" }}>Real solutions.</span>
               </h2>
               <p style={{
                 fontSize: "1rem",

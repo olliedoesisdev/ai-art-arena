@@ -124,7 +124,7 @@ export default function BlogIndexPage() {
           </p>
           <h1 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(2rem,5vw,3rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--color-text)", margin: "0 0 16px", lineHeight: 1.05 }}>
             Real problems.<br />
-            <span style={{ color: "var(--color-text-dim)" }}>Real solutions.</span>
+            <span style={{ color: "var(--color-text-muted)" }}>Real solutions.</span>
           </h1>
           <p style={{ fontSize: "1.0625rem", color: "var(--color-text-muted)", maxWidth: "560px", lineHeight: 1.7, margin: 0 }}>
             Deep dives into Next.js, PostgreSQL, Supabase, and production engineering — written while building AI Art Arena from scratch.

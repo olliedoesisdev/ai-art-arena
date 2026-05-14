@@ -188,7 +188,8 @@ export default function AboutPage() {
             </p>
             <h1 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(2.25rem,6vw,4rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--color-text)", margin: "0 0 24px", lineHeight: 1.02, maxWidth: "800px" }}>
               Good tools.<br />
-              <span style={{ color: "var(--color-text-dim)" }}>Clear decisions. Ships fast.</span>
+              <span style={{ color: "var(--color-text-muted)" }}>Clear decisions.</span><br />
+              <span style={{ color: "var(--color-purple-light)" }}>Ships fast.</span>
             </h1>
             <p style={{ fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)", maxWidth: "580px", margin: "0 0 36px" }}>
               AI Art Arena is a live, production voting contest built from scratch. Every tool in this stack was chosen because the project demanded it — and AI was one of those tools.
@@ -198,13 +199,13 @@ export default function AboutPage() {
                 href="https://github.com/olliedoesisdev/ai-art-arena"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 20px", background: "var(--color-purple-dim)", border: "1px solid var(--color-border-mid)", borderRadius: "100px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 600, color: "var(--color-purple-light)", textDecoration: "none", letterSpacing: "0.06em" }}
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 20px", background: "var(--color-purple-dim)", border: "1px solid var(--color-border-strong)", borderRadius: "100px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 600, color: "var(--color-purple-pale)", textDecoration: "none", letterSpacing: "0.06em" }}
               >
                 View source
               </a>
               <Link
                 href="/blog"
-                style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 20px", background: "transparent", border: "1px solid var(--color-border-subtle)", borderRadius: "100px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 600, color: "var(--color-text-muted)", textDecoration: "none", letterSpacing: "0.06em" }}
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 20px", background: "transparent", border: "1px solid var(--color-border-mid)", borderRadius: "100px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 600, color: "var(--color-text)", textDecoration: "none", letterSpacing: "0.06em" }}
               >
                 Read the blog →
               </Link>
