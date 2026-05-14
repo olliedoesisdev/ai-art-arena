@@ -1,4 +1,4 @@
-﻿import { getAnalyticsSummary } from "@/lib/data/analytics";
+import { getAnalyticsSummary } from "@/lib/data/analytics";
 import { MetricCard } from "@/components/admin/analytics/MetricCard";
 import { VoteTrendChart } from "@/components/admin/analytics/VoteTrendChart";
 import { ContestBarChart } from "@/components/admin/analytics/ContestBarChart";
@@ -6,7 +6,7 @@ import { EngagementDonut } from "@/components/admin/analytics/EngagementDonut";
 import { TopArtworksTable } from "@/components/admin/analytics/TopArtworksTable";
 import { ContestStatsTable } from "@/components/admin/analytics/ContestStatsTable";
 
-export const metadata = { title: "Analytics â€” Admin" };
+export const metadata = { title: "Analytics — Admin" };
 export const revalidate = 300;
 
 const card: React.CSSProperties = {
@@ -81,7 +81,7 @@ export default async function AnalyticsPage() {
       {/* Vote trend + engagement row */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "16px" }}>
         <div style={card}>
-          <p style={cardLabel}>Votes â€” last 30 days</p>
+          <p style={cardLabel}>Votes — last 30 days</p>
           <VoteTrendChart data={dailyVotes} days={30} />
         </div>
         <div style={card}>
@@ -106,7 +106,7 @@ export default async function AnalyticsPage() {
           <TopArtworksTable artworks={topArtworks} />
         </div>
         <div style={card}>
-          <p style={cardLabel}>Votes â€” last 90 days</p>
+          <p style={cardLabel}>Votes — last 90 days</p>
           <VoteTrendChart data={dailyVotes} days={90} />
         </div>
       </div>

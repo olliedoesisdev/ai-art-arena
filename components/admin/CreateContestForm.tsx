@@ -92,7 +92,7 @@ export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProp
         <label style={labelStyle}>Number of Artworks</label>
         <input type="number" min="1" max="50" required value={formData.artworkCount} style={inputStyle}
           onChange={(e) => setFormData({ ...formData, artworkCount: Math.max(1, parseInt(e.target.value) || 1) })} />
-        <p style={{ fontSize: "0.75rem", color: "var(--color-text-dim)", marginTop: "4px" }}>How many artworks will be in this contest (1â€“50)</p>
+        <p style={{ fontSize: "0.75rem", color: "var(--color-text-dim)", marginTop: "4px" }}>How many artworks will be in this contest (1–50)</p>
       </div>
 
       <div>
@@ -111,8 +111,8 @@ export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProp
         <label style={labelStyle}>Status</label>
         <select required value={formData.status} style={inputStyle}
           onChange={(e) => setFormData({ ...formData, status: e.target.value as "active" | "archived" })}>
-          <option value="active">Active â€” live now</option>
-          <option value="archived">Archived â€” not accepting votes</option>
+          <option value="active">Active — live now</option>
+          <option value="archived">Archived — not accepting votes</option>
         </select>
       </div>
 

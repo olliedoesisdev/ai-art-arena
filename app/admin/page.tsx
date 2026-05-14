@@ -1,9 +1,9 @@
-﻿import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-export const metadata = { title: "Admin â€” AI Art Arena" };
+export const metadata = { title: "Admin — AI Art Arena" };
 export const revalidate = 120;
 
 const card: React.CSSProperties = {
@@ -83,7 +83,7 @@ export default async function AdminPage() {
               border: `1px solid ${color}30`, background: `${color}08`,
               color, fontSize: "0.875rem", fontWeight: 600, textDecoration: "none",
             }}>
-              {label} â†’
+              {label} →
             </Link>
           ))}
         </div>
@@ -104,7 +104,7 @@ export default async function AdminPage() {
                 <div>
                   <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>Week {c.week_number}</div>
                   <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                    {new Date(c.start_date).toLocaleDateString()} â€” {new Date(c.end_date).toLocaleDateString()}
+                    {new Date(c.start_date).toLocaleDateString()} &ndash; {new Date(c.end_date).toLocaleDateString()}
                   </div>
                 </div>
                 <span style={{

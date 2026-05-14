@@ -6,11 +6,11 @@ import { LeaderboardFeatured } from "@/components/leaderboard/LeaderboardFeature
 export const revalidate = 300;
 
 export const metadata = {
-  title: "Leaderboard â€” AI Art Arena",
+  title: "Leaderboard — AI Art Arena",
   description: "All-time highest-voted artworks across every AI Art Arena contest.",
   alternates: { canonical: `${SITE_URL}/leaderboard` },
   openGraph: {
-    title: "Leaderboard â€” AI Art Arena",
+    title: "Leaderboard — AI Art Arena",
     description: "All-time highest-voted artworks across every AI Art Arena contest.",
     url: `${SITE_URL}/leaderboard`,
     siteName: "AI Art Arena",
@@ -19,7 +19,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Leaderboard â€” AI Art Arena",
+    title: "Leaderboard — AI Art Arena",
     description: "All-time highest-voted artworks across every AI Art Arena contest.",
     images: [`${SITE_URL}/og-image.png`],
   },

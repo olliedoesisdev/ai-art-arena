@@ -103,7 +103,7 @@ function ApplicationCard({
             </div>
             <div>
               <p style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>Location</p>
-              <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: 0 }}>{app.location ?? "â€”"}</p>
+              <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: 0 }}>{app.location ?? "—"}</p>
             </div>
           </div>
 
@@ -111,7 +111,7 @@ function ApplicationCard({
             <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
               {app.portfolio_url && (
                 <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "13px", color: "var(--color-purple)", textDecoration: "none" }}>
-                  Portfolio â†—
+                  Portfolio ↗
                 </a>
               )}
               {app.social_handle && (

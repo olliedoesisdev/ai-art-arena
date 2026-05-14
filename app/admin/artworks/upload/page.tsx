@@ -1,9 +1,9 @@
-﻿import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { UploadArtworksForm } from "@/components/admin/UploadArtworksForm";
 
-export const metadata = { title: "Upload Artworks â€” Admin" };
+export const metadata = { title: "Upload Artworks — Admin" };
 
 export default async function UploadArtworksPage() {
   const session = await auth();

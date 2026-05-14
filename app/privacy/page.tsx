@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy â€” AI Art Arena",
+  title: "Privacy Policy — AI Art Arena",
   description: "How AI Art Arena handles your data.",
 };
 

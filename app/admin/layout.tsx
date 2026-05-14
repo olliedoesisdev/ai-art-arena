@@ -1,7 +1,7 @@
-﻿import { auth } from "@/auth";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { signOut } from "@/auth";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -15,85 +15,68 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect("/signin");
   }
 
-  const NAV = [
-    { href: "/admin", label: "Overview" },
-    { href: "/admin/contests", label: "Contests" },
-    { href: "/admin/artworks", label: "Artworks" },
-    { href: "/admin/comments", label: "Comments" },
-    { href: "/admin/analytics", label: "Analytics" },
-    { href: "/admin/applications", label: "Applications" },
-  ];
-
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--color-bg-base)" }}>
-      {/* Admin top bar */}
-      <div style={{
-        background: "rgba(17,17,25,0.95)",
-        borderBottom: "1px solid rgba(139,92,246,0.15)",
-        padding: "0 28px",
-        height: "52px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        position: "sticky",
-        top: "60px",
-        zIndex: 40,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--color-purple)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            Admin
-          </span>
-          <span style={{ color: "rgba(139,92,246,0.3)" }}>Â·</span>
-          <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>{session.user.email}</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <Link href="/" style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", textDecoration: "none" }}>
-            â† Back to site
-          </Link>
-          <form action={async () => { "use server"; await signOut({ redirectTo: "/" }); }}>
-            <button type="submit" style={{
-              fontSize: "0.75rem", fontWeight: 600, color: "var(--color-status-error)",
-              background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)",
-              borderRadius: "6px", padding: "4px 12px", cursor: "pointer",
-            }}>
-              Sign out
-            </button>
-          </form>
-        </div>
-      </div>
+    <>
+      <style>{`
+        /* Desktop: sidebar always visible, main content offset */
+        @media (min-width: 768px) {
+          .admin-sidebar {
+            transform: translateX(0) !important;
+          }
+          .md-hide {
+            display: none !important;
+          }
+          .admin-main-wrap {
+            margin-left: 220px;
+          }
+        }
+        /* Mobile: no margin offset (sidebar overlays) */
+        @media (max-width: 767px) {
+          .admin-main-wrap {
+            margin-left: 0;
+          }
+          .md-show-flex {
+            display: none !important;
+          }
+        }
+      `}</style>
 
-      <div style={{ maxWidth: "1140px", margin: "0 auto", padding: "32px 28px", display: "grid", gridTemplateColumns: "200px 1fr", gap: "32px" }}>
-        {/* Sidebar */}
-        <aside>
-          <nav style={{ display: "flex", flexDirection: "column", gap: "4px", position: "sticky", top: "120px" }}>
-            {NAV.map(({ href, label }) => (
-              <Link key={href} href={href} style={{
-                fontSize: "0.875rem", fontWeight: 500, color: "var(--color-text-muted)",
-                textDecoration: "none", padding: "8px 12px", borderRadius: "8px",
+      <AdminSidebar email={session.user.email ?? ""} />
+
+      <div className="admin-main-wrap" style={{ minHeight: "100dvh", background: "var(--color-bg-base)" }}>
+        {/* Desktop top bar */}
+        <div
+          className="md-show-flex"
+          style={{
+            background: "rgba(17,17,25,0.95)",
+            borderBottom: "1px solid rgba(139,92,246,0.15)",
+            padding: "0 28px",
+            height: "52px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            position: "sticky",
+            top: 0,
+            zIndex: 30,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <form action={async () => { "use server"; await signOut({ redirectTo: "/" }); }}>
+              <button type="submit" style={{
+                fontSize: "0.75rem", fontWeight: 600, color: "var(--color-status-error)",
+                background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)",
+                borderRadius: "6px", padding: "4px 12px", cursor: "pointer",
               }}>
-                {label}
-              </Link>
-            ))}
-            <div style={{ height: "1px", background: "rgba(139,92,246,0.12)", margin: "8px 0" }} />
-            <Link href="/admin/contests/new" style={{
-              fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-purple)",
-              textDecoration: "none", padding: "8px 12px", borderRadius: "8px",
-              background: "rgba(139,92,246,0.08)",
-            }}>
-              + New Contest
-            </Link>
-            <Link href="/admin/artworks/upload" style={{
-              fontSize: "0.8125rem", fontWeight: 500, color: "var(--color-text-muted)",
-              textDecoration: "none", padding: "8px 12px", borderRadius: "8px",
-            }}>
-              Upload Artworks
-            </Link>
-          </nav>
-        </aside>
+                Sign out
+              </button>
+            </form>
+          </div>
+        </div>
 
-        {/* Main content */}
-        <main>{children}</main>
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "32px 24px" }}>
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

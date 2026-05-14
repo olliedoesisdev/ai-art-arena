@@ -1,9 +1,9 @@
-﻿import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { CreateContestForm } from "@/components/admin/CreateContestForm";
 
-export const metadata = { title: "New Contest â€” Admin" };
+export const metadata = { title: "New Contest — Admin" };
 
 export default async function NewContestPage() {
   const session = await auth();
@@ -34,7 +34,7 @@ export default async function NewContestPage() {
         <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-purple-light)", marginBottom: "10px" }}>Setup checklist</p>
         <ul style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", lineHeight: 1.8, paddingLeft: "16px", margin: 0 }}>
           <li>Set status to Active to make it live immediately</li>
-          <li>Upload 6 artworks after creating the contest</li>
+          <li>Upload artworks after creating the contest (the count you set above)</li>
           <li>End date is typically 7 days after start</li>
         </ul>
       </div>

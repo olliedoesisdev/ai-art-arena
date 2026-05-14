@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of Use â€” AI Art Arena",
+  title: "Terms of Use — AI Art Arena",
   description: "Terms of use for AI Art Arena.",
 };
 
@@ -45,7 +45,7 @@ export default function TermsPage() {
           },
           {
             heading: "Voting rules",
-            body: "Each visitor may cast one vote per contest. Attempts to circumvent this limit â€” including using proxies, VPNs, or automated tools â€” are prohibited and will result in votes being discarded.",
+            body: "Each visitor may cast one vote per contest. Attempts to circumvent this limit — including using proxies, VPNs, or automated tools — are prohibited and will result in votes being discarded.",
           },
           {
             heading: "Content",

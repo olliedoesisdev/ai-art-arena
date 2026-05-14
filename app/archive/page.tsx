@@ -6,11 +6,11 @@ import { Contest, Artwork } from "@/lib/types";
 export const revalidate = 3600;
 
 export const metadata = {
-  title: "Archive â€” AI Art Arena",
+  title: "Archive — AI Art Arena",
   description: "Browse past AI Art Arena contests and their winning artworks.",
   alternates: { canonical: `${SITE_URL}/archive` },
   openGraph: {
-    title: "Archive â€” AI Art Arena",
+    title: "Archive — AI Art Arena",
     description: "Browse past AI Art Arena contests and their winning artworks.",
     url: `${SITE_URL}/archive`,
     siteName: "AI Art Arena",
@@ -19,7 +19,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Archive â€” AI Art Arena",
+    title: "Archive — AI Art Arena",
     description: "Browse past AI Art Arena contests and their winning artworks.",
     images: [`${SITE_URL}/og-image.png`],
   },

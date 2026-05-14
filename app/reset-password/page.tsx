@@ -2,7 +2,7 @@
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Reset Password â€” AI Art Arena",
+  title: "Reset Password — AI Art Arena",
   robots: { index: false, follow: false },
 };
 

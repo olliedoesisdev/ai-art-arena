@@ -1,10 +1,10 @@
-﻿import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Link from "next/link";
 import Image from "next/image";
 
-export const metadata = { title: "Artworks â€” Admin" };
+export const metadata = { title: "Artworks — Admin" };
 
 export default async function ManageArtworksPage() {
   const session = await auth();
@@ -38,7 +38,7 @@ export default async function ManageArtworksPage() {
         <div style={{ background: "var(--color-bg-surface)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", padding: "64px", textAlign: "center" }}>
           <p style={{ color: "var(--color-text-muted)", marginBottom: "12px" }}>No artworks yet</p>
           <Link href="/admin/artworks/upload" style={{ color: "var(--color-purple)", fontSize: "0.875rem", textDecoration: "none" }}>
-            Upload your first artworks â†’
+            Upload your first artworks →
           </Link>
         </div>
       ) : (
@@ -82,7 +82,7 @@ export default async function ManageArtworksPage() {
                   </div>
                   {contest && (
                     <Link href={`/contest/${contest.id}`} target="_blank" style={{ display: "block", marginTop: "10px", fontSize: "0.75rem", color: "var(--color-purple)", textDecoration: "none" }}>
-                      View contest â†’
+                      View contest →
                     </Link>
                   )}
                 </div>

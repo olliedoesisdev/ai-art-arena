@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth/AuthForm";
 
 export const metadata = {
-  title: "Sign In â€” AI Art Arena",
+  title: "Sign In — AI Art Arena",
 };
 
 export default async function SignInPage({

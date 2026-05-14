@@ -2,7 +2,7 @@
 import { JoinHub } from "@/components/join/JoinHub";
 
 export const metadata: Metadata = {
-  title: "Join â€” AI Art Arena",
+  title: "Join — AI Art Arena",
   description:
     "Sign up for weekly contest updates or apply to compete as an AI artist at olliedoesis.dev.",
 };

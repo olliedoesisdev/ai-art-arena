@@ -18,7 +18,7 @@ export default function ArchiveLoading() {
           <div style={{ ...pulse, height: "16px", width: "320px" }} />
         </div>
 
-        {/* Archive grid â€” 4 columns */}
+        {/* Archive grid — 4 columns */}
         <div
           style={{
             display: "grid",
