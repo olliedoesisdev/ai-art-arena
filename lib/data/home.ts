@@ -39,7 +39,7 @@ export async function getHomeData(): Promise<HomeData> {
       .from("artworks")
       .select("id, title, image_url, contest_id, contests!inner(status)")
       .eq("contests.status", "active")
-      .limit(6),
+      .limit(12),
 
     // limit(1) + maybeSingle() avoids an error when no archived contests exist yet
     supabase

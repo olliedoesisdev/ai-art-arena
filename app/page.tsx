@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArtMosaic } from "@/components/home/ArtMosaic";
+import { ArtCarousel } from "@/components/home/ArtCarousel";
 import { SITE_URL } from "@/lib/site";
 import { LastWinner } from "@/components/home/LastWinner";
 import { getHomeData } from "@/lib/data/home";
@@ -7,33 +7,26 @@ import { JsonLd } from "@/components/layout/JsonLd";
 import { BlogCarousel } from "@/components/blog/BlogCarousel";
 import { BLOG_POSTS } from "@/lib/blog";
 
-const TECH_STACK = [
-  { name: "Next.js 15", detail: "App Router, ISR, Server Components" },
-  { name: "PostgreSQL", detail: "Atomic RPCs, RLS, custom indexes" },
-  { name: "Supabase", detail: "Auth, Storage, Realtime subscriptions" },
-  { name: "Upstash Redis", detail: "Sliding-window rate limiting" },
-  { name: "NextAuth v5", detail: "GitHub OAuth + magic links" },
-  { name: "Inngest", detail: "Serverless background jobs" },
-  { name: "Vercel", detail: "Edge deployment, CI/CD" },
-  { name: "TypeScript", detail: "Strict mode throughout" },
-];
-
-const BUILD_POINTS = [
+const PROOF_POINTS = [
   {
-    label: "Architected end-to-end",
-    body: "Every schema decision, every API contract, every security boundary — designed before a single line was written.",
+    value: "40ms",
+    label: "Vote latency",
+    sub: "5 queries → 1 atomic RPC",
   },
   {
-    label: "Production-grade security",
-    body: "CSP with per-request nonces, IP hashing, Zod validation on every input, RLS on every table, rate limiting on every endpoint.",
+    value: "8",
+    label: "Client components",
+    sub: "rest is server-rendered HTML",
   },
   {
-    label: "AI-assisted, human-led",
-    body: "Built with AI as a collaborator. Every decision — what to build, how to structure it, what to leave out — was mine.",
+    value: "3×",
+    label: "Duplicate prevention",
+    sub: "IP + user ID + email hash",
   },
   {
-    label: "Real performance engineering",
-    body: "Five sequential DB queries became one atomic PostgreSQL function. Vote latency dropped from ~200ms to ~40ms.",
+    value: "19",
+    label: "Migrations",
+    sub: "every schema change tracked",
   },
 ];
 
@@ -53,7 +46,7 @@ export default async function HomePage() {
     "@type": "WebSite",
     name: "AI Art Arena",
     url: SITE_URL,
-    description: "A full-stack AI art voting platform built from scratch by Oliver White — Next.js, PostgreSQL, Supabase, Redis, and TypeScript.",
+    description: "A production AI art voting platform built from scratch by Oliver White — Next.js, PostgreSQL, Supabase, Redis, and TypeScript.",
     potentialAction: {
       "@type": "SearchAction",
       target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/archive` },
@@ -90,9 +83,8 @@ export default async function HomePage() {
               color: "var(--color-text)",
               margin: "0 0 24px",
             }}>
-              A full-stack platform,
-              <br />
-              <span style={{ color: "var(--color-purple)" }}>built from scratch.</span>
+              Taste. Judgment.<br />
+              <span style={{ color: "var(--color-purple-light)" }}>The right tools.</span>
             </h1>
 
             <p style={{
@@ -100,22 +92,11 @@ export default async function HomePage() {
               color: "var(--color-text-muted)",
               lineHeight: 1.7,
               maxWidth: "560px",
-              margin: "0 0 16px",
-            }}>
-              AI Art Arena is a weekly AI art voting contest — and the vehicle for demonstrating
-              what it takes to ship a production-grade web application in 2026.
-              Every piece of the stack was chosen deliberately. Every tradeoff was made consciously.
-            </p>
-
-            <p style={{
-              fontSize: "0.9375rem",
-              color: "var(--color-text-dim)",
-              lineHeight: 1.65,
-              maxWidth: "520px",
               margin: "0 0 40px",
-              fontFamily: "var(--font-dm-mono)",
             }}>
-              Next.js &middot; PostgreSQL &middot; Supabase &middot; Redis &middot; TypeScript &middot; Vercel
+              AI Art Arena is a live voting contest for AI-generated artwork — and the proof of concept
+              for a workflow where AI handles execution and the developer handles everything that matters:
+              architecture, security, product decisions, and taste.
             </p>
 
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
@@ -125,7 +106,7 @@ export default async function HomePage() {
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
                   fontSize: "0.9375rem",
-                  color: "var(--color-bg-base)",
+                  color: "#fff",
                   background: "var(--color-purple)",
                   padding: "13px 32px",
                   borderRadius: "100px",
@@ -143,8 +124,8 @@ export default async function HomePage() {
                     fontWeight: 600,
                     fontSize: "0.9375rem",
                     color: "var(--color-status-warning)",
-                    background: "var(--color-status-warning-dim)",
-                    border: "1px solid rgba(251,191,36,0.25)",
+                    background: "var(--color-status-warningDim)",
+                    border: "1px solid rgba(251,191,36,0.30)",
                     padding: "13px 32px",
                     borderRadius: "100px",
                     textDecoration: "none",
@@ -159,7 +140,7 @@ export default async function HomePage() {
                     fontFamily: "var(--font-syne)",
                     fontWeight: 600,
                     fontSize: "0.9375rem",
-                    color: "var(--color-purple-light)",
+                    color: "var(--color-purple-pale)",
                     background: "var(--color-purple-dim)",
                     border: "1px solid var(--color-border-mid)",
                     padding: "13px 32px",
@@ -175,10 +156,165 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Art Mosaic ───────────────────────────────────────────── */}
+      {/* ── Art Carousel ─────────────────────────────────────────── */}
       {mosaicArtworks.length > 0 && (
-        <ArtMosaic artworks={mosaicArtworks} />
+        <ArtCarousel artworks={mosaicArtworks} />
       )}
+
+      {/* ── Proof points ─────────────────────────────────────────── */}
+      <section style={{ paddingBottom: "80px" }}>
+        <div className="shell">
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "1px",
+            background: "var(--color-border-subtle)",
+            border: "1px solid var(--color-border-subtle)",
+            borderRadius: "14px",
+            overflow: "hidden",
+          }}
+          className="proof-grid"
+          >
+            {PROOF_POINTS.map(({ value, label, sub }) => (
+              <div key={label} style={{ background: "var(--color-bg-surface)", padding: "28px 20px", textAlign: "center" }}>
+                <div style={{
+                  fontFamily: "var(--font-dm-mono)",
+                  fontWeight: 500,
+                  fontSize: "2rem",
+                  color: "var(--color-purple-light)",
+                  letterSpacing: "-0.02em",
+                  marginBottom: "4px",
+                }}>
+                  {value}
+                </div>
+                <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--color-text)", letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "var(--font-dm-mono)", marginBottom: "2px" }}>
+                  {label}
+                </div>
+                <div style={{ fontSize: "0.6875rem", color: "var(--color-text-muted)", fontFamily: "var(--font-dm-mono)" }}>
+                  {sub}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Directed Output ──────────────────────────────────────── */}
+      <section style={{ paddingBottom: "100px" }}>
+        <div className="shell">
+          <div style={{ display: "grid", gap: "56px" }} className="split-grid">
+
+            <div style={{ maxWidth: "560px" }}>
+              <p style={{
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--color-purple-light)",
+                fontFamily: "var(--font-dm-mono)",
+                marginBottom: "16px",
+              }}>
+                The approach
+              </p>
+              <h2 style={{
+                fontFamily: "var(--font-syne)",
+                fontWeight: 800,
+                fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
+                letterSpacing: "-0.03em",
+                color: "var(--color-text)",
+                margin: "0 0 20px",
+                lineHeight: 1.1,
+              }}>
+                AI removes execution bottlenecks.
+                <br />
+                <span style={{ color: "var(--color-text-muted)" }}>Judgment fills the rest.</span>
+              </h2>
+              <p style={{
+                fontSize: "1rem",
+                color: "var(--color-text-muted)",
+                lineHeight: 1.7,
+                margin: "0 0 20px",
+              }}>
+                The calculator did not replace mathematicians. It removed the arithmetic so they
+                could work on harder problems. AI does the same thing for development — it removes
+                the execution bottleneck so architecture, security, and product thinking can run faster.
+              </p>
+              <p style={{
+                fontSize: "1rem",
+                color: "var(--color-text-muted)",
+                lineHeight: 1.7,
+                margin: "0 0 32px",
+              }}>
+                Every decision in this project — the schema design, the three-layer vote fraud
+                prevention, the atomic RPC, the security headers — was deliberate. AI shipped
+                the implementation. I decided what to build and why.
+              </p>
+              <Link
+                href="/about"
+                style={{
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "var(--color-purple-light)",
+                  textDecoration: "none",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                Read the full breakdown &rarr;
+              </Link>
+            </div>
+
+            {/* Right: decisions list */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+              <p style={{
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--color-purple-light)",
+                fontFamily: "var(--font-dm-mono)",
+                marginBottom: "12px",
+              }}>
+                Decisions made
+              </p>
+              {[
+                { decision: "One atomic RPC instead of 5 sequential queries", why: "Eliminates race conditions and cuts vote latency 5×" },
+                { decision: "Three independent duplicate-vote layers", why: "IP hash + user ID + email hash — any one catches a fraud attempt" },
+                { decision: "8 Client Components out of the entire codebase", why: "Server Components by default. JS bundle stays minimal." },
+                { decision: "RLS at the database layer, not the application layer", why: "A compromised route still cannot read or write data it should not" },
+                { decision: "pino + requestId on every API route", why: "Client errors correlate to server traces — not guesswork" },
+                { decision: "Zod validation before Redis or DB is touched", why: "Malformed input never reaches the infrastructure" },
+              ].map((item) => (
+                <div
+                  key={item.decision}
+                  style={{
+                    padding: "14px 20px",
+                    background: "var(--color-bg-surface)",
+                    border: "1px solid var(--color-border-subtle)",
+                    borderRadius: "8px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                  }}
+                >
+                  <span style={{
+                    fontFamily: "var(--font-dm-mono)",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: "var(--color-text)",
+                  }}>
+                    {item.decision}
+                  </span>
+                  <span style={{ fontSize: "11px", color: "var(--color-text-muted)" }}>
+                    {item.why}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       {/* ── Live stats ───────────────────────────────────────────── */}
       {stats && (
@@ -218,142 +354,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
-      {/* ── What was built ───────────────────────────────────────── */}
-      <section style={{ paddingBottom: "100px" }}>
-        <div className="shell">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "56px" }} className="build-section-grid">
-
-            {/* Left: build story */}
-            <div style={{ maxWidth: "560px" }}>
-              <p style={{
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "var(--color-purple-light)",
-                fontFamily: "var(--font-dm-mono)",
-                marginBottom: "16px",
-              }}>
-                The build
-              </p>
-              <h2 style={{
-                fontFamily: "var(--font-syne)",
-                fontWeight: 800,
-                fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-                letterSpacing: "-0.03em",
-                color: "var(--color-text)",
-                margin: "0 0 20px",
-                lineHeight: 1.1,
-              }}>
-                Each layer engineered to hold weight.
-              </h2>
-              <p style={{
-                fontSize: "1rem",
-                color: "var(--color-text-muted)",
-                lineHeight: 1.7,
-                margin: "0 0 32px",
-              }}>
-                The same stack trusted by companies like Vercel, GitHub, Linear, and Loom.
-                The difference is that every part here — from the database schema to the
-                rate limiter to the CSP headers — was designed and wired together by one person.
-              </p>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                {BUILD_POINTS.map((pt) => (
-                  <div key={pt.label} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
-                    <div style={{
-                      width: "6px",
-                      height: "6px",
-                      borderRadius: "50%",
-                      background: "var(--color-purple)",
-                      flexShrink: 0,
-                      marginTop: "8px",
-                    }} />
-                    <div>
-                      <p style={{
-                        fontFamily: "var(--font-syne)",
-                        fontWeight: 700,
-                        fontSize: "0.9375rem",
-                        color: "var(--color-text)",
-                        margin: "0 0 4px",
-                      }}>
-                        {pt.label}
-                      </p>
-                      <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", lineHeight: 1.65, margin: 0 }}>
-                        {pt.body}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ marginTop: "36px" }}>
-                <Link
-                  href="/about"
-                  style={{
-                    fontFamily: "var(--font-dm-mono)",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    color: "var(--color-purple-light)",
-                    textDecoration: "none",
-                    letterSpacing: "0.04em",
-                  }}
-                >
-                  Read the full breakdown &rarr;
-                </Link>
-              </div>
-            </div>
-
-            {/* Right: tech stack grid */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-              <p style={{
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "var(--color-text-dim)",
-                fontFamily: "var(--font-dm-mono)",
-                marginBottom: "12px",
-              }}>
-                Stack
-              </p>
-              {TECH_STACK.map((item) => (
-                <div
-                  key={item.name}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "16px",
-                    padding: "14px 20px",
-                    background: "var(--color-bg-surface)",
-                    border: "1px solid var(--color-border-subtle)",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <span style={{
-                    fontFamily: "var(--font-dm-mono)",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    color: "var(--color-text)",
-                  }}>
-                    {item.name}
-                  </span>
-                  <span style={{
-                    fontSize: "12px",
-                    color: "var(--color-text-muted)",
-                    textAlign: "right",
-                  }}>
-                    {item.detail}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        </div>
-      </section>
 
       {/* ── Blog carousel ────────────────────────────────────────── */}
       <section style={{ paddingBottom: "100px" }}>
@@ -442,7 +442,7 @@ export default async function HomePage() {
               pointerEvents: "none",
             }} />
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "32px", alignItems: "center", flexWrap: "wrap", position: "relative" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "32px", alignItems: "center", position: "relative" }} className="cta-grid">
               <div>
                 <p style={{
                   fontSize: "11px",
@@ -470,8 +470,8 @@ export default async function HomePage() {
                 </h2>
                 <p style={{ fontSize: "0.9375rem", color: "var(--color-text-muted)", lineHeight: 1.65, margin: 0, maxWidth: "480px" }}>
                   {activeId
-                    ? "A fresh set of AI-generated artworks, one vote per person. Pick the piece that stops you in your tracks."
-                    : "Check back Monday when the next round of artworks drops. Or browse the archive to see past results."}
+                    ? "A fresh set of AI-generated artworks. One vote per person. Pick the piece that stops you."
+                    : "Check back Monday when the next round drops. Or browse the archive to see past results."}
                 </p>
               </div>
 
@@ -502,7 +502,7 @@ export default async function HomePage() {
                       fontFamily: "var(--font-syne)",
                       fontWeight: 700,
                       fontSize: "0.9375rem",
-                      color: "var(--color-bg-base)",
+                      color: "#fff",
                       background: "var(--color-purple)",
                       padding: "13px 28px",
                       borderRadius: "100px",
@@ -521,7 +521,7 @@ export default async function HomePage() {
                     fontFamily: "var(--font-dm-mono)",
                     fontSize: "12px",
                     fontWeight: 500,
-                    color: "var(--color-text-dim)",
+                    color: "var(--color-text-muted)",
                     textDecoration: "none",
                     textAlign: "center",
                     letterSpacing: "0.04em",
@@ -547,7 +547,7 @@ export default async function HomePage() {
             border: "1px solid var(--color-border-subtle)",
             borderRadius: "14px",
             padding: "32px 40px",
-          }}>
+          }} className="profile-cta-grid">
             <div>
               <p style={{
                 fontSize: "11px",
@@ -555,7 +555,7 @@ export default async function HomePage() {
                 fontWeight: 600,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                color: "var(--color-text-dim)",
+                color: "var(--color-purple-light)",
                 marginBottom: "8px",
               }}>
                 Track your votes
@@ -581,7 +581,7 @@ export default async function HomePage() {
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
                   fontSize: "0.875rem",
-                  color: "var(--color-bg-base)",
+                  color: "#fff",
                   background: "var(--color-purple)",
                   padding: "11px 24px",
                   borderRadius: "100px",
@@ -598,7 +598,7 @@ export default async function HomePage() {
                 style={{
                   fontFamily: "var(--font-dm-mono)",
                   fontSize: "11px",
-                  color: "var(--color-text-dim)",
+                  color: "var(--color-text-muted)",
                   textDecoration: "none",
                   textAlign: "center",
                   letterSpacing: "0.04em",
