@@ -40,4 +40,7 @@ export default withSentryConfig(nextConfig, {
   // Auto-instrument Next.js server actions and API routes
   autoInstrumentServerFunctions: true,
   autoInstrumentMiddleware: false,
+
+  // Tunnel browser errors through /monitoring to bypass ad blockers
+  tunnelRoute: "/monitoring",
 });
