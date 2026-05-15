@@ -7,16 +7,16 @@
 
 ## 1. WHAT THIS PROJECT IS
 
-**AI Art Arena** is a weekly voting contest platform for AI-generated artwork.
+**AI Art Arena** is a daily voting contest platform for AI-generated artwork.
 Live at: `olliedoesis.dev`
 Repo: `https://github.com/olliedoesisdev/ai-art-arena`
 Local path: `D:\Projects\ai-art-arena-v2\`
 Git user: `olliedoesisdev`
 
 **Core loop:**
-- A variable number of AI artworks are posted each week in a contest (set per-contest by the admin at creation time)
-- Visitors vote once per contest (24-hour cooldown via IP hash + Upstash Redis)
-- At week end, the contest auto-archives and a new one begins
+- A variable number of AI artworks are posted each day in a contest (set per-contest by the admin at creation time)
+- Visitors vote once per contest (cooldown via IP hash + Upstash Redis)
+- At midnight, the contest auto-archives and a new one begins
 - Archive page shows all past contests and results
 - Leaderboard shows all-time highest-voted artworks across every contest
 
@@ -338,7 +338,7 @@ description  TEXT
 ```
 voting_cooldown_hours     = 24
 artworks_per_contest      = (set per-contest by admin at creation time — no global default enforced)
-contest_duration_days     = 7
+contest_duration_days     = 1
 max_votes_per_ip_per_day  = 1
 ```
 
@@ -668,7 +668,7 @@ Every API route must log: request received (with requestId), response sent (stat
 
 ## 17. CONTEST AUTOMATION (Inngest)
 
-Inngest handles the weekly cycle. Functions live in `inngest/functions/`.
+Inngest handles the daily cycle. Functions live in `inngest/functions/`.
 
 `archive-contest.ts`
 - Trigger: cron `0 * * * *` (hourly), guards on `end_date < now`
@@ -676,7 +676,7 @@ Inngest handles the weekly cycle. Functions live in `inngest/functions/`.
 
 `create-next-contest.ts`
 - Trigger: event `contest/archived`
-- Action: create new contest row using week_number + 1, read duration from system_config
+- Action: create new contest row using week_number + 1, read duration from system_config (1 day)
 
 `send-vote-reminder.ts`
 - Trigger: cron `0 * * * *`, guards on contests ending within 24–25 hours

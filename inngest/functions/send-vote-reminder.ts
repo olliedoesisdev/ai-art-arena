@@ -36,8 +36,8 @@ export const sendVoteReminder = inngest.createFunction(
         await resend.emails.send({
           from: 'AI Art Arena <no-reply@olliedoesis.dev>',
           to: [adminEmail],
-          subject: `Last chance to vote — Week ${contest.week_number} ends in 24 hours`,
-          html: `<p>Week ${contest.week_number} closes in 24 hours. <a href="https://olliedoesis.dev/contest/${contest.id}">Cast your vote now.</a></p>`,
+          subject: `Last chance to vote — Day ${contest.week_number} ends soon`,
+          html: `<p>Day ${contest.week_number} closes soon. <a href="https://olliedoesis.dev/contest/${contest.id}">Cast your vote now.</a></p>`,
         })
       })
     }

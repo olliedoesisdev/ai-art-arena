@@ -102,7 +102,7 @@ export default async function AdminPage() {
             ) : (recentContests.data ?? []).map((c) => (
               <div key={c.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--color-bg-surface2)", borderRadius: "8px" }}>
                 <div>
-                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>Week {c.week_number}</div>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>Day {c.week_number}</div>
                   <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
                     {new Date(c.start_date).toLocaleDateString()} &ndash; {new Date(c.end_date).toLocaleDateString()}
                   </div>
@@ -141,7 +141,7 @@ export default async function AdminPage() {
                     <div style={{ fontSize: "0.8125rem", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {artwork?.title ?? "Unknown"}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Week {artwork?.contests?.[0]?.week_number ?? "?"}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Day {artwork?.contests?.[0]?.week_number ?? "?"}</div>
                   </div>
                   <div style={{ fontSize: "0.6875rem", color: "var(--color-text-dim)" }}>
                     {new Date(v.created_at).toLocaleDateString()}

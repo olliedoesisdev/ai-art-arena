@@ -39,13 +39,13 @@ export default async function ArchivePage() {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "AI Art Arena — Contest Archive",
-    description: "Every past weekly AI art voting contest, final standings, and winner on record.",
+    description: "Every past daily AI art voting contest, final standings, and winner on record.",
     url: `${SITE_URL}/archive`,
     isPartOf: { "@type": "WebSite", name: "AI Art Arena", url: SITE_URL },
     ...(contests && contests.length > 0 ? {
       hasPart: contests.map((c) => ({
         "@type": "Event",
-        name: `AI Art Arena — Week ${c.week_number}`,
+        name: `AI Art Arena — Day ${c.week_number}`,
         url: `${SITE_URL}/archive/${c.week_number}`,
         startDate: c.start_date,
         endDate: c.end_date,

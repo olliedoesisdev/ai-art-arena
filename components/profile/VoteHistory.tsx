@@ -106,7 +106,7 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
               padding: "2px 7px",
               borderRadius: "100px",
             }}>
-              Week {vote.contest_week}
+              Day {vote.contest_week}
             </span>
             {vote.contest_status === "active" && (
               <span style={{
@@ -209,7 +209,7 @@ export function VoteHistory({ votes }: Props) {
               textTransform: "uppercase",
               color: "var(--color-text-dim)",
             }}>
-              Week {String(week).padStart(2, "0")}
+              Day {String(week).padStart(2, "0")}
             </span>
             <div style={{ flex: 1, height: "1px", background: "rgba(139,92,246,0.08)" }} />
           </div>

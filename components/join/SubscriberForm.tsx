@@ -103,7 +103,7 @@ export function SubscriberForm() {
         Stay in the Loop
       </h2>
       <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px" }}>
-        Get notified when each weekly contest goes live. Vote, follow the competition, and watch the community grow.
+        Get notified when each daily contest goes live. Vote, follow the competition, and watch the community grow.
       </p>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>

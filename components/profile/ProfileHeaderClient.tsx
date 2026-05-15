@@ -192,7 +192,7 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
       }}>
         <StatBlock value={totalVotes} label="Votes Cast" />
         <StatBlock value={totalComments} label="Comments" divider />
-        <StatBlock value={weeksActive} label="Weeks Active" divider />
+        <StatBlock value={weeksActive} label="Days Active" divider />
       </div>
 
       <div style={{ height: "32px" }} />

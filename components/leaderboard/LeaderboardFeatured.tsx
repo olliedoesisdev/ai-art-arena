@@ -71,7 +71,7 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
 
         {artwork.contests && (
           <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginBottom: "16px" }}>
-            Week {artwork.contests.week_number}
+            Day {artwork.contests.week_number}
           </p>
         )}
 

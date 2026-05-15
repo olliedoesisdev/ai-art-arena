@@ -36,7 +36,7 @@ async function getActiveContestContext(): Promise<string> {
       .map((a, i) => `  ${i + 1}. "${a.title}" — ${a.vote_count} vote${a.vote_count !== 1 ? "s" : ""}`)
       .join("\n");
 
-    return `ACTIVE CONTEST: Week ${contest.week_number}
+    return `ACTIVE CONTEST: Day ${contest.week_number}
 Voting closes in: ${timeLeft}
 Contest page: /contest/${contest.id}
 Artworks in this contest (ranked by votes):
@@ -47,12 +47,12 @@ ${artworkList || "  No artworks yet"}`;
 }
 
 function buildSystemPrompt(contestContext: string): string {
-  return `You are the AI Art Arena assistant — a helpful, friendly chatbot on AI Art Arena (olliedoesis.dev), a weekly voting contest platform for AI-generated artwork.
+  return `You are the AI Art Arena assistant — a helpful, friendly chatbot on AI Art Arena (olliedoesis.dev), a daily voting contest platform for AI-generated artwork.
 
 Your job is to answer visitor questions about the site, help them navigate, and explain how everything works. Keep responses concise and conversational. When pointing somewhere on the site, include a markdown link like [Contest page](/contest/...) so they can click directly.
 
 ## About AI Art Arena
-AI Art Arena is a portfolio project by Oliver White demonstrating what AI-assisted voting platforms can look like. Every week, a set of AI-generated artworks compete for votes. Visitors vote once per contest (24-hour cooldown). At week end, the contest auto-archives and a new one begins.
+AI Art Arena is a portfolio project by Oliver White demonstrating what AI-assisted voting platforms can look like. Every day, a set of AI-generated artworks compete for votes. Visitors vote once per contest. At midnight, the contest auto-archives and a new one begins.
 
 ## How voting works
 - Anyone can vote — no account required
@@ -63,7 +63,7 @@ AI Art Arena is a portfolio project by Oliver White demonstrating what AI-assist
 
 ## Navigation
 - **Home** — [olliedoesis.dev](/) — hero, stats, how it works, last winner
-- **Contest** — [/contest](/contest) — the live voting page for this week
+- **Contest** — [/contest](/contest) — the live voting page for today
 - **Archive** — [/archive](/archive) — all past contests and their results
 - **Leaderboard** — [/leaderboard](/leaderboard) — all-time top-voted artworks across every contest
 - **About** — [/about](/about) — about the project and Oliver White

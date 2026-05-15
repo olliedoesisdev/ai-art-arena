@@ -358,7 +358,7 @@ export default async function HomePage() {
                   lineHeight: 1.1,
                 }}>
                   {activeId
-                    ? `Week ${stats?.active_week ?? ""} is live.`
+                    ? `Day ${stats?.active_week ?? ""} is live.`
                     : "No contest running right now."}
                 </h2>
                 <p style={{ fontSize: "0.9375rem", color: "var(--color-text-muted)", lineHeight: 1.65, margin: 0, maxWidth: "480px" }}>

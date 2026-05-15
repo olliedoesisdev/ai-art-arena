@@ -78,7 +78,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
               padding: "2px 7px",
               borderRadius: "100px",
             }}>
-              Week {comment.contest_week}
+              Day {comment.contest_week}
             </span>
             {comment.contest_status === "active" && (
               <span style={{

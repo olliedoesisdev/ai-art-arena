@@ -13,8 +13,8 @@ type Props = { params: { week: string } };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const week = params.week;
-  const title = `Week ${week} Results — AI Art Arena`;
-  const description = `Final results and winner for Week ${week} of the AI Art Arena AI art voting contest.`;
+  const title = `Day ${week} Results — AI Art Arena`;
+  const description = `Final results and winner for Day ${week} of the AI Art Arena AI art voting contest.`;
   return {
     title,
     description,
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: `${SITE_URL}/archive/${week}`,
       siteName: "AI Art Arena",
-      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena Week ${week} results` }],
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena Day ${week} results` }],
       type: "website",
     },
     twitter: {
@@ -67,8 +67,8 @@ export default async function ArchiveWeekPage({ params }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: `AI Art Arena — Week ${contest.week_number} Results`,
-    description: `Final results for Week ${contest.week_number} of the AI Art Arena AI art voting contest.`,
+    name: `AI Art Arena — Day ${contest.week_number} Results`,
+    description: `Final results for Day ${contest.week_number} of the AI Art Arena AI art voting contest.`,
     startDate: contest.start_date,
     endDate: contest.end_date,
     eventStatus: "https://schema.org/EventEnded",
@@ -123,7 +123,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
               marginBottom: "16px",
             }}
           >
-            Week {contest.week_number} Results
+            Day {contest.week_number} Results
           </h1>
           <div style={{ display: "flex", gap: "6px", alignItems: "baseline" }}>
             <span
@@ -192,7 +192,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
                   marginBottom: "10px",
                 }}
               >
-                ★ Week {contest.week_number} Champion
+                ★ Day {contest.week_number} Champion
               </span>
               <h2
                 style={{

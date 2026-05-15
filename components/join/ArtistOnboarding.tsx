@@ -822,7 +822,7 @@ function SuccessScreen({ email }: { email: string }) {
         Your work is under review. Expect a decision at {email} within a few days.
       </p>
       <p style={{ color: "var(--color-join-muted)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px", maxWidth: "420px", marginLeft: "auto", marginRight: "auto" }}>
-        New contests open every week â€” keep creating.
+        New contests open every day — keep creating.
       </p>
       <Link
         href="/"
@@ -896,7 +896,7 @@ export function ArtistOnboarding() {
         Compete as an Artist
       </h2>
       <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 36px" }}>
-        Tell us about your work and submit a piece for consideration. If selected, it enters the next weekly contest.
+        Tell us about your work and submit a piece for consideration. If selected, it enters the next daily contest.
       </p>
 
       <StepProgress step={step} />

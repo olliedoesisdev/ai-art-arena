@@ -43,7 +43,7 @@ const jsonLd = {
     "@type": "CreativeWork",
     name: "AI Art Arena",
     url: SITE_URL,
-    description: "A weekly voting contest for AI-generated artwork. Built fast, built right.",
+    description: "A daily voting contest for AI-generated artwork. Built fast, built right.",
   },
 };
 

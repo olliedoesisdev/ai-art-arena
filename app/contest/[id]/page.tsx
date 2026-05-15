@@ -24,24 +24,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const week = contest?.week_number;
   return {
-    title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
+    title: week ? `Vote on AI Art — Day ${week} | AI Art Arena` : "Contest — AI Art Arena",
     description: week
-      ? `Vote for the best AI-generated artwork in Week ${week}. One vote per contest, no account needed.`
+      ? `Vote for the best AI-generated artwork in Day ${week}. One vote per contest, no account needed.`
       : "Vote for your favourite AI-generated artwork.",
     alternates: { canonical: `${SITE_URL}/contest/${id}` },
     openGraph: {
-      title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
-      description: `Week ${week} is live. Pick your favourite AI artwork.`,
+      title: week ? `Vote on AI Art — Day ${week} | AI Art Arena` : "Contest — AI Art Arena",
+      description: `Day ${week} is live. Pick your favourite AI artwork.`,
       url: `${SITE_URL}/contest/${id}`,
       siteName: "AI Art Arena",
-      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena — Week ${week} voting contest` }],
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena — Day ${week} voting contest` }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
+      title: week ? `Vote on AI Art — Day ${week} | AI Art Arena` : "Contest — AI Art Arena",
       description: week
-        ? `Week ${week} is live. Pick your favourite AI-generated artwork — one vote per contest.`
+        ? `Day ${week} is live. Pick your favourite AI-generated artwork — one vote per contest.`
         : "Vote for your favourite AI-generated artwork. One vote per contest.",
       images: [`${SITE_URL}/og-image.png`],
     },
@@ -100,8 +100,8 @@ export default async function ContestPage({ params }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: `AI Art Arena — Week ${contest.week_number}`,
-    description: `Vote for the best AI-generated artwork in Week ${contest.week_number}. One vote per contest.`,
+    name: `AI Art Arena — Day ${contest.week_number}`,
+    description: `Vote for the best AI-generated artwork in Day ${contest.week_number}. One vote per contest.`,
     startDate: contest.start_date,
     endDate: contest.end_date,
     eventStatus: contest.status === "active"
@@ -228,7 +228,7 @@ export default async function ContestPage({ params }: Props) {
               Want to compete?
             </h2>
             <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: "0 0 8px" }}>
-              Apply to enter your AI artwork in next week&apos;s contest.
+              Apply to enter your AI artwork in tomorrow&apos;s contest.
             </p>
             <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0, letterSpacing: "0.04em" }}>
               Built by <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Oliver White</a>

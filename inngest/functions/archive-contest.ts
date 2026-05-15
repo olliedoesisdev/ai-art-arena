@@ -36,8 +36,8 @@ export const archiveContest = inngest.createFunction(
         await resend.emails.send({
           from: 'AI Art Arena <no-reply@olliedoesis.dev>',
           to: [process.env.ADMIN_EMAIL!],
-          subject: `Week ${contest.week_number} contest archived`,
-          html: `<p>Week ${contest.week_number} has ended and has been archived. A new contest will be created shortly.</p>`,
+          subject: `Day ${contest.week_number} contest archived`,
+          html: `<p>Day ${contest.week_number} has ended and has been archived. A new contest will be created shortly.</p>`,
         })
       })
 

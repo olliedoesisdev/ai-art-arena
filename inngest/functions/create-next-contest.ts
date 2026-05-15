@@ -18,7 +18,7 @@ export const createNextContest = inngest.createFunction(
         .in('key', ['contest_duration_days'])
       if (error) throw error
       const config = Object.fromEntries((data ?? []).map((r) => [r.key, r.value]))
-      return parseInt(config.contest_duration_days ?? '7', 10)
+      return parseInt(config.contest_duration_days ?? '1', 10)
     })
 
     await step.run('create-contest', async () => {

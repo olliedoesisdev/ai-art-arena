@@ -60,7 +60,7 @@ export function ArchiveCard({ contest, priority = false }: ArchiveCardProps) {
                 color: "var(--color-text)",
               }}
             >
-              Week {contest.week_number}
+              Day {contest.week_number}
             </h3>
             <span
               style={{

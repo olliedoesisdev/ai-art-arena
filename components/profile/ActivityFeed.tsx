@@ -118,7 +118,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
             color: "var(--color-status-success)",
             letterSpacing: "0.06em",
           }}>
-            Voted on Week {item.contest_week}
+            Voted on Day {item.contest_week}
           </div>
         </div>
 
@@ -183,7 +183,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
             color: "var(--color-purple-light)",
             letterSpacing: "0.06em",
           }}>
-            Commented on Week {item.contest_week}
+            Commented on Day {item.contest_week}
           </span>
           <span style={{
             fontFamily: "var(--font-dm-mono)",

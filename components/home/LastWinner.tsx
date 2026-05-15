@@ -26,7 +26,7 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
             marginBottom: "16px",
           }}
         >
-          Last week&apos;s champion
+          Yesterday&apos;s champion
         </h2>
 
         <Link
@@ -86,7 +86,7 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
                   marginBottom: "10px",
                 }}
               >
-                ★ Week {weekNumber} Winner
+                ★ Day {weekNumber} Winner
               </span>
 
               <h3

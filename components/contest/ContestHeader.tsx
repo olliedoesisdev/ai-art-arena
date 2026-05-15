@@ -30,7 +30,7 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
             textTransform: "uppercase",
           }}
         >
-          Week {weekNumber} &middot; {status === "active" ? "Open for voting" : "Archived"}
+          Day {weekNumber} &middot; {status === "active" ? "Open for voting" : "Archived"}
         </div>
         <h1
           style={{
@@ -43,7 +43,7 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
             margin: 0,
           }}
         >
-          The Arena — Week {weekNumber}
+          The Arena — Day {weekNumber}
         </h1>
       </div>
 

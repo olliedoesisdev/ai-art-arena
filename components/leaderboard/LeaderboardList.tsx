@@ -98,7 +98,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
               </p>
               {artwork.contests && (
                 <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                  Week {artwork.contests.week_number}
+                  Day {artwork.contests.week_number}
                 </p>
               )}
             </div>

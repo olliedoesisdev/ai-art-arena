@@ -87,7 +87,7 @@ export async function sendCommentNotification(data: CommentNotificationData): Pr
   await resend.emails.send({
     from: "AI Art Arena <notifications@olliedoesis.dev>",
     to: adminEmail,
-    subject: `New comment on "${artworkTitle}" — Week ${weekNumber}`,
+    subject: `New comment on "${artworkTitle}" — Day ${weekNumber}`,
     html: `
       <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;
                   background: #111119; color: #eeeeff; padding: 40px;
@@ -102,7 +102,7 @@ export async function sendCommentNotification(data: CommentNotificationData): Pr
           New comment
         </h1>
         <p style="font-size: 13px; color: #7878a0; margin: 0 0 32px 0;">
-          Week ${weekNumber} &mdash; ${artworkTitle}
+          Day ${weekNumber} &mdash; ${artworkTitle}
         </p>
 
         <div style="background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.2);
@@ -174,11 +174,11 @@ export async function sendSubscriberWelcome(data: {
           olliedoesis.dev
         </p>
         <p style="line-height: 1.8; color: #aaa; margin: 0 0 20px 0;">
-          Hi ${data.name} — you are subscribed. Every week a new contest goes
+          Hi ${data.name} — you are subscribed. Every day a new contest goes
           live, and you will hear about it first.
         </p>
         <p style="line-height: 1.8; color: #aaa; margin: 0 0 32px 0;">
-          Head over to the arena any time to vote on this week's AI artworks.
+          Head over to the arena any time to vote on today&apos;s AI artworks.
         </p>
         <a href="${SITE_URL_PUBLIC}"
            style="display: inline-block; background: #e8d5b7; color: #0a0a0a;

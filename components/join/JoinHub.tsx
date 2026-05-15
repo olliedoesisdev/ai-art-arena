@@ -55,7 +55,7 @@ function JoinHubInner() {
             letterSpacing: "-0.03em",
             margin: "0 0 12px",
           }}>
-            Submit AI artwork. Compete weekly.
+            Submit AI artwork. Compete daily.
           </h1>
           <p style={{ color: "var(--color-join-muted)", fontSize: "15px", margin: "0 0 10px" }}>Pick your track — artist or subscriber.</p>
           <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-subtle)", margin: 0, letterSpacing: "0.04em" }}>
@@ -121,7 +121,7 @@ function JoinHubInner() {
                     Stay in the Loop
                   </h2>
                   <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 10px" }}>
-                    Get notified when each weekly contest goes live. Vote, follow the competition, and watch the community grow.
+                    Get notified when each daily contest goes live. Vote, follow the competition, and watch the community grow.
                   </p>
                   <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-subtle)", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>
                     Name + email. One step.
@@ -165,7 +165,7 @@ function JoinHubInner() {
                     Compete as an Artist
                   </h2>
                   <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 10px" }}>
-                    Submit your AI-generated artwork for consideration in the weekly contest. Tell us about your process, your tools, and let your work speak.
+                    Submit your AI-generated artwork for consideration in the daily contest. Tell us about your process, your tools, and let your work speak.
                   </p>
                   <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-subtle)", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>
                     Four steps. One submission.

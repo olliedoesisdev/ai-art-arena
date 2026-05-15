@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (existingContest) {
-      return jsonResponse(requestId, { error: `Week ${week_number} already exists` }, { status: 409 });
+      return jsonResponse(requestId, { error: `Day ${week_number} already exists` }, { status: 409 });
     }
 
     if (status === "active") {
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 
       if (activeContests && activeContests.length > 0) {
         return jsonResponse(requestId,
-          { error: `There is already an active contest (Week ${activeContests[0].week_number}). Archive it first.` },
+          { error: `There is already an active contest (Day ${activeContests[0].week_number}). Archive it first.` },
           { status: 409 }
         );
       }
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       .from("contests")
       .insert({
         week_number,
-        title: title ?? `Week ${week_number}`,
+        title: title ?? `Day ${week_number}`,
         description: description ?? null,
         start_date: new Date(start_date).toISOString(),
         end_date: new Date(end_date).toISOString(),

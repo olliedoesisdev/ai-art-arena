@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: RouteContext) {
   const { id } = await params;
   const supabase = createAdminClient();
   const { data } = await supabase.from("contests").select("week_number").eq("id", id).single();
-  return { title: data ? `Week ${data.week_number} — Admin` : "Contest — Admin" };
+  return { title: data ? `Day ${data.week_number} — Admin` : "Contest — Admin" };
 }
 
 export default async function ContestDetailPage({ params }: RouteContext) {
@@ -40,13 +40,13 @@ export default async function ContestDetailPage({ params }: RouteContext) {
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
           <Link href="/admin/contests" style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", textDecoration: "none" }}>Contests</Link>
           <span style={{ color: "var(--color-text-dim)" }}>/</span>
-          <span style={{ fontSize: "0.8125rem", color: "var(--color-text)" }}>Week {contest.week_number}</span>
+          <span style={{ fontSize: "0.8125rem", color: "var(--color-text)" }}>Day {contest.week_number}</span>
         </div>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px" }}>
           <div>
             <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple)", marginBottom: "8px" }}>Contest</p>
             <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-text)", letterSpacing: "-0.03em" }}>
-              Week {contest.week_number}
+              Day {contest.week_number}
             </h1>
           </div>
           <div style={{ display: "flex", gap: "10px", alignItems: "center", flexShrink: 0, paddingTop: "28px" }}>
