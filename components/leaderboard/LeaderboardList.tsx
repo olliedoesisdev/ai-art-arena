@@ -30,7 +30,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
     >
       {artworks.map((artwork, index) => {
         const rank = index + 1;
-        const rankColor = RANK_COLORS[rank] ?? "var(--color-text-dim)";
+        const rankColor = RANK_COLORS[rank] ?? "var(--color-text-muted)";
         const isTop3 = rank <= 3;
 
         return (
@@ -68,7 +68,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
                 flexShrink: 0,
                 borderRadius: "6px",
                 overflow: "hidden",
-                border: isTop3 ? `1px solid ${rankColor}40` : "none",
+                border: isTop3 ? "1px solid var(--color-border-mid)" : "none",
               }}
             >
               <Image
@@ -76,6 +76,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
                 alt={artwork.title}
                 fill
                 sizes="52px"
+                priority={index === 0}
                 className="object-cover"
               />
             </div>
@@ -96,7 +97,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
                 {artwork.title}
               </p>
               {artwork.contests && (
-                <p style={{ fontSize: "0.75rem", color: "var(--color-text-dim)" }}>
+                <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
                   Week {artwork.contests.week_number}
                 </p>
               )}
@@ -114,7 +115,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
               >
                 {artwork.vote_count.toLocaleString()}
               </span>
-              <span style={{ display: "block", fontSize: "0.6875rem", color: "var(--color-text-dim)" }}>votes</span>
+              <span style={{ display: "block", fontSize: "0.6875rem", color: "var(--color-text-muted)" }}>votes</span>
             </div>
           </div>
         );

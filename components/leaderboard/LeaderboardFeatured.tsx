@@ -15,7 +15,7 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
     <div
       style={{
         background: "var(--color-bg-surface)",
-        border: "1px solid rgba(251,191,36,0.2)", /* status-warning at 20% */
+        border: "1px solid var(--color-status-warning-border)",
         borderRadius: "14px",
         overflow: "hidden",
         position: "sticky",
@@ -45,8 +45,8 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
             letterSpacing: "0.1em",
             textTransform: "uppercase",
             color: "var(--color-status-warning)",
-            background: "rgba(251,191,36,0.12)",
-            border: "1px solid rgba(251,191,36,0.3)",
+            background: "var(--color-status-warning-dim2)",
+            border: "1px solid var(--color-status-warning-border-mid)",
             padding: "4px 10px",
             borderRadius: "100px",
           }}
@@ -81,8 +81,8 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
             alignItems: "baseline",
             gap: "6px",
             padding: "12px 16px",
-            background: "rgba(251,191,36,0.06)",
-            border: "1px solid rgba(251,191,36,0.12)",
+            background: "var(--color-status-warning-dim)",
+            border: "1px solid var(--color-status-warning-dim2)",
             borderRadius: "8px",
           }}
         >

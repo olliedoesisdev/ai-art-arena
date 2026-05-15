@@ -2,6 +2,7 @@
 import { SITE_URL } from "@/lib/site";
 import { LeaderboardList } from "@/components/leaderboard/LeaderboardList";
 import { LeaderboardFeatured } from "@/components/leaderboard/LeaderboardFeatured";
+import { JsonLd } from "@/components/layout/JsonLd";
 
 export const revalidate = 300;
 
@@ -14,7 +15,7 @@ export const metadata = {
     description: "All-time highest-voted artworks across every AI Art Arena contest.",
     url: `${SITE_URL}/leaderboard`,
     siteName: "AI Art Arena",
-    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "AI Art Arena all-time leaderboard" }],
     type: "website",
   },
   twitter: {
@@ -65,9 +66,25 @@ export default async function LeaderboardPage() {
 
   const topArtwork = entries[0] ?? null;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "AI Art Arena — All-Time Leaderboard",
+    description: "Top AI-generated artworks by all-time vote count across every AI Art Arena contest.",
+    url: `${SITE_URL}/leaderboard`,
+    numberOfItems: entries.length,
+    itemListElement: entries.slice(0, 10).map((a, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: a.title,
+      url: a.contests?.week_number ? `${SITE_URL}/archive/${a.contests.week_number}` : `${SITE_URL}/leaderboard`,
+    })),
+  };
+
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
       <div className="shell">
+        <JsonLd data={jsonLd} />
         <p
           style={{
             fontSize: "11px",
@@ -87,11 +104,14 @@ export default async function LeaderboardPage() {
             fontSize: "clamp(2rem, 5vw, 3rem)",
             letterSpacing: "-0.03em",
             color: "var(--color-text)",
-            marginBottom: "48px",
+            marginBottom: "12px",
           }}
         >
-          Leaderboard
+          AI Art Leaderboard
         </h1>
+        <p style={{ color: "var(--color-text-muted)", fontSize: "15px", margin: "0 0 48px" }}>
+          Top AI-generated artworks by all-time vote count.
+        </p>
 
         {entries.length === 0 ? (
           <div
@@ -120,6 +140,9 @@ export default async function LeaderboardPage() {
             {topArtwork && <LeaderboardFeatured artwork={topArtwork} />}
           </div>
         )}
+        <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: "48px 0 0", letterSpacing: "0.04em" }}>
+          Built by <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Oliver White</a>
+        </p>
       </div>
     </div>
   );
