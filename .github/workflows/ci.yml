@@ -32,7 +32,7 @@ env:
   ADMIN_EMAIL: ci@example.com
   SENTRY_DSN: ""
   NEXT_PUBLIC_SENTRY_DSN: ""
-  SENTRY_AUTH_TOKEN: ""
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   LOG_LEVEL: silent
 
 jobs:
@@ -132,7 +132,7 @@ jobs:
           ADMIN_EMAIL: ci@example.com
           SENTRY_DSN: ""
           NEXT_PUBLIC_SENTRY_DSN: ""
-          SENTRY_AUTH_TOKEN: ""
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           LOG_LEVEL: silent
 
       - name: Upload Playwright report
