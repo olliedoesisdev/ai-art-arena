@@ -5,6 +5,7 @@ interface StatsStripProps {
 }
 
 export function StatsStrip({ totalVotes, artworkCount, startDate }: StatsStripProps) {
+  // eslint-disable-next-line react-hooks/purity
   const hoursActive = Math.max(1, Math.round((Date.now() - new Date(startDate).getTime()) / 3600000));
   const timeLabel = hoursActive < 24
     ? `in ${hoursActive} hour${hoursActive !== 1 ? "s" : ""}`

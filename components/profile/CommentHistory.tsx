@@ -20,6 +20,7 @@ function useRelativeTime(dateStr: string): string {
       if (days < 7) return `${days}d ago`;
       return `${weeks}w ago`;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLabel(compute());
     const id = setInterval(() => setLabel(compute()), 60000);
     return () => clearInterval(id);

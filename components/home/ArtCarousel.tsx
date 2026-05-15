@@ -26,6 +26,7 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
   }, [artworks.length]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     if (artworks.length <= 1) return;
     const id = setInterval(next, 5000);
