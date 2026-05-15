@@ -15,12 +15,14 @@ interface ArtCarouselProps {
 
 export function ArtCarousel({ artworks }: ArtCarouselProps) {
   const [index, setIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   const next = useCallback(() => {
     setIndex((i) => (i + 1) % artworks.length);
   }, [artworks.length]);
 
   useEffect(() => {
+    setMounted(true);
     if (artworks.length <= 1) return;
     const id = setInterval(next, 5000);
     return () => clearInterval(id);
@@ -28,34 +30,36 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
 
   if (artworks.length === 0) return null;
 
-  // Build a window of slides starting at index, cycling
   const getSlide = (offset: number) =>
     artworks[(index + offset) % artworks.length];
+
+  // Before hydration, render first 3 images statically so the browser
+  // can LCP-prioritise them without waiting for JS execution.
+  const slides = mounted
+    ? [0, 1, 2].map((offset) => getSlide(offset))
+    : artworks.slice(0, 3);
 
   return (
     <div style={{ position: "relative", width: "100%", marginBottom: "80px", overflow: "hidden" }}>
       {/* Desktop: 3 wide */}
       <div className="carousel-track" style={{ display: "grid", gap: "3px", minHeight: "280px" }}>
-        {[0, 1, 2].map((offset) => {
-          const artwork = getSlide(offset);
-          return (
-            <div
-              key={`${artwork.id}-${offset}`}
-              className="group"
-              style={{ position: "relative", overflow: "hidden", aspectRatio: "1 / 1" }}
-            >
-              <Image
-                src={artwork.image_url}
-                alt={artwork.title}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                priority={offset === 0 || offset === 1}
-                className="object-cover transition-all duration-700 group-hover:scale-105"
-                style={{ transition: "opacity 0.6s ease, transform 0.5s ease" }}
-              />
-            </div>
-          );
-        })}
+        {slides.map((artwork, offset) => (
+          <div
+            key={mounted ? `${artwork.id}-${offset}` : artwork.id}
+            className="group"
+            style={{ position: "relative", overflow: "hidden", aspectRatio: "1 / 1" }}
+          >
+            <Image
+              src={artwork.image_url}
+              alt={artwork.title}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              priority={offset === 0 || offset === 1}
+              className="object-cover transition-all duration-700 group-hover:scale-105"
+              style={{ transition: "opacity 0.6s ease, transform 0.5s ease" }}
+            />
+          </div>
+        ))}
       </div>
 
       {/* Fade-out bottom gradient */}
@@ -69,38 +73,40 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
         }}
       />
 
-      {/* Dot indicators */}
-      <div
-        role="group"
-        aria-label="Carousel navigation"
-        style={{
-          position: "absolute",
-          bottom: "32px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex",
-          gap: "6px",
-          zIndex: 2,
-        }}
-      >
-        {artworks.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setIndex(i)}
-            aria-label={`Go to slide ${i + 1}`}
-            style={{
-              width: i === index ? "20px" : "6px",
-              height: "6px",
-              borderRadius: "100px",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              background: i === index ? "var(--color-purple)" : "rgba(139,92,246,0.25)",
-              transition: "width 0.3s ease, background 0.3s ease",
-            }}
-          />
-        ))}
-      </div>
+      {/* Dot indicators — only visible after mount */}
+      {mounted && (
+        <div
+          role="group"
+          aria-label="Carousel navigation"
+          style={{
+            position: "absolute",
+            bottom: "32px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            gap: "6px",
+            zIndex: 2,
+          }}
+        >
+          {artworks.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIndex(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              style={{
+                width: i === index ? "20px" : "6px",
+                height: "6px",
+                borderRadius: "100px",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+                background: i === index ? "var(--color-purple)" : "rgba(139,92,246,0.25)",
+                transition: "width 0.3s ease, background 0.3s ease",
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <style>{`
         .carousel-track {

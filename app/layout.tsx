@@ -24,31 +24,11 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Art Arena — Weekly AI Art Voting Contest",
-  description:
-    "Vote on stunning AI-generated artwork every week. Discover amazing AI art and help crown the weekly champion.",
-  authors: [{ name: "Oliver" }],
+  metadataBase: new URL(SITE_URL),
+  authors: [{ name: "Oliver White" }],
   openGraph: {
-    title: "AI Art Arena — Weekly AI Art Voting Contest",
-    description: "Vote on stunning AI-generated artwork every week",
-    url: SITE_URL,
     siteName: "AI Art Arena",
     locale: "en_US",
-    type: "website",
-    images: [
-      {
-        url: `${SITE_URL}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: "AI Art Arena — Weekly AI Art Voting Contest",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI Art Arena",
-    description: "Vote on stunning AI-generated artwork every week",
-    images: [`${SITE_URL}/og-image.png`],
   },
 };
 

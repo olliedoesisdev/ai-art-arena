@@ -92,10 +92,10 @@ export function BlogCarousel({ posts }: Props) {
 
             {/* Post number + read time */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", letterSpacing: "0.1em" }}>
+              <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", letterSpacing: "0.1em" }}>
                 {String(active + 1).padStart(2, "0")} / {String(posts.length).padStart(2, "0")}
               </span>
-              <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
+              <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
                 {post.readingTime} min read
               </span>
             </div>
