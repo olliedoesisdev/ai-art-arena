@@ -83,7 +83,7 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
     setError(null);
     setLoading(true);
 
-    const res = await fetch("/api/auth/signup", {
+    const res = await fetch("/api/v1/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, name: name.trim() || undefined }),
