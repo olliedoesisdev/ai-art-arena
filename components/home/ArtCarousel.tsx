@@ -35,14 +35,14 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
   return (
     <div style={{ position: "relative", width: "100%", marginBottom: "80px", overflow: "hidden" }}>
       {/* Desktop: 3 wide */}
-      <div className="carousel-track" style={{ display: "grid", gap: "3px", height: "300px" }}>
+      <div className="carousel-track" style={{ display: "grid", gap: "3px" }}>
         {[0, 1, 2].map((offset) => {
           const artwork = getSlide(offset);
           return (
             <div
               key={`${artwork.id}-${offset}`}
               className="group"
-              style={{ position: "relative", overflow: "hidden" }}
+              style={{ position: "relative", overflow: "hidden", aspectRatio: "1 / 1" }}
             >
               <Image
                 src={artwork.image_url}
