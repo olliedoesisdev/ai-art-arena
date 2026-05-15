@@ -126,7 +126,7 @@ export default async function HomePage() {
 
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
               <Link
-                href="/about"
+                href="/join?track=artist"
                 style={{
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
@@ -139,43 +139,8 @@ export default async function HomePage() {
                   letterSpacing: "0.01em",
                 }}
               >
-                How it was built &rarr;
+                Apply as an artist &rarr;
               </Link>
-              {activeId ? (
-                <Link
-                  href={`/contest/${activeId}`}
-                  style={{
-                    fontFamily: "var(--font-syne)",
-                    fontWeight: 600,
-                    fontSize: "0.9375rem",
-                    color: "var(--color-status-warning)",
-                    background: "var(--color-status-warningDim)",
-                    border: "1px solid rgba(251,191,36,0.30)",
-                    padding: "13px 32px",
-                    borderRadius: "100px",
-                    textDecoration: "none",
-                  }}
-                >
-                  See the live contest &rarr;
-                </Link>
-              ) : (
-                <Link
-                  href="/archive"
-                  style={{
-                    fontFamily: "var(--font-syne)",
-                    fontWeight: 600,
-                    fontSize: "0.9375rem",
-                    color: "var(--color-purple-pale)",
-                    background: "var(--color-purple-dim)",
-                    border: "1px solid var(--color-border-mid)",
-                    padding: "13px 32px",
-                    borderRadius: "100px",
-                    textDecoration: "none",
-                  }}
-                >
-                  Browse archive
-                </Link>
-              )}
             </div>
           </div>
         </div>
@@ -348,110 +313,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Live stats ───────────────────────────────────────────── */}
-      {stats && (
-        <section style={{ paddingBottom: "80px" }}>
-          <div className="shell">
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "1px",
-              background: "var(--color-border-subtle)",
-              border: "1px solid var(--color-border-subtle)",
-              borderRadius: "14px",
-              overflow: "hidden",
-            }}>
-              {[
-                { label: "Votes cast", value: stats.total_votes.toLocaleString() },
-                { label: "Artworks judged", value: stats.total_artworks.toLocaleString() },
-                { label: "Contests run", value: stats.total_contests.toLocaleString() },
-              ].map(({ label, value }) => (
-                <div key={label} style={{ background: "var(--color-bg-surface)", padding: "32px 24px", textAlign: "center" }}>
-                  <div style={{
-                    fontFamily: "var(--font-dm-mono)",
-                    fontWeight: 500,
-                    fontSize: "2.25rem",
-                    color: "var(--color-text)",
-                    letterSpacing: "-0.02em",
-                    marginBottom: "6px",
-                  }}>
-                    {value}
-                  </div>
-                  <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", fontWeight: 500 }}>
-                    {label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Blog carousel ────────────────────────────────────────── */}
-      <section style={{ paddingBottom: "100px" }}>
-        <div className="shell">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "40px" }} className="blog-carousel-grid">
-            <div>
-              <p style={{
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "var(--color-purple-light)",
-                fontFamily: "var(--font-dm-mono)",
-                marginBottom: "16px",
-              }}>
-                Writing
-              </p>
-              <h2 style={{
-                fontFamily: "var(--font-syne)",
-                fontWeight: 800,
-                fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-                letterSpacing: "-0.03em",
-                color: "var(--color-text)",
-                margin: "0 0 16px",
-                lineHeight: 1.1,
-              }}>
-                Real problems.<br />
-                <span style={{ color: "var(--color-text-muted)" }}>Real solutions.</span>
-              </h2>
-              <p style={{
-                fontSize: "1rem",
-                color: "var(--color-text-muted)",
-                lineHeight: 1.7,
-                maxWidth: "440px",
-                margin: "0 0 32px",
-              }}>
-                Deep dives into Next.js, PostgreSQL, Supabase, and the engineering
-                decisions behind this platform. Written while building it.
-              </p>
-              <Link
-                href="/blog"
-                style={{
-                  fontFamily: "var(--font-dm-mono)",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  color: "var(--color-purple-light)",
-                  textDecoration: "none",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                All {BLOG_POSTS.length} posts &rarr;
-              </Link>
-            </div>
-
-            <div style={{ maxWidth: "600px" }}>
-              <BlogCarousel posts={carouselPosts} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Last winner ──────────────────────────────────────────── */}
-      {lastWinner && lastWinnerWeek !== null && (
-        <LastWinner artwork={lastWinner} weekNumber={lastWinnerWeek} />
-      )}
-
       {/* ── Contest CTA ──────────────────────────────────────────── */}
       <section style={{ paddingBottom: "80px" }}>
         <div className="shell">
@@ -566,6 +427,110 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── Blog carousel ────────────────────────────────────────── */}
+      <section style={{ paddingBottom: "100px" }}>
+        <div className="shell">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "40px" }} className="blog-carousel-grid">
+            <div>
+              <p style={{
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "var(--color-purple-light)",
+                fontFamily: "var(--font-dm-mono)",
+                marginBottom: "16px",
+              }}>
+                Writing
+              </p>
+              <h2 style={{
+                fontFamily: "var(--font-syne)",
+                fontWeight: 800,
+                fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
+                letterSpacing: "-0.03em",
+                color: "var(--color-text)",
+                margin: "0 0 16px",
+                lineHeight: 1.1,
+              }}>
+                Real problems.<br />
+                <span style={{ color: "var(--color-text-muted)" }}>Real solutions.</span>
+              </h2>
+              <p style={{
+                fontSize: "1rem",
+                color: "var(--color-text-muted)",
+                lineHeight: 1.7,
+                maxWidth: "440px",
+                margin: "0 0 32px",
+              }}>
+                Deep dives into Next.js, PostgreSQL, Supabase, and the engineering
+                decisions behind this platform. Written while building it.
+              </p>
+              <Link
+                href="/blog"
+                style={{
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "var(--color-purple-light)",
+                  textDecoration: "none",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                All {BLOG_POSTS.length} posts &rarr;
+              </Link>
+            </div>
+
+            <div style={{ maxWidth: "600px" }}>
+              <BlogCarousel posts={carouselPosts} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Last winner ──────────────────────────────────────────── */}
+      {lastWinner && lastWinnerWeek !== null && (
+        <LastWinner artwork={lastWinner} weekNumber={lastWinnerWeek} />
+      )}
+
+      {/* ── Live stats ───────────────────────────────────────────── */}
+      {stats && (
+        <section style={{ paddingBottom: "80px" }}>
+          <div className="shell">
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "1px",
+              background: "var(--color-border-subtle)",
+              border: "1px solid var(--color-border-subtle)",
+              borderRadius: "14px",
+              overflow: "hidden",
+            }}>
+              {[
+                { label: "Votes cast", value: stats.total_votes.toLocaleString() },
+                { label: "Artworks judged", value: stats.total_artworks.toLocaleString() },
+                { label: "Contests run", value: stats.total_contests.toLocaleString() },
+              ].map(({ label, value }) => (
+                <div key={label} style={{ background: "var(--color-bg-surface)", padding: "32px 24px", textAlign: "center" }}>
+                  <div style={{
+                    fontFamily: "var(--font-dm-mono)",
+                    fontWeight: 500,
+                    fontSize: "2.25rem",
+                    color: "var(--color-text)",
+                    letterSpacing: "-0.02em",
+                    marginBottom: "6px",
+                  }}>
+                    {value}
+                  </div>
+                  <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", fontWeight: 500 }}>
+                    {label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Profile CTA ──────────────────────────────────────────── */}
       <section style={{ paddingBottom: "120px" }}>
