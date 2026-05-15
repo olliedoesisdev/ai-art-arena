@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { ArtCarousel } from "@/components/home/ArtCarousel";
 import { SITE_URL } from "@/lib/site";
@@ -6,6 +7,30 @@ import { getHomeData } from "@/lib/data/home";
 import { JsonLd } from "@/components/layout/JsonLd";
 import { BlogCarousel } from "@/components/blog/BlogCarousel";
 import { BLOG_POSTS } from "@/lib/blog";
+
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "AI Art Arena — Built by Oliver White",
+  description:
+    "A production AI art voting platform built from scratch. Next.js 14, PostgreSQL, Supabase, Redis, TypeScript. Every architectural decision deliberate. Every tradeoff explainable.",
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    title: "AI Art Arena — Built by Oliver White",
+    description:
+      "Production voting platform for AI-generated artwork. Self-taught developer, Directed Output workflow — AI handles execution, Oliver handles everything that matters.",
+    url: SITE_URL,
+    siteName: "AI Art Arena",
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "AI Art Arena — built by Oliver White" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Art Arena — Built by Oliver White",
+    description: "Production Next.js 14 + Supabase voting platform. Directed Output workflow. Every decision deliberate.",
+    images: [`${SITE_URL}/og-image.png`],
+  },
+};
 
 const PROOF_POINTS = [
   {
@@ -106,7 +131,7 @@ export default async function HomePage() {
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
                   fontSize: "0.9375rem",
-                  color: "#fff",
+                  color: "var(--color-text)",
                   background: "var(--color-purple)",
                   padding: "13px 32px",
                   borderRadius: "100px",
@@ -510,7 +535,7 @@ export default async function HomePage() {
                       fontFamily: "var(--font-syne)",
                       fontWeight: 700,
                       fontSize: "0.9375rem",
-                      color: "#fff",
+                      color: "var(--color-text)",
                       background: "var(--color-purple)",
                       padding: "13px 28px",
                       borderRadius: "100px",
@@ -589,7 +614,7 @@ export default async function HomePage() {
                   fontFamily: "var(--font-syne)",
                   fontWeight: 700,
                   fontSize: "0.875rem",
-                  color: "#fff",
+                  color: "var(--color-text)",
                   background: "var(--color-purple)",
                   padding: "11px 24px",
                   borderRadius: "100px",

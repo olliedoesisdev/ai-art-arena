@@ -35,7 +35,7 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
   return (
     <div style={{ position: "relative", width: "100%", marginBottom: "80px", overflow: "hidden" }}>
       {/* Desktop: 3 wide */}
-      <div className="carousel-track" style={{ display: "grid", gap: "3px" }}>
+      <div className="carousel-track" style={{ display: "grid", gap: "3px", minHeight: "280px" }}>
         {[0, 1, 2].map((offset) => {
           const artwork = getSlide(offset);
           return (
