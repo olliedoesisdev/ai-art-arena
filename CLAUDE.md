@@ -180,8 +180,10 @@ app/
 │
 └── api/
     └── v1/                       ALL routes use /api/v1/ prefix. Never /api/
-        └── vote/
-            └── route.ts          POST only. Uses submit_vote RPC.
+        ├── vote/
+        │   └── route.ts          POST only. Uses submit_vote RPC.
+        └── chat/
+            └── route.ts          POST only. Streams Claude Haiku response with live contest context injected.
 
 components/
 ├── ui/                           Reusable primitives
@@ -225,6 +227,9 @@ components/
 
 components/blog/
 └── BlogCarousel.tsx              [CLIENT] Swipeable carousel — touch + pointer drag, no library
+
+components/chat/
+└── ChatWidget.tsx                [CLIENT] Floating chat island — toggle button + panel, streams /api/v1/chat
 
 app/blog/
 ├── page.tsx                      [SERVER] Blog index, ISR revalidate=3600, full SEO metadata
@@ -281,7 +286,7 @@ inngest/
 
 **Client Components in this project:**
 VotingInterface, VoteButton, ContestTimer, VoteAlert, LiveVoteCount,
-MobileMenu, UserNav, all error.tsx files
+MobileMenu, UserNav, ChatWidget, all error.tsx files
 
 ---
 
@@ -779,6 +784,7 @@ Vitest unit tests (`__tests__/` directory):
 - Password reset flow with token table
 - CI/CD pipeline: `.github/workflows/ci.yml` — type-check → lint → unit tests → build → Playwright E2E, two jobs, concurrency cancel-in-progress
 - JSON-LD structured data on homepage and about page
+- ChatWidget — floating assistant on all pages, streams Claude Haiku via /api/v1/chat with live contest context
 
 **Known gaps (fix in this order for portfolio impact):**
 1. `ArtworkCard.tsx` uses hardcoded hex values in inline styles — should use Tailwind design tokens from tailwind.config.ts
@@ -809,6 +815,7 @@ RESEND_API_KEY
 INNGEST_SIGNING_KEY
 INNGEST_EVENT_KEY
 LOG_LEVEL
+ANTHROPIC_API_KEY
 ```
 
 Local dev: `.env.local` — never commit this file.
