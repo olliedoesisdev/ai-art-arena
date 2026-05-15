@@ -57,7 +57,10 @@ function JoinHubInner() {
           }}>
             Join the Arena
           </h1>
-          <p style={{ color: "var(--color-join-muted)", fontSize: "15px", margin: 0 }}>Choose your path below.</p>
+          <p style={{ color: "var(--color-join-muted)", fontSize: "15px", margin: "0 0 10px" }}>Choose your path below.</p>
+          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-subtle)", margin: 0, letterSpacing: "0.04em" }}>
+            Built by <a href="/about" style={{ color: "var(--color-join-amber)", textDecoration: "none" }}>Oliver White</a>
+          </p>
         </div>
 
         {track !== "choose" && (

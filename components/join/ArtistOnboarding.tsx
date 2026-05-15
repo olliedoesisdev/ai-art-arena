@@ -399,7 +399,7 @@ function Step2({
                   padding: "10px 14px",
                   borderRadius: "6px",
                   border: `1px solid ${selected ? "var(--color-join-amber)" : "var(--color-join-border)"}`,
-                  background: selected ? "rgba(232,213,183,0.06)" : "transparent",
+                  background: selected ? "var(--color-join-amber-dim2)" : "transparent",
                   cursor: "pointer",
                   userSelect: "none",
                   transition: "all 0.15s",
@@ -761,7 +761,7 @@ function Step4({
         {uploadedImage && (
           <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
             <div style={{ position: "relative", width: "80px", height: "80px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, border: "1px solid var(--color-join-border)" }}>
-              <Image src={uploadedImage.preview} alt="Submission" fill className="object-cover" unoptimized />
+              <Image src={uploadedImage.preview} alt="Submission artwork thumbnail" fill className="object-cover" unoptimized />
             </div>
             <div>
               <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-muted)", margin: "0 0 4px", letterSpacing: "0.06em", textTransform: "uppercase" }}>
