@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",
-    "@sentry/nextjs": "^10.52.0",
+    "@sentry/nextjs": "^10.53.1",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.105.4",
     "@types/bcryptjs": "^3.0.0",

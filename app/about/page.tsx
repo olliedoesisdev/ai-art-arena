@@ -55,6 +55,8 @@ interface StackItem {
   blurb: string;
   blogSlug: string;
   color: string;
+  iconBg: string;
+  hoverBorder: string;
   icon: string;
 }
 
@@ -65,6 +67,8 @@ const STACK: StackItem[] = [
     blurb: "App Router Server Components keep 95% of the codebase off the browser. Contest pages are ISR-cached HTML. Only 8 Client Components ship JavaScript.",
     blogSlug: "nextjs-server-client-split",
     color: "#a78bfa",
+    iconBg: "var(--color-stack-purple-light-icon)",
+    hoverBorder: "var(--color-stack-purple-light-hover)",
     icon: "▲",
   },
   {
@@ -73,6 +77,8 @@ const STACK: StackItem[] = [
     blurb: "PostgreSQL with RLS enforced at the database layer. One atomic SECURITY DEFINER function replaced 5 sequential queries — dropping vote latency from ~200ms to ~40ms and eliminating a race condition.",
     blogSlug: "submit-vote-postgresql-race-condition",
     color: "#34d399",
+    iconBg: "var(--color-stack-green-icon)",
+    hoverBorder: "var(--color-stack-green-hover)",
     icon: "⬡",
   },
   {
@@ -81,6 +87,8 @@ const STACK: StackItem[] = [
     blurb: "Ground-up v5 rewrite wired into App Router. auth() works in Server Components, middleware, and API routes. GitHub OAuth + Credentials, with role attached to the session token.",
     blogSlug: "nextauth-v5-app-router",
     color: "#f472b6",
+    iconBg: "var(--color-stack-pink-icon)",
+    hoverBorder: "var(--color-stack-pink-hover)",
     icon: "🔑",
   },
   {
@@ -89,6 +97,8 @@ const STACK: StackItem[] = [
     blurb: "Sliding window rate limiting across 5 limiters. Vote keys are scoped per-contest per identity — email hash for authenticated users, IP hash for anonymous. One vote. Full stop.",
     blogSlug: "rate-limiting-sliding-window-redis",
     color: "#fbbf24",
+    iconBg: "var(--color-stack-amber-icon)",
+    hoverBorder: "var(--color-stack-amber-hover)",
     icon: "⚡",
   },
   {
@@ -97,6 +107,8 @@ const STACK: StackItem[] = [
     blurb: "Strict mode throughout. Zod validates every API input at the boundary before anything touches Redis or the database. UUIDs, not strings — injection attempts rejected before they form a query.",
     blogSlug: "typescript-zod-api-validation",
     color: "#60a5fa",
+    iconBg: "var(--color-stack-blue-icon)",
+    hoverBorder: "var(--color-stack-blue-hover)",
     icon: "{}",
   },
   {
@@ -105,6 +117,8 @@ const STACK: StackItem[] = [
     blurb: "Event-driven contest automation in a serverless environment. archive-contest fires contest/archived, which triggers create-next-contest. Automatic retries, step-level observability, no cron hacks.",
     blogSlug: "inngest-background-jobs-serverless",
     color: "#84cc16",
+    iconBg: "var(--color-stack-lime-icon)",
+    hoverBorder: "var(--color-stack-lime-hover)",
     icon: "↻",
   },
   {
@@ -113,6 +127,8 @@ const STACK: StackItem[] = [
     blurb: "next/image routes through Vercel's transformation pipeline — a 4MB PNG becomes 180KB WebP, edge-cached for a year. Git push deploys in under 60 seconds.",
     blogSlug: "vercel-nextjs-image-optimization",
     color: "#eeeeff",
+    iconBg: "var(--color-stack-white-icon)",
+    hoverBorder: "var(--color-stack-white-hover)",
     icon: "◈",
   },
   {
@@ -121,6 +137,8 @@ const STACK: StackItem[] = [
     blurb: "Six security headers on every response via middleware. unsafe-eval is gated to NODE_ENV=development only — React needs it for dev tooling, production strips it completely.",
     blogSlug: "csp-nextjs-unsafe-eval",
     color: "#f87171",
+    iconBg: "var(--color-stack-red-icon)",
+    hoverBorder: "var(--color-stack-red-hover)",
     icon: "🛡",
   },
   {
@@ -129,6 +147,8 @@ const STACK: StackItem[] = [
     blurb: "Structured JSON logs with a requestId threaded through every API route. X-Request-Id response header ties server traces to client errors. Sentry catches anything that escapes explicit handling.",
     blogSlug: "structured-logging-pino-request-id",
     color: "#c4b5fd",
+    iconBg: "var(--color-stack-purple-pale-icon)",
+    hoverBorder: "var(--color-stack-purple-pale-hover)",
     icon: "◉",
   },
   {
@@ -137,12 +157,14 @@ const STACK: StackItem[] = [
     blurb: "RLS policies enforce access rules at the database layer — not in application code. Votes are insert-only. No updates, no deletes. A compromised route still can't modify data it shouldn't.",
     blogSlug: "supabase-rls-security-model",
     color: "#34d399",
+    iconBg: "var(--color-stack-green-icon)",
+    hoverBorder: "var(--color-stack-green-hover)",
     icon: "⬢",
   },
 ];
 
 const STATS = [
-  { value: "19", label: "Migrations", sub: "tracked in order" },
+  { value: "19", label: "Migrations", sub: "schema changes, in production" },
   { value: "40ms", label: "Vote latency", sub: "p50 after RPC refactor" },
   { value: "8", label: "Client components", sub: "rest is server-rendered HTML" },
   { value: "3×", label: "Duplicate prevention", sub: "IP + user_id + email hash" },
@@ -187,12 +209,12 @@ export default function AboutPage() {
               Oliver White — Full Stack Developer
             </p>
             <h1 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(2.25rem,6vw,4rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--color-text)", margin: "0 0 24px", lineHeight: 1.02, maxWidth: "800px" }}>
-              Full stack developer.<br />
-              <span style={{ color: "var(--color-text-muted)" }}>Clear decisions.</span><br />
-              <span style={{ color: "var(--color-purple-light)" }}>Ships fast.</span>
+              Ships fast.<br />
+              <span style={{ color: "var(--color-text-muted)" }}>Decides deliberately.</span><br />
+              <span style={{ color: "var(--color-purple-light)" }}>Explains every call.</span>
             </h1>
             <p style={{ fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)", maxWidth: "580px", margin: "0 0 36px" }}>
-              AI Art Arena is a live, production voting contest built from scratch. Every tool in this stack was chosen because the project demanded it — and AI was one of those tools.
+              AI Art Arena is the proof of concept. Production Next.js, 22 migrations, 40ms vote latency. Real constraints. Built in months, not years.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
               <a
@@ -227,7 +249,7 @@ export default function AboutPage() {
                 >
                   <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "2rem", fontWeight: 500, color: "var(--color-purple-light)", margin: "0 0 4px", letterSpacing: "-0.03em" }}>{s.value}</p>
                   <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", margin: "0 0 2px" }}>{s.label}</p>
-                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>{s.sub}</p>
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: 0 }}>{s.sub}</p>
                 </div>
               ))}
             </div>
@@ -240,13 +262,13 @@ export default function AboutPage() {
             <div className="grid-about-reverse">
               <div style={{ maxWidth: "600px" }}>
                 <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "20px" }}>
-                  The builder
+                  Background
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "18px", fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)" }}>
                   <p style={{ margin: 0 }}>
-                    Three years ago I was selling life insurance. No CS degree, no bootcamp.
-                    I retrained deliberately — building real things, hitting real problems,
-                    and learning exactly what each one required.
+                    Three years ago I was in sales. No CS degree, no bootcamp.
+                    I learned by building things that had to work — real databases,
+                    real deployments, real consequences when something broke.
                   </p>
                   <p style={{ margin: 0 }}>
                     Sales taught me something most developers miss: the work is not the code.
@@ -256,7 +278,7 @@ export default function AboutPage() {
                   <p style={{ margin: 0 }}>
                     AI Art Arena is a production project built under real conditions — real
                     database constraints, real security requirements, real deployment pipeline.
-                    Every decision has a reason. I can explain every one of them.
+                    There are no shortcuts in the codebase. Every decision has a reason. Ask me any of them.
                   </p>
                 </div>
               </div>
@@ -307,7 +329,7 @@ export default function AboutPage() {
               </Link>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "12px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "12px" }}>
               {STACK.map((item) => (
                 <Link
                   key={item.name}
@@ -317,7 +339,7 @@ export default function AboutPage() {
                   <article
                     className="stack-card"
                     style={{
-                      "--card-hover-border": item.color + "50",
+                      "--card-hover-border": item.hoverBorder,
                       background: "var(--color-bg-surface)",
                       border: "1px solid var(--color-border-subtle)",
                       borderRadius: "12px",
@@ -332,7 +354,7 @@ export default function AboutPage() {
                     {/* Header row */}
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <span style={{ width: "32px", height: "32px", borderRadius: "8px", background: item.color + "18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", flexShrink: 0 }}>
+                        <span style={{ width: "32px", height: "32px", borderRadius: "8px", background: item.iconBg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", flexShrink: 0 }}>
                           {item.icon}
                         </span>
                         <div>
@@ -416,7 +438,7 @@ export default function AboutPage() {
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "32px" }}>
               <div>
                 <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "12px" }}>
-                  Work together
+                  Available for hire
                 </p>
                 <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(1.5rem,3vw,2rem)", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: "0 0 10px" }}>
                   Let&apos;s build something real.

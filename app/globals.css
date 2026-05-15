@@ -108,6 +108,27 @@
   --color-card-accent-5-shadow: rgba(244, 114, 182, 0.16);
   --color-card-accent-5-shadow-sm: rgba(244, 114, 182, 0.09);
   --color-card-accent-5-dim: rgba(244, 114, 182, 0.13);
+
+  /* ── Stack card accent alphas (about page) ─────────────────────── */
+  /* icon bg = color @ 0x18 ≈ 9.4% opacity; hover border = color @ 0x50 ≈ 31% opacity */
+  --color-stack-purple-light-icon:   rgba(167, 139, 250, 0.094);
+  --color-stack-purple-light-hover:  rgba(167, 139, 250, 0.314);
+  --color-stack-green-icon:          rgba(52,  211, 153, 0.094);
+  --color-stack-green-hover:         rgba(52,  211, 153, 0.314);
+  --color-stack-pink-icon:           rgba(244, 114, 182, 0.094);
+  --color-stack-pink-hover:          rgba(244, 114, 182, 0.314);
+  --color-stack-amber-icon:          rgba(251, 191,  36, 0.094);
+  --color-stack-amber-hover:         rgba(251, 191,  36, 0.314);
+  --color-stack-blue-icon:           rgba(96,  165, 250, 0.094);
+  --color-stack-blue-hover:          rgba(96,  165, 250, 0.314);
+  --color-stack-lime-icon:           rgba(132, 204,  22, 0.094);
+  --color-stack-lime-hover:          rgba(132, 204,  22, 0.314);
+  --color-stack-white-icon:          rgba(238, 238, 255, 0.094);
+  --color-stack-white-hover:         rgba(238, 238, 255, 0.314);
+  --color-stack-red-icon:            rgba(248, 113, 113, 0.094);
+  --color-stack-red-hover:           rgba(248, 113, 113, 0.314);
+  --color-stack-purple-pale-icon:    rgba(196, 181, 253, 0.094);
+  --color-stack-purple-pale-hover:   rgba(196, 181, 253, 0.314);
 }
 
 /* ── Base ────────────────────────────────────────────────── */
