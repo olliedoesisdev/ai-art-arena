@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { LiveVoteCount } from "./LiveVoteCount";
 import { Artwork } from "@/lib/types";
+import { trackEvent } from "@/lib/gtag";
 
 interface ArtworkCardProps {
   artwork: Artwork;
@@ -116,6 +117,7 @@ export function ArtworkCard({
       if (res.ok) {
         try { localStorage.setItem(localVoteKey(contestId), "1"); } catch { /* blocked */ }
         setLocalVoted(true);
+        trackEvent('vote_submitted', { contest_id: contestId, artwork_id: artwork.id, artwork_title: artwork.title })
         toast.success(`Voted for "${artwork.title}"`);
         router.refresh();
       } else {

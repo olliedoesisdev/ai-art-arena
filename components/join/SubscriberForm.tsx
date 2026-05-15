@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/gtag";
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
@@ -58,9 +59,10 @@ export function SubscriberForm() {
         setIsSubmitting(false);
         return;
       }
+      trackEvent('subscriber_signup')
       setIsDone(true);
     } catch {
-      toast.error("Network error â€” please try again.");
+      toast.error(“Network error â€” please try again.”);
       setIsSubmitting(false);
     }
   }

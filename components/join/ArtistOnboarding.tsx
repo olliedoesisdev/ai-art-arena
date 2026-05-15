@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/gtag";
 
 // â”€â”€ Shared styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -883,6 +884,7 @@ export function ArtistOnboarding() {
         setIsSubmitting(false);
         return;
       }
+      trackEvent('artist_application_submitted', { tools: formData.primary_tools?.join(','), experience: formData.years_using_ai })
       setIsDone(true);
     } catch {
       toast.error(“Network error — please try again.”);
