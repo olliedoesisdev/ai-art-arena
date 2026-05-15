@@ -22,15 +22,15 @@ export type BlogSection =
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "submit-vote-postgresql-race-condition",
-    title: "I replaced 5 DB queries with 1 PostgreSQL function — and fixed a race condition I didn't know I had",
-    excerpt: "Every vote submission used to make five round trips to the database. Here's how a single atomic SQL function cut that to one, dropped latency from ~200ms to ~40ms, and eliminated a subtle concurrency bug in the process.",
+    title: "PostgreSQL SECURITY DEFINER functions: atomic votes, 80% latency reduction, zero race conditions",
+    excerpt: "Five sequential database queries in a vote handler create a TOCTOU race condition and ~200ms latency. A single SECURITY DEFINER function eliminates both — one atomic transaction, ~40ms, no interleaving possible.",
     publishedAt: "2026-05-10",
     readingTime: 9,
     tags: ["PostgreSQL", "Supabase", "Performance", "Concurrency"],
     sections: [
       {
         type: "paragraph",
-        content: "When I first wired up the voting endpoint for AI Art Arena, the logic was straightforward: check the contest exists, check the artwork belongs to the contest, check the user hasn't already voted, insert the vote, increment the count. Five database calls, written sequentially, each one waiting for the previous to return before the next fired.",
+        content: "Five sequential database queries in a vote handler create a TOCTOU race condition. Two requests arriving at the same millisecond both pass the duplicate-vote check, both insert a vote row, and one user gets counted twice. A single SECURITY DEFINER function eliminates this — one atomic transaction that cannot be interleaved with anything else.",
       },
       {
         type: "paragraph",
@@ -246,15 +246,15 @@ return NextResponse.json({ success: true, vote_count: row.vote_count });`,
 
   {
     slug: "nextjs-server-client-split",
-    title: "Server Components changed how I think about data, not just performance",
-    excerpt: "The real value of Next.js App Router isn't speed — it's the architectural discipline of deciding which code should never reach the browser. Here's how the createPublicClient vs createClient split works in practice.",
+    title: "Next.js App Router: when to use Server Components vs Client Components (with real examples)",
+    excerpt: "Using createClient() with cookies() inside a revalidate=60 page silently breaks ISR. Here's the three-client Supabase setup that keeps Server Components server-rendered, CDN-cached correctly, and the use client boundary deliberate.",
     publishedAt: "2026-05-09",
     readingTime: 8,
     tags: ["Next.js", "App Router", "Performance", "Architecture"],
     sections: [
       {
         type: "paragraph",
-        content: "Most explanations of Next.js Server Components focus on performance: less JavaScript, faster initial load, no client-side data fetching waterfalls. All of that is true. But the performance gains are a side effect of something more fundamental — a forced separation between code that must run on the server and code that genuinely needs the browser.",
+        content: "In Next.js App Router, the decision of where to put 'use client' is an architectural decision, not a performance one. Performance is a side effect. The real constraint is this: code marked 'use client' — and everything it imports — gets bundled and sent to the browser. Server Components never do. That separation is what makes the three-client Supabase setup necessary.",
       },
       {
         type: "heading",
@@ -419,7 +419,7 @@ export async function ArtworkList({ contestId }: { contestId: string }) {
     sections: [
       {
         type: "paragraph",
-        content: "Rate limiting is one of those topics where the theory is simple and the implementation details matter enormously. For AI Art Arena — a voting platform where one vote per person per contest is the core integrity guarantee — getting this wrong would mean the leaderboard is meaningless.",
+        content: "A fixed window rate limiter has an exploitable boundary: vote at 11:59pm, vote again at 12:00am — two votes in two minutes, both within their respective windows. A sliding window tracks the rolling 24 hours and has no such boundary. For AI Art Arena, where one vote per person per contest is the core integrity guarantee, only one of these is acceptable.",
       },
       {
         type: "heading",
@@ -542,19 +542,15 @@ export function buildVoteRateLimitKey(
 
   {
     slug: "csp-nextjs-unsafe-eval",
-    title: "CSP with Next.js: why unsafe-eval broke my app in dev and how I fixed it",
-    excerpt: "I removed 'unsafe-eval' from my Content Security Policy and immediately got a React error in the browser. Here's what's actually happening, why it only affects dev mode, and the correct per-environment CSP gate.",
+    title: "Next.js Content Security Policy: how to gate unsafe-eval to development only",
+    excerpt: "React's development build requires eval() for stack reconstruction and DevTools. Your production CSP must not include 'unsafe-eval'. The fix is a NODE_ENV gate in middleware.ts — one conditional, correct in both environments.",
     publishedAt: "2026-05-07",
     readingTime: 6,
     tags: ["Security", "CSP", "Next.js", "Middleware"],
     sections: [
       {
         type: "paragraph",
-        content: "Content Security Policy is one of the most effective mitigations against XSS attacks. It tells the browser which scripts, styles, and resources are allowed to execute on the page. A strict CSP means that even if an attacker injects a malicious script, the browser refuses to run it.",
-      },
-      {
-        type: "paragraph",
-        content: "So when I set up the security headers in middleware.ts for AI Art Arena, removing 'unsafe-eval' from script-src was the obvious move. Then I opened the browser and saw this:",
+        content: "React requires eval() in development mode for error stack reconstruction and DevTools integration. In production, the compiled React build uses no eval at all. This means a Content Security Policy that correctly excludes 'unsafe-eval' in production will break the development server — unless it is gated on NODE_ENV. Here is what that error looks like and how the gate works:",
       },
       {
         type: "callout",
@@ -673,15 +669,15 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
 
   {
     slug: "nextauth-v5-app-router",
-    title: "NextAuth v5 with the App Router: what actually changed and what broke",
-    excerpt: "NextAuth v5 is a ground-up rewrite. The configuration is different, the session access pattern is different, and the middleware integration changed. Here's what I learned wiring it into a Next.js 14 App Router project.",
+    title: "NextAuth v5 App Router migration: auth(), new middleware pattern, session types",
+    excerpt: "In NextAuth v5, getServerSession() is replaced by auth(), authOptions moves to auth.ts, and the middleware uses a wrapping pattern instead of withAuth(). This covers all three changes with working code for Next.js 14 App Router.",
     publishedAt: "2026-05-06",
     readingTime: 8,
     tags: ["NextAuth", "Authentication", "Next.js", "App Router"],
     sections: [
       {
         type: "paragraph",
-        content: "NextAuth v4 and v5 are barely recognisable as the same library. The v5 rewrite (also called Auth.js) changed the configuration API, the session access pattern, the way providers are declared, and the middleware integration. If you're upgrading or starting fresh on Next.js 14 App Router, you're not porting — you're migrating.",
+        content: "In NextAuth v5, getServerSession() is gone — replaced by auth() with no arguments. The authOptions config moves to a top-level auth.ts file. Middleware no longer uses withAuth() — it wraps a handler that calls auth() directly. If you are upgrading from v4 or starting fresh on Next.js 14 App Router, these three changes affect every part of the auth integration.",
       },
       {
         type: "heading",
@@ -820,8 +816,8 @@ declare module 'next-auth' {
 
   {
     slug: "supabase-rls-security-model",
-    title: "Row Level Security is not an auth system — it's a safety net",
-    excerpt: "RLS policies enforce access rules at the database layer. They're not a replacement for application-layer auth — they're the guarantee that application-layer bugs don't become data breaches.",
+    title: "Supabase Row Level Security is not an auth system — it's a safety net",
+    excerpt: "RLS policies enforce access rules at the database layer. They are not a replacement for application-layer auth — they are the guarantee that application-layer bugs do not become data breaches.",
     publishedAt: "2026-05-05",
     readingTime: 7,
     tags: ["Supabase", "PostgreSQL", "Security", "RLS"],
@@ -917,15 +913,15 @@ WHERE routine_name = 'submit_vote';`,
 
   {
     slug: "structured-logging-pino-request-id",
-    title: "Structured logging isn't about the logs — it's about the request ID",
-    excerpt: "console.log in a production API route is nearly useless. A structured JSON log with a request ID, status code, and duration is a debugging superpower. Here's how pino and a thread-through requestId work in Next.js.",
+    title: "Structured logging in Next.js with pino: why the request ID is the whole point",
+    excerpt: "A Sentry stack trace tells you what broke. A structured pino log with a request ID tells you everything else: which request, what input, how long it ran, what preceded the failure. Here is how to build that in Next.js API routes.",
     publishedAt: "2026-05-04",
     readingTime: 6,
     tags: ["Observability", "Pino", "Logging", "Next.js"],
     sections: [
       {
         type: "paragraph",
-        content: "When a vote fails in production, you get a Sentry error notification with a stack trace. That tells you what broke. What it doesn't tell you is: which request was it, what was the input, how long had the request been running, and what happened immediately before the failure. That's what structured logging is for.",
+        content: "A Sentry stack trace tells you what broke. It does not tell you which request, what the input was, how long the request had been running, or what happened immediately before the failure. Structured logging with a thread-through request ID fills that gap. Here is the full pattern for Next.js API routes.",
       },
       {
         type: "heading",
@@ -1042,8 +1038,8 @@ export async function POST(request: Request) {
 
   {
     slug: "inngest-background-jobs-serverless",
-    title: "Background jobs in a serverless Next.js app: why cron isn't enough",
-    excerpt: "Serverless functions don't stay running. That means no cron jobs, no persistent queues, no long-running processes. Inngest solves this with event-driven functions that chain together — here's how the contest automation works.",
+    title: "Background jobs in a serverless Next.js app with Inngest: why Vercel cron isn't enough",
+    excerpt: "Vercel cron functions fire and forget — no retries, no event chaining, no step-level observability. Inngest adds all three. Here is how the contest automation chain works: archive fires an event, that event triggers create-next-contest, with automatic retries throughout.",
     publishedAt: "2026-05-03",
     readingTime: 7,
     tags: ["Inngest", "Background Jobs", "Next.js", "Serverless"],
@@ -1164,15 +1160,15 @@ endDate.setDate(endDate.getDate() + durationDays);`,
 
   {
     slug: "typescript-zod-api-validation",
-    title: "Zod as the contract between your API and your database",
-    excerpt: "TypeScript catches type errors at compile time. Zod catches invalid data at runtime — at the API boundary, before it touches your database. Here's how strict validation prevents a class of bugs that TypeScript alone can't catch.",
+    title: "Zod runtime validation in Next.js API routes: what TypeScript alone can't catch",
+    excerpt: "TypeScript catches type errors at compile time. At the API boundary — HTTP request bodies, query parameters, webhook payloads — TypeScript has no power. Zod validates at runtime, before anything touches Redis or the database.",
     publishedAt: "2026-05-02",
     readingTime: 6,
     tags: ["TypeScript", "Zod", "Validation", "API Design"],
     sections: [
       {
         type: "paragraph",
-        content: "TypeScript is a compile-time tool. It enforces types within your codebase — function signatures, component props, database query results. But at the boundary where your application meets the outside world — HTTP request bodies, query parameters, webhook payloads — TypeScript has no power. That's where Zod comes in.",
+        content: "At the API boundary — HTTP request bodies, query parameters, webhook payloads — TypeScript has no power. It enforces types within your codebase at compile time, but it cannot verify what arrives over the network at runtime. Zod fills that gap: it validates inputs at the edge of your system, before any Redis call or database query forms.",
       },
       {
         type: "heading",
@@ -1277,8 +1273,8 @@ export async function POST(request: Request) {
 
   {
     slug: "vercel-nextjs-image-optimization",
-    title: "How Vercel's image pipeline turned a 4MB PNG into a 200KB WebP",
-    excerpt: "next/image isn't just a component — it's an image transformation pipeline. Here's what actually happens when you configure remotePatterns, formats, and minimumCacheTTL, and how it affects Core Web Vitals.",
+    title: "How Vercel's image pipeline turned a 4MB PNG into a ~180KB WebP",
+    excerpt: "next/image is an image transformation pipeline, not just a component. Here is what actually happens when you configure remotePatterns, formats, and minimumCacheTTL — and how priority, sizes, and aspect-ratio wrappers affect LCP and CLS.",
     publishedAt: "2026-05-01",
     readingTime: 7,
     tags: ["Vercel", "Performance", "next/image", "Core Web Vitals"],
