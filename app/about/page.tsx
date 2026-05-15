@@ -217,6 +217,12 @@ export default function AboutPage() {
               AI Art Arena is the proof of concept. Production Next.js, 22 migrations, 40ms vote latency. Real constraints. Built in months, not years.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+              <Link
+                href="/join?track=artist"
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 20px", background: "var(--color-status-warning)", borderRadius: "100px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 700, color: "#08080e", textDecoration: "none", letterSpacing: "0.06em" }}
+              >
+                Apply as an artist →
+              </Link>
               <a
                 href="https://github.com/olliedoesisdev/ai-art-arena"
                 target="_blank"
@@ -299,7 +305,7 @@ export default function AboutPage() {
                       {i < arr.length - 1 && <div style={{ width: "1px", height: "32px", background: "var(--color-border-subtle)" }} />}
                     </div>
                     <div style={{ paddingBottom: i < arr.length - 1 ? "8px" : 0 }}>
-                      <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-text-dim)", margin: "0 0 2px", letterSpacing: "0.08em" }}>{item.year}</p>
+                      <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-text-muted)", margin: "0 0 2px", letterSpacing: "0.08em" }}>{item.year}</p>
                       <p style={{ fontSize: "0.875rem", color: i === arr.length - 1 ? "var(--color-text)" : "var(--color-text-muted)", margin: 0, fontWeight: i === arr.length - 1 ? 600 : 400 }}>{item.event}</p>
                     </div>
                   </div>
@@ -446,6 +452,12 @@ export default function AboutPage() {
                 <p style={{ fontSize: "1rem", color: "var(--color-text-muted)", margin: 0, maxWidth: "440px" }}>
                   I take on client work. If you need someone who ships fast, makes deliberate decisions, and can explain every one of them — reach out.
                 </p>
+                <Link
+                  href="/join?track=artist"
+                  style={{ display: "inline-flex", alignItems: "center", marginTop: "16px", padding: "10px 20px", background: "var(--color-status-warning)", borderRadius: "100px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 700, color: "#08080e", textDecoration: "none", letterSpacing: "0.06em" }}
+                >
+                  Apply as an artist →
+                </Link>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
                 <a
