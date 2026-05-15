@@ -62,7 +62,7 @@ export function SubscriberForm() {
       trackEvent('subscriber_signup')
       setIsDone(true);
     } catch {
-      toast.error(“Network error â€” please try again.”);
+      toast.error("Network error -- please try again.");
       setIsSubmitting(false);
     }
   }
