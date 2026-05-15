@@ -13,6 +13,7 @@ const inputStyle: React.CSSProperties = {
   fontSize: "0.875rem",
   outline: "none",
   boxSizing: "border-box",
+  transition: "border-color 0.15s",
 };
 
 const labelStyle: React.CSSProperties = {
@@ -153,7 +154,7 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
         <div
           style={{
             background: "var(--color-status-error-dim)",
-            border: "1px solid rgba(248,113,113,0.3)",
+            border: "1px solid rgba(248,113,113,0.25)",
             borderRadius: "8px",
             padding: "10px 14px",
             marginBottom: "20px",
@@ -170,7 +171,7 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
         <div
           style={{
             background: "var(--color-status-success-dim)",
-            border: "1px solid rgba(52,211,153,0.25)",
+            border: "1px solid rgba(52,211,153,0.20)",
             borderRadius: "8px",
             padding: "10px 14px",
             marginBottom: "20px",
@@ -194,6 +195,8 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               style={inputStyle}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-border-strong)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border-mid)"; }}
             />
           </div>
           <div>
@@ -214,6 +217,8 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               style={inputStyle}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-border-strong)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border-mid)"; }}
             />
           </div>
           <button type="submit" disabled={loading} style={loading ? disabledBtn : primaryBtn}>
@@ -241,6 +246,8 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
               style={inputStyle}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-border-strong)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border-mid)"; }}
             />
           </div>
           <div>
@@ -253,6 +260,8 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               style={inputStyle}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-border-strong)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border-mid)"; }}
             />
           </div>
           <div>
@@ -266,6 +275,8 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 8 characters"
               style={inputStyle}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-border-strong)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border-mid)"; }}
             />
           </div>
           <button type="submit" disabled={loading} style={loading ? disabledBtn : primaryBtn}>

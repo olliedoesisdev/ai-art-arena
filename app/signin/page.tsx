@@ -25,6 +25,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 0;
+
 export default async function SignInPage({
   searchParams,
 }: {
@@ -84,7 +86,7 @@ export default async function SignInPage({
           <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: "4px" }}>
             Vote on AI-generated artwork
           </p>
-          <p style={{ fontSize: "0.75rem", color: "var(--color-text-dim)" }}>
+          <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
             Built by{" "}
             <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>
               Oliver White
