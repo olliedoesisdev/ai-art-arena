@@ -1,10 +1,19 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
+import { adminRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const requestId = generateRequestId();
+
+  const ipHash = hashIP(getClientIP(request) ?? "unknown");
+  const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+  if (!rateLimitOk) {
+    return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
+  }
+
   const session = await auth();
 
   if (!session?.user || session.user.role !== "admin") {

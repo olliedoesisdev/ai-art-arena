@@ -25,6 +25,13 @@ export async function POST(request: NextRequest) {
   logger.info({ requestId, path: '/api/v1/admin/contests' }, 'admin contests create request received');
 
   try {
+    const ip = getClientIP(request);
+    const ipHash = hashIP(ip ?? "unknown");
+    const { success } = await adminRateLimit.limit(`admin:${ipHash}`);
+    if (!success) {
+      return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
+    }
+
     const session = await auth();
 
     if (!session?.user) {
@@ -33,13 +40,6 @@ export async function POST(request: NextRequest) {
 
     if (session.user.role !== "admin") {
       return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });
-    }
-
-    const ip = getClientIP(request);
-    const ipHash = hashIP(ip);
-    const { success } = await adminRateLimit.limit(`admin:${ipHash}`);
-    if (!success) {
-      return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
     }
 
     const body = await request.json();

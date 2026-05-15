@@ -1,7 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
+import { adminRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 import { z } from "zod";
 
 type Params = { params: Promise<{ id: string }> };
@@ -11,8 +13,15 @@ const PatchSchema = z.object({
   is_admin_reply: z.boolean().optional(),
 });
 
-export async function PATCH(request: Request, { params }: Params) {
+export async function PATCH(request: NextRequest, { params }: Params) {
   const requestId = generateRequestId();
+
+  const ipHash = hashIP(getClientIP(request) ?? "unknown");
+  const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+  if (!rateLimitOk) {
+    return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
+  }
+
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
     return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });
@@ -48,8 +57,15 @@ export async function PATCH(request: Request, { params }: Params) {
   return jsonResponse(requestId, { success: true });
 }
 
-export async function DELETE(_request: Request, { params }: Params) {
+export async function DELETE(request: NextRequest, { params }: Params) {
   const requestId = generateRequestId();
+
+  const ipHash = hashIP(getClientIP(request) ?? "unknown");
+  const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+  if (!rateLimitOk) {
+    return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
+  }
+
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
     return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });

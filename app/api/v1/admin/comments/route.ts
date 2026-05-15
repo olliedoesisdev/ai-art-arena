@@ -1,13 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
+import { adminRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 import { z } from "zod";
 
 const PAGE_SIZE = 50;
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const requestId = generateRequestId();
+
+  const ipHash = hashIP(getClientIP(request) ?? "unknown");
+  const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+  if (!rateLimitOk) {
+    return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
+  }
+
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
     return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });
@@ -83,8 +92,15 @@ const AdminReplySchema = z.object({
   body: z.string().min(5).max(500),
 });
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const requestId = generateRequestId();
+
+  const ipHash = hashIP(getClientIP(request) ?? "unknown");
+  const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+  if (!rateLimitOk) {
+    return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
+  }
+
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
     return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });

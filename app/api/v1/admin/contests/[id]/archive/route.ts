@@ -15,6 +15,12 @@ export async function POST(_request: NextRequest, context: RouteContext) {
   logger.info({ requestId, path: '/api/v1/admin/contests/[id]/archive' }, 'archive request received');
 
   try {
+    const ipHash = hashIP(getClientIP(_request) ?? "unknown");
+    const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+    if (!rateLimitOk) {
+      return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
+    }
+
     const session = await auth();
 
     if (!session?.user) {
@@ -23,12 +29,6 @@ export async function POST(_request: NextRequest, context: RouteContext) {
 
     if (session.user.role !== "admin") {
       return jsonResponse(requestId, { error: "Forbidden - Admin access required" }, { status: 403 });
-    }
-
-    const ipHash = hashIP(getClientIP(_request));
-    const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
-    if (!rateLimitOk) {
-      return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
     }
 
     const supabase = createAdminClient();

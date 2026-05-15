@@ -16,16 +16,17 @@ const PatchSchema = z.object({
 
 export async function PATCH(request: Request, { params }: Params) {
   const requestId = generateRequestId();
+
+  const ipHash = hashIP(getClientIP(request) ?? "unknown");
+  const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
+  if (!rateLimitOk) {
+    return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
+  }
+
   const session = await auth();
 
   if (!session?.user || session.user.role !== "admin") {
     return jsonResponse(requestId, { error: "Forbidden" }, { status: 403 });
-  }
-
-  const ipHash = hashIP(getClientIP(request));
-  const { success: rateLimitOk } = await adminRateLimit.limit(`admin:${ipHash}`);
-  if (!rateLimitOk) {
-    return jsonResponse(requestId, { error: "Too many requests" }, { status: 429 });
   }
 
   const { id } = await params;
