@@ -33,6 +33,42 @@ const ACCENT_COLORS = [
   "var(--color-card-accent-5)",
 ];
 
+const ACCENT_BORDER = [
+  "var(--color-card-accent-0-border)",
+  "var(--color-card-accent-1-border)",
+  "var(--color-card-accent-2-border)",
+  "var(--color-card-accent-3-border)",
+  "var(--color-card-accent-4-border)",
+  "var(--color-card-accent-5-border)",
+];
+
+const ACCENT_SHADOW = [
+  "var(--color-card-accent-0-shadow)",
+  "var(--color-card-accent-1-shadow)",
+  "var(--color-card-accent-2-shadow)",
+  "var(--color-card-accent-3-shadow)",
+  "var(--color-card-accent-4-shadow)",
+  "var(--color-card-accent-5-shadow)",
+];
+
+const ACCENT_SHADOW_SM = [
+  "var(--color-card-accent-0-shadow-sm)",
+  "var(--color-card-accent-1-shadow-sm)",
+  "var(--color-card-accent-2-shadow-sm)",
+  "var(--color-card-accent-3-shadow-sm)",
+  "var(--color-card-accent-4-shadow-sm)",
+  "var(--color-card-accent-5-shadow-sm)",
+];
+
+const ACCENT_DIM = [
+  "var(--color-card-accent-0-dim)",
+  "var(--color-card-accent-1-dim)",
+  "var(--color-card-accent-2-dim)",
+  "var(--color-card-accent-3-dim)",
+  "var(--color-card-accent-4-dim)",
+  "var(--color-card-accent-5-dim)",
+];
+
 export function ArtworkCard({
   artwork,
   contestId,
@@ -56,6 +92,10 @@ export function ArtworkCard({
   const router = useRouter();
 
   const accent = ACCENT_COLORS[index % ACCENT_COLORS.length];
+  const accentBorder = ACCENT_BORDER[index % ACCENT_BORDER.length];
+  const accentShadow = ACCENT_SHADOW[index % ACCENT_SHADOW.length];
+  const accentShadowSm = ACCENT_SHADOW_SM[index % ACCENT_SHADOW_SM.length];
+  const accentDim = ACCENT_DIM[index % ACCENT_DIM.length];
   const effectivelyVoted = hasVoted || localVoted;
   const showResults = effectivelyVoted || contestEnded;
   const voteCount = artwork.vote_count;
@@ -69,7 +109,7 @@ export function ArtworkCard({
       const res = await fetch("/api/v1/vote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ artwork_id: artwork.id, contest_id: contestId }),
+        body: JSON.stringify({ artwork_id: artwork.id }),
       });
       const data = await res.json();
 
@@ -101,18 +141,18 @@ export function ArtworkCard({
 
   const clickable = !effectivelyVoted && !contestEnded;
 
-  // Border and shadow depend on the runtime accent colour — must stay inline
+  // Border and shadow use per-accent CSS token variants — defined in globals.css
   const cardStyle: React.CSSProperties = {
     border: isUserVote
       ? `1.5px solid ${accent}`
       : hovered && clickable
-      ? `1.5px solid ${accent}60`
+      ? `1.5px solid ${accentBorder}`
       : "1.5px solid var(--color-border-subtle)",
     transform: isUserVote ? "translateY(-4px)" : hovered && clickable ? "translateY(-2px)" : "none",
     boxShadow: isUserVote
-      ? `0 12px 40px ${accent}28`
+      ? `0 12px 40px ${accentShadow}`
       : hovered && clickable
-      ? `0 8px 24px ${accent}16`
+      ? `0 8px 24px ${accentShadowSm}`
       : "none",
   };
 
@@ -128,7 +168,7 @@ export function ArtworkCard({
       tabIndex={clickable ? 0 : undefined}
       aria-label={clickable ? `Vote for ${artwork.title}` : undefined}
       aria-pressed={isUserVote ? true : undefined}
-      className="relative overflow-hidden rounded-[16px] bg-white/[0.03] transition-[border-color,transform,box-shadow] duration-200"
+      className="relative overflow-hidden rounded-2xl bg-white/3 transition-[border-color,transform,box-shadow] duration-200"
       style={{ ...cardStyle, cursor: clickable ? "pointer" : "default" }}
     >
       {/* Image — links to artwork detail page, stops vote click propagation */}
@@ -150,7 +190,7 @@ export function ArtworkCard({
           {/* YOUR VOTE badge */}
           {isUserVote && (
             <div
-              className="absolute right-[10px] top-[10px] rounded-[4px] px-2 py-[3px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-bg-base)]"
+              className="absolute right-2.5 top-2.5 rounded-[4px] px-2 py-[3px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-bg-base"
               style={{ background: accent }}
             >
               Your vote
@@ -159,7 +199,7 @@ export function ArtworkCard({
 
           {/* LEADING / WINNER badge */}
           {isLeading && showResults && !isUserVote && (
-            <div className="absolute right-[10px] top-[10px] rounded-[4px] bg-[var(--color-status-warning)]/90 px-2 py-[3px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-bg-base)]">
+            <div className="absolute right-2.5 top-2.5 rounded-[4px] bg-status-warning/90 px-2 py-[3px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-bg-base">
               {contestEnded ? "Winner" : "Leading"}
             </div>
           )}
@@ -169,14 +209,14 @@ export function ArtworkCard({
       {/* Body */}
       <div className="p-4">
         {/* Title */}
-        <div className="mb-1 overflow-hidden text-ellipsis whitespace-nowrap font-sans text-base font-bold text-[var(--color-text)]">
+        <div className="mb-1 overflow-hidden text-ellipsis whitespace-nowrap font-sans text-base font-bold text-text">
           {artwork.title}
         </div>
 
         {/* Prompt */}
         {artwork.prompt && (
           <div
-            className="mb-[14px] overflow-hidden font-mono text-[11px] leading-[1.55] text-white/35"
+            className="mb-3.5 overflow-hidden font-mono text-[11px] leading-[1.55] text-text-muted"
             style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}
           >
             {artwork.prompt}
@@ -186,16 +226,16 @@ export function ArtworkCard({
         {/* Results: bar + counts — shown after voting or when ended */}
         {showResults && (
           <div className="mb-3">
-            <div className="h-[3px] overflow-hidden rounded-[2px] bg-white/[0.08]">
+            <div className="h-[3px] overflow-hidden rounded-xs bg-border-subtle">
               <div
-                className="h-full rounded-[2px] transition-[width] duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+                className="h-full rounded-xs transition-[width] duration-800 ease-in-out"
                 style={{
                   width: `${pct}%`,
                   background: isUserVote ? accent : isLeading ? "var(--color-status-warning)" : "var(--color-purple)",
                 }}
               />
             </div>
-            <div className="mt-[6px] flex justify-between font-mono text-[11px] text-white/35">
+            <div className="mt-1.5 flex justify-between font-mono text-[11px] text-text-muted">
               <span>
                 <LiveVoteCount artworkId={artwork.id} initialCount={voteCount} />
                 {" votes"}
@@ -211,9 +251,9 @@ export function ArtworkCard({
         {isUserVote && (
           <button
             onClick={(e) => { e.stopPropagation(); handleShare(); }}
-            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[var(--radius-sm)] px-0 py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
+            className="mt-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-(--radius-sm) px-0 py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
             style={{
-              background: copied ? `${accent}20` : "var(--color-purple-dim2)",
+              background: copied ? accentDim : "var(--color-purple-dim2)",
               border: `1px solid ${copied ? accent : "var(--color-border-subtle)"}`,
               color: copied ? accent : "var(--color-text-muted)",
             }}
@@ -227,13 +267,14 @@ export function ArtworkCard({
           <VoteButtonInline
             isVoting={isVoting}
             accent={accent}
+            accentDim={accentDim}
             hovered={hovered}
           />
         )}
 
         {/* Quiet vote count when voted but this is not the user's pick */}
         {effectivelyVoted && !isUserVote && !showResults && (
-          <div className="py-[9px] text-center font-mono text-[11px] text-white/25">
+          <div className="py-[9px] text-center font-mono text-[11px] text-text-dim">
             <LiveVoteCount artworkId={artwork.id} initialCount={voteCount} /> votes
           </div>
         )}
@@ -246,17 +287,19 @@ export function ArtworkCard({
 function VoteButtonInline({
   isVoting,
   accent,
+  accentDim,
   hovered,
 }: {
   isVoting: boolean;
   accent: string;
+  accentDim: string;
   hovered: boolean;
 }) {
   return (
     <div
-      className="w-full rounded-[var(--radius-sm)] px-0 py-[9px] text-center font-mono text-[12px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
+      className="w-full rounded-(--radius-sm) px-0 py-[9px] text-center font-mono text-[12px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
       style={{
-        background: hovered ? `${accent}20` : "var(--color-purple-dim2)",
+        background: hovered ? accentDim : "var(--color-purple-dim2)",
         border: `1px solid ${hovered ? accent : "var(--color-border-subtle)"}`,
         color: hovered ? accent : "var(--color-text)",
         cursor: isVoting ? "wait" : "pointer",

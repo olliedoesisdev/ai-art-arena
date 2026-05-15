@@ -82,9 +82,32 @@
   --color-card-accent-3: #84cc16;
   --color-card-accent-4: #f59e0b;
   --color-card-accent-5: #f472b6;
-  /* accent-2 alpha variants — used in VoteAlert and anonymous vote banner */
-  --color-card-accent-2-dim:    rgba(6,182,212,0.08);
-  --color-card-accent-2-border: rgba(6,182,212,0.20);
+  /* Per-accent alpha variants — used for borders, shadows, and hover backgrounds */
+  --color-card-accent-0-border: rgba(124, 58, 237, 0.38);
+  --color-card-accent-0-shadow: rgba(124, 58, 237, 0.16);
+  --color-card-accent-0-shadow-sm: rgba(124, 58, 237, 0.09);
+  --color-card-accent-0-dim: rgba(124, 58, 237, 0.13);
+  --color-card-accent-1-border: rgba(255, 107, 53, 0.38);
+  --color-card-accent-1-shadow: rgba(255, 107, 53, 0.16);
+  --color-card-accent-1-shadow-sm: rgba(255, 107, 53, 0.09);
+  --color-card-accent-1-dim: rgba(255, 107, 53, 0.13);
+  --color-card-accent-2-border: rgba(6, 182, 212, 0.38);
+  --color-card-accent-2-shadow: rgba(6, 182, 212, 0.16);
+  --color-card-accent-2-shadow-sm: rgba(6, 182, 212, 0.09);
+  --color-card-accent-2-dim: rgba(6,182,212,0.08);
+  --color-card-accent-2-dim-border: rgba(6,182,212,0.20);
+  --color-card-accent-3-border: rgba(132, 204, 22, 0.38);
+  --color-card-accent-3-shadow: rgba(132, 204, 22, 0.16);
+  --color-card-accent-3-shadow-sm: rgba(132, 204, 22, 0.09);
+  --color-card-accent-3-dim: rgba(132, 204, 22, 0.13);
+  --color-card-accent-4-border: rgba(245, 158, 11, 0.38);
+  --color-card-accent-4-shadow: rgba(245, 158, 11, 0.16);
+  --color-card-accent-4-shadow-sm: rgba(245, 158, 11, 0.09);
+  --color-card-accent-4-dim: rgba(245, 158, 11, 0.13);
+  --color-card-accent-5-border: rgba(244, 114, 182, 0.38);
+  --color-card-accent-5-shadow: rgba(244, 114, 182, 0.16);
+  --color-card-accent-5-shadow-sm: rgba(244, 114, 182, 0.09);
+  --color-card-accent-5-dim: rgba(244, 114, 182, 0.13);
 }
 
 /* ── Base ────────────────────────────────────────────────── */

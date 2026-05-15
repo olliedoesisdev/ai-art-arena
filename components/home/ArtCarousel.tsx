@@ -63,7 +63,7 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
             marginBottom: "12px",
           }}
         >
-          Weekly competition
+          Daily competition
         </p>
         <h2
           style={{
