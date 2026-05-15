@@ -256,7 +256,7 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
                     borderRadius: "8px",
                     fontSize: "0.875rem",
                     fontWeight: 500,
-                    color: "var(--color-text-muted)",
+                    color: "var(--color-text)",
                     textDecoration: "none",
                   }}
                 >
@@ -269,7 +269,7 @@ export function MobileMenu({ navLinks, contestHref, isAdmin }: Props) {
               <p
                 style={{
                   fontSize: "0.75rem",
-                  color: "var(--color-text-dim)",
+                  color: "var(--color-text-muted)",
                   textAlign: "center",
                   marginTop: "14px",
                 }}

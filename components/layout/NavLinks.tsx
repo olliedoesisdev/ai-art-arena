@@ -27,7 +27,7 @@ export function NavLinks({ links, contestHref }: Props) {
           style={{
             fontSize: "0.875rem",
             fontWeight: 500,
-            color: isActive(href) ? "var(--color-text)" : "var(--color-text-muted)",
+            color: isActive(href) ? "var(--color-text)" : "var(--color-purple-pale)",
             textDecoration: "none",
             transition: "color 0.15s",
             borderBottom: isActive(href) ? "1px solid var(--color-border-strong)" : "1px solid transparent",
