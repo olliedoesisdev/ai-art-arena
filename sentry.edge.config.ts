@@ -4,4 +4,12 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
   tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
   enabled: process.env.NODE_ENV === "production",
+
+  beforeSend(event) {
+    if (event.user) {
+      delete event.user.email;
+      delete event.user.ip_address;
+    }
+    return event;
+  },
 });
