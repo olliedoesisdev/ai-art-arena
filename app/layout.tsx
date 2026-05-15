@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NoiseOrbs } from "@/components/layout/NoiseOrbs";
 import { Providers } from "@/components/layout/Providers";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import "./globals.css";
 
 const syne = Syne({
@@ -53,6 +54,7 @@ export default async function RootLayout({
           <Header />
           <main style={{ position: "relative", zIndex: 1 }}>{children}</main>
           <Footer />
+          <ChatWidget />
           <Toaster
             position="top-right"
             richColors
