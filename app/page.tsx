@@ -235,9 +235,18 @@ export default async function HomePage() {
                 lineHeight: 1.7,
                 margin: "0 0 20px",
               }}>
-                The calculator did not replace mathematicians. It removed the arithmetic so they
-                could work on harder problems. AI does the same thing for development — it removes
-                the execution bottleneck so architecture, security, and product thinking can run faster.
+                Most developers treat AI like autocomplete. That is not this.
+              </p>
+              <p style={{
+                fontSize: "1rem",
+                color: "var(--color-text-muted)",
+                lineHeight: 1.7,
+                margin: "0 0 20px",
+              }}>
+                Every decision in this project — the schema design, the three-layer
+                vote fraud prevention, the atomic RPC, the rate limiter configuration
+                — started with a problem I understood and a specification I wrote.
+                AI shipped the implementation. Fast. The decisions were mine.
               </p>
               <p style={{
                 fontSize: "1rem",
@@ -245,9 +254,8 @@ export default async function HomePage() {
                 lineHeight: 1.7,
                 margin: "0 0 32px",
               }}>
-                Every decision in this project — the schema design, the three-layer vote fraud
-                prevention, the atomic RPC, the security headers — was deliberate. AI shipped
-                the implementation. I decided what to build and why.
+                That gap between directing and executing is where the work actually
+                lives. This site is what it looks like when you close it.
               </p>
               <Link
                 href="/about"
