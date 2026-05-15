@@ -49,7 +49,7 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
                 alt={artwork.title}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                priority={offset === 0}
+                priority={offset === 0 || offset === 1}
                 className="object-cover transition-all duration-700 group-hover:scale-105"
                 style={{ transition: "opacity 0.6s ease, transform 0.5s ease" }}
               />
@@ -71,6 +71,8 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
 
       {/* Dot indicators */}
       <div
+        role="group"
+        aria-label="Carousel navigation"
         style={{
           position: "absolute",
           bottom: "32px",

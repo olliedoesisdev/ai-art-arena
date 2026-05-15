@@ -16,7 +16,7 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
   return (
     <section style={{ paddingBottom: "100px" }}>
       <div className="shell">
-        <p
+        <h2
           style={{
             fontSize: "11px",
             fontWeight: 600,
@@ -27,7 +27,7 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
           }}
         >
           Last week&apos;s champion
-        </p>
+        </h2>
 
         <Link
           href={`/contest/${artwork.contest_id}`}
@@ -120,9 +120,10 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
 
             {/* Arrow */}
             <span
+              aria-hidden
               style={{
                 fontSize: "1.25rem",
-                color: "var(--color-text-dim)",
+                color: "var(--color-text-muted)",
                 flexShrink: 0,
                 transition: "color 0.2s",
               }}
