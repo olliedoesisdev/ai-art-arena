@@ -2,24 +2,28 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import crypto from "crypto";
 
-// 1 vote per 24 hours per unique identifier (email for authed, IP for anon).
-//
-// NOTE: rate limit scope is now PER-IDENTITY globally, not per-contest. Since
-// only one contest is active at a time and contests run weekly, the effective
-// behaviour is unchanged. Dropping the per-contest scope lets the API accept
-// just { artwork_id } from the client — the previous per-contest key required
-// the route handler to know contest_id before calling the limiter, which
-// defeated pushing contest_id derivation into the submit_vote RPC.
+// Authenticated users: 1 vote per 24 hours, keyed by email hash.
+// One vote per contest — the daily cadence makes per-identity global scope
+// equivalent to per-identity-per-contest since only one contest is active.
 export const voteRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(1, "24 h"),
   analytics: true,
-  prefix: "vote",
+  prefix: "vote:authed",
+});
+
+// Anonymous users: up to 5 votes per IP per 24 hours.
+// Scoped per IP hash only — authenticated users bypass this limiter entirely.
+export const anonVoteRateLimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "24 h"),
+  analytics: true,
+  prefix: "vote:anon",
 });
 
 // Build a rate limit key for a vote attempt.
-// Signed-in users are keyed by email hash — stronger signal than IP.
-// Anonymous visitors fall back to IP hash.
+// Authenticated: keyed by email hash (stronger signal than IP).
+// Anonymous: keyed by IP hash.
 // Raw PII never stored in Redis — always hashed with VOTE_HASH_SALT.
 export function buildVoteRateLimitKey(
   email: string | null | undefined,

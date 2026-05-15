@@ -1,9 +1,9 @@
-﻿import { NextResponse } from "next/server";
-import * as Sentry from "@sentry/nextjs";
+﻿import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
 import { VoteSchema } from "@/lib/validators";
 import {
   voteRateLimit,
+  anonVoteRateLimit,
   buildVoteRateLimitKey,
   hashEmail,
 } from "@/lib/ratelimit";
@@ -71,13 +71,14 @@ export async function POST(request: Request) {
     }
     const ipHash = hashIP(clientIP);
 
-    // 5. Rate limit — keyed by email hash for authed users, IP hash for anon.
-    //    Scope is per-identity globally (not per-contest); since only one
-    //    contest is active at a time this is effectively identical.
+    // 5. Two-lane rate limit:
+    //    Authenticated → voteRateLimit (1/24h, keyed by email hash)
+    //    Anonymous     → anonVoteRateLimit (5/24h, keyed by IP hash)
     const rateLimitKey = buildVoteRateLimitKey(userEmail, ipHash);
+    const limiter = userEmail ? voteRateLimit : anonVoteRateLimit;
     let allowed: boolean, reset: number;
     try {
-      const rl = await voteRateLimit.limit(rateLimitKey);
+      const rl = await limiter.limit(rateLimitKey);
       allowed = rl.success;
       reset = rl.reset;
     } catch (rlError) {
@@ -96,7 +97,7 @@ export async function POST(request: Request) {
       );
       const errorMessage = userEmail
         ? `You have already voted today. Your next vote is available in ${hoursUntilReset} hour${hoursUntilReset !== 1 ? "s" : ""}.`
-        : `This device has already voted today. Sign in with your email to vote from any device. Next vote available in ${hoursUntilReset} hour${hoursUntilReset !== 1 ? "s" : ""}.`;
+        : `This connection has used all 5 votes for today. Sign in to get your own personal vote. Next reset in ${hoursUntilReset} hour${hoursUntilReset !== 1 ? "s" : ""}.`;
 
       logger.warn(
         { requestId, rateLimitKey, isAuthenticated: !!userEmail },
