@@ -108,8 +108,8 @@ export default async function HomePage() {
               color: "var(--color-text)",
               margin: "0 0 24px",
             }}>
-              Taste. Judgment.<br />
-              <span style={{ color: "var(--color-purple-light)" }}>The right tools.</span>
+              Full stack developer.<br />
+              <span style={{ color: "var(--color-purple-light)" }}>Built with intention.</span>
             </h1>
 
             <p style={{
@@ -279,8 +279,7 @@ export default async function HomePage() {
                 lineHeight: 1.7,
                 margin: "0 0 32px",
               }}>
-                That gap between directing and executing is where the work actually
-                lives. This site is what it looks like when you close it.
+                That gap between directing and executing is where the work actually lives.
               </p>
               <Link
                 href="/about"
