@@ -8,8 +8,8 @@ export function VoteAlert({ artworkTitle }: VoteAlertProps) {
   return (
     <div
       style={{
-        background: "rgba(6,182,212,0.08)", /* card-accent-2 dim — no token for this alpha */
-        border: "1px solid rgba(6,182,212,0.2)",
+        background: "var(--color-card-accent-2-dim)",
+        border: "1px solid var(--color-card-accent-2-border)",
         borderRadius: "10px",
         padding: "12px 18px",
         marginBottom: "32px",

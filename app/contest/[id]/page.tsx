@@ -134,8 +134,8 @@ export default async function ContestPage({ params }: Props) {
         {hasVoted && !votedArtwork && (
           <div
             style={{
-              background: "rgba(6,182,212,0.08)",
-              border: "1px solid rgba(6,182,212,0.2)",
+              background: "var(--color-card-accent-2-dim)",
+              border: "1px solid var(--color-card-accent-2-border)",
               borderRadius: "10px",
               padding: "12px 18px",
               marginBottom: "32px",
@@ -156,8 +156,8 @@ export default async function ContestPage({ params }: Props) {
         {contestEnded && (
           <div
             style={{
-              background: "rgba(139,92,246,0.08)",
-              border: "1px solid rgba(139,92,246,0.2)",
+              background: "var(--color-purple-dim2)",
+              border: "1px solid var(--color-border-subtle)",
               borderRadius: "10px",
               padding: "12px 18px",
               marginBottom: "32px",
@@ -224,11 +224,14 @@ export default async function ContestPage({ params }: Props) {
           }}
         >
           <div>
-            <h3 style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 6px" }}>
+            <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 6px" }}>
               Want to compete?
-            </h3>
-            <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
+            </h2>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: "0 0 8px" }}>
               Apply to enter your AI artwork in next week&apos;s contest.
+            </p>
+            <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0, letterSpacing: "0.04em" }}>
+              Built by <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Oliver White</a>
             </p>
           </div>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
