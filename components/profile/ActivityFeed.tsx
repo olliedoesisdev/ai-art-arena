@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { ActivityFeedItem, ActivityType } from "@/lib/types";
 
@@ -68,7 +69,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
         }}
       >
         {/* Type indicator */}
-        <div style={{ flexShrink: 0 }}>
+        <div style={{ flexShrink: 0 }} aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M7 12V3M3 6l4-4 4 4" stroke="var(--color-status-success)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -83,13 +84,15 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
           flexShrink: 0,
           background: "var(--color-bg-surface3)",
           border: "1px solid rgba(139,92,246,0.1)",
+          position: "relative",
         }}>
           {item.artwork_image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={item.artwork_image_url}
-              alt={item.artwork_title ?? ""}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              alt={item.artwork_title ?? "Artwork thumbnail"}
+              fill
+              sizes="48px"
+              style={{ objectFit: "cover" }}
             />
           ) : null}
         </div>
@@ -121,10 +124,10 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
 
         {/* Time + arrow */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)" }}>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)" }}>
             {timeLabel}
           </span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
             <path d="M2.5 6h7M6.5 3L9.5 6l-3 3" stroke="var(--color-status-success)" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
@@ -149,7 +152,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
           padding: "14px 16px",
           background: "var(--color-bg-base)",
           border: "1px solid rgba(139,92,246,0.08)",
-          borderLeft: "3px solid rgba(192,132,252,0.6)",
+          borderLeft: "3px solid var(--color-profile-comment-border)",
           borderRadius: "12px",
           transition: "border-color 0.15s, background 0.15s",
           animationDelay: `${index * 30}ms`,
@@ -158,20 +161,20 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
         onMouseEnter={(e) => {
           const el = e.currentTarget as HTMLDivElement;
           el.style.borderColor = "var(--color-border-mid)";
-          el.style.borderLeftColor = "var(--color-purple-light)";
+          el.style.borderLeftColor = "var(--color-profile-comment-border-hover)";
           el.style.background = "var(--color-bg-surface)";
         }}
         onMouseLeave={(e) => {
           const el = e.currentTarget as HTMLDivElement;
           el.style.borderColor = "rgba(139,92,246,0.08)";
-          el.style.borderLeftColor = "rgba(192,132,252,0.6)";
+          el.style.borderLeftColor = "var(--color-profile-comment-border)";
           el.style.background = "var(--color-bg-base)";
         }}
       >
         {/* Header row */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
-            <path d="M1 1.5h10a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5H4l-3 2V2a.5.5 0 0 1 .5-.5z" stroke="#c084fc" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }} aria-hidden="true">
+            <path d="M1 1.5h10a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5H4l-3 2V2a.5.5 0 0 1 .5-.5z" stroke="var(--color-purple-pale)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           <span style={{
             fontFamily: "var(--font-dm-mono)",
@@ -185,7 +188,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
           <span style={{
             fontFamily: "var(--font-dm-mono)",
             fontSize: "11px",
-            color: "var(--color-text-dim)",
+            color: "var(--color-text-muted)",
             marginLeft: "auto",
           }}>
             {timeLabel}
@@ -207,7 +210,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
         </p>
 
         {isLong && (
-          <span
+          <button
             onClick={(e) => { e.preventDefault(); setExpanded(!expanded); }}
             style={{
               display: "inline-block",
@@ -218,10 +221,13 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
               color: "var(--color-purple-light)",
               cursor: "pointer",
               letterSpacing: "0.06em",
+              background: "none",
+              border: "none",
+              padding: 0,
             }}
           >
             {expanded ? "Show less" : "Show more"}
-          </span>
+          </button>
         )}
       </div>
     </Link>
@@ -238,7 +244,7 @@ function DateDivider({ label }: { label: string }) {
         fontWeight: 700,
         letterSpacing: "0.14em",
         textTransform: "uppercase",
-        color: "var(--color-text-dim)",
+        color: "var(--color-text-muted)",
         whiteSpace: "nowrap",
       }}>
         {label}
@@ -305,7 +311,7 @@ export function ActivityFeed({ activityFeed, totalVotes, totalComments }: Props)
           letterSpacing: "-0.02em",
           margin: 0,
         }}>
-          Activity
+          Contest Activity
         </h2>
         <div style={{ display: "flex", gap: "8px" }}>
           {[
@@ -318,7 +324,7 @@ export function ActivityFeed({ activityFeed, totalVotes, totalComments }: Props)
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "var(--color-text-dim)",
+              color: "var(--color-text-muted)",
               background: "var(--color-bg-base)",
               border: "1px solid rgba(139,92,246,0.1)",
               padding: "3px 10px",

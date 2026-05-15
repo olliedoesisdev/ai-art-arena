@@ -4,15 +4,35 @@ import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import { CommentSection } from "@/components/comments/CommentSection";
+import { JsonLd } from "@/components/layout/JsonLd";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 3600;
 
 type Props = { params: { week: string } };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const week = params.week;
+  const title = `Week ${week} Results — AI Art Arena`;
+  const description = `Final results and winner for Week ${week} of the AI Art Arena AI art voting contest.`;
   return {
-    title: `Week ${params.week} Results — AI Art Arena`,
-    description: `Final results for Week ${params.week} of the AI Art Arena voting contest.`,
+    title,
+    description,
+    alternates: { canonical: `${SITE_URL}/archive/${week}` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/archive/${week}`,
+      siteName: "AI Art Arena",
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena Week ${week} results` }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${SITE_URL}/og-image.png`],
+    },
   };
 }
 
@@ -44,9 +64,25 @@ export default async function ArchiveWeekPage({ params }: Props) {
 
   const RANK_COLORS: Record<number, string> = { 0: "var(--color-status-warning)", 1: "var(--color-rank-silver)", 2: "var(--color-rank-bronze)" };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: `AI Art Arena — Week ${contest.week_number} Results`,
+    description: `Final results for Week ${contest.week_number} of the AI Art Arena AI art voting contest.`,
+    startDate: contest.start_date,
+    endDate: contest.end_date,
+    eventStatus: "https://schema.org/EventEnded",
+    eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+    location: { "@type": "VirtualLocation", url: `${SITE_URL}/archive/${contest.week_number}` },
+    organizer: { "@type": "Organization", name: "AI Art Arena", url: SITE_URL },
+    url: `${SITE_URL}/archive/${contest.week_number}`,
+    ...(winner ? { winner: { "@type": "CreativeWork", name: winner.title } } : {}),
+  };
+
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
       <div className="shell">
+        <JsonLd data={jsonLd} />
         {/* Back link */}
         <Link
           href="/archive"
@@ -112,7 +148,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
               gap: "28px",
               alignItems: "center",
               background: "var(--color-bg-surface)",
-              border: "1px solid rgba(251,191,36,0.2)",
+              border: "1px solid var(--color-status-warning-border)",
               borderRadius: "14px",
               padding: "20px",
               marginBottom: "40px",
@@ -149,8 +185,8 @@ export default async function ArchiveWeekPage({ params }: Props) {
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
                   color: "var(--color-status-warning)",
-                  background: "rgba(251,191,36,0.08)",
-                  border: "1px solid rgba(251,191,36,0.2)",
+                  background: "var(--color-status-warning-dim)",
+                  border: "1px solid var(--color-status-warning-border)",
                   padding: "3px 10px",
                   borderRadius: "100px",
                   marginBottom: "10px",
@@ -177,7 +213,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
               <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", color: "var(--color-purple-light)" }}>
                 {winner.vote_count.toLocaleString()} votes
                 {totalVotes > 0 && (
-                  <span style={{ color: "var(--color-text-dim)" }}>
+                  <span style={{ color: "var(--color-text-muted)" }}>
                     {" "}({((winner.vote_count / totalVotes) * 100).toFixed(1)}%)
                   </span>
                 )}
@@ -267,7 +303,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
                   <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", color: "var(--color-text)", fontWeight: 500 }}>
                     {artwork.vote_count.toLocaleString()}
                   </span>
-                  <span style={{ display: "block", fontFamily: "var(--font-dm-mono)", fontSize: "0.6875rem", color: "var(--color-text-dim)" }}>
+                  <span style={{ display: "block", fontFamily: "var(--font-dm-mono)", fontSize: "0.6875rem", color: "var(--color-text-muted)" }}>
                     {pct}%
                   </span>
                 </div>
@@ -276,12 +312,17 @@ export default async function ArchiveWeekPage({ params }: Props) {
           })}
         </div>
 
+        {/* Attribution */}
+        <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: "40px 0 0", letterSpacing: "0.04em" }}>
+          Built by <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Oliver White</a>
+        </p>
+
         {/* Per-artwork comment sections */}
         {artworks.map((artwork) => (
           <div key={artwork.id} style={{ marginTop: "48px" }}>
             <p style={{
               fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em",
-              textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "2px",
+              textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "2px",
             }}>
               {artwork.title}
             </p>

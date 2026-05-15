@@ -30,8 +30,8 @@ export default function ArchiveLoading() {
             <div
               key={i}
               style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1.5px solid rgba(255,255,255,0.06)",
+                background: "var(--color-bg-surface)",
+                border: "1px solid var(--color-border-subtle)",
                 borderRadius: "14px",
                 overflow: "hidden",
               }}

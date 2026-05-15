@@ -29,7 +29,8 @@
   --color-status-success-dim: rgba(52, 211, 153, 0.08);
   --color-status-error:       #f87171;
   --color-status-warning:     #fbbf24;
-  --color-status-warning-dim: rgba(251, 191, 36, 0.08);
+  --color-status-warning-dim:    rgba(251, 191, 36, 0.08);
+  --color-status-warning-border: rgba(251, 191, 36, 0.20);
 
   /* ── Fonts ───────────────────────────────────────────── */
   --font-sans: var(--font-syne), system-ui, sans-serif;
@@ -61,6 +62,12 @@
   --color-join-text:        #f5f5f5;
   --color-join-review-label: #444;
   --color-join-review-value: #bbb;
+
+  /* ── Profile page ────────────────────────────────────────────── */
+  --color-profile-comment-border:       rgba(192, 132, 252, 0.6);
+  --color-profile-comment-border-hover: rgba(167, 139, 250, 1);
+  --color-profile-banner-border:        rgba(139, 92, 246, 0.15);
+  --color-profile-banner-bg:            linear-gradient(135deg, rgba(139,92,246,0.18) 0%, rgba(192,132,252,0.10) 50%, rgba(139,92,246,0.06) 100%);
 
   /* ── Artwork card accents (cycled by index in ArtworkCard.tsx) ── */
   --color-card-accent-0: #7c3aed;

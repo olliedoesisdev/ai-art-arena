@@ -5,9 +5,10 @@ import { WinnerBadge } from "./WinnerBadge";
 
 interface ArchiveCardProps {
   contest: Contest & { artworks?: Artwork[] };
+  priority?: boolean;
 }
 
-export function ArchiveCard({ contest }: ArchiveCardProps) {
+export function ArchiveCard({ contest, priority = false }: ArchiveCardProps) {
   const winner = contest.artworks?.slice().sort((a, b) => b.vote_count - a.vote_count)[0];
   const totalVotes = contest.artworks?.reduce((sum, a) => sum + a.vote_count, 0) ?? 0;
 
@@ -30,6 +31,7 @@ export function ArchiveCard({ contest }: ArchiveCardProps) {
               alt={winner.title}
               fill
               sizes="(max-width: 768px) 50vw, 25vw"
+              priority={priority}
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <WinnerBadge />

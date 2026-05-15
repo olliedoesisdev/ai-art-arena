@@ -38,7 +38,7 @@ function StatBlock({ value, label, divider }: { value: number; label: string; di
         fontWeight: 600,
         letterSpacing: "0.1em",
         textTransform: "uppercase",
-        color: "var(--color-text-dim)",
+        color: "var(--color-text-muted)",
       }}>
         {label}
       </div>
@@ -61,8 +61,8 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
       <div style={{
         height: "120px",
         borderRadius: "16px 16px 0 0",
-        background: "linear-gradient(135deg, rgba(139,92,246,0.18) 0%, rgba(192,132,252,0.10) 50%, rgba(139,92,246,0.06) 100%)",
-        border: "1px solid rgba(139,92,246,0.15)",
+        background: "var(--color-profile-banner-bg)",
+        border: "1px solid var(--color-profile-banner-border)",
         borderBottom: "none",
         position: "relative",
       }}>
@@ -109,15 +109,27 @@ export function ProfileHeaderClient({ profile, isOwnProfile, totalVotes, totalCo
           fontWeight: 800,
           color: "var(--color-text)",
           letterSpacing: "-0.03em",
-          margin: "0 0 4px",
+          margin: "0 0 2px",
         }}>
           {displayName}
         </h1>
 
         <div style={{
           fontFamily: "var(--font-dm-mono)",
+          fontSize: "10px",
+          fontWeight: 600,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          color: "var(--color-purple-light)",
+          margin: "0 0 6px",
+        }}>
+          AI Art Arena member
+        </div>
+
+        <div style={{
+          fontFamily: "var(--font-dm-mono)",
           fontSize: "11px",
-          color: "var(--color-text-dim)",
+          color: "var(--color-text-muted)",
           letterSpacing: "0.06em",
           marginBottom: profile.bio || isOwnProfile ? "14px" : "0",
         }}>

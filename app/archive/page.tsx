@@ -1,6 +1,7 @@
 ﻿import { createPublicClient } from "@/lib/supabase/server";
 import { SITE_URL } from "@/lib/site";
 import { ArchiveCard } from "@/components/archive/ArchiveCard";
+import { JsonLd } from "@/components/layout/JsonLd";
 import { Contest, Artwork } from "@/lib/types";
 
 export const revalidate = 3600;
@@ -14,7 +15,7 @@ export const metadata = {
     description: "Browse past AI Art Arena contests and their winning artworks.",
     url: `${SITE_URL}/archive`,
     siteName: "AI Art Arena",
-    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "AI Art Arena contest archive" }],
     type: "website",
   },
   twitter: {
@@ -34,9 +35,30 @@ export default async function ArchivePage() {
     .eq("status", "archived")
     .order("week_number", { ascending: false });
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "AI Art Arena — Contest Archive",
+    description: "Every past weekly AI art voting contest, final standings, and winner on record.",
+    url: `${SITE_URL}/archive`,
+    isPartOf: { "@type": "WebSite", name: "AI Art Arena", url: SITE_URL },
+    ...(contests && contests.length > 0 ? {
+      hasPart: contests.map((c) => ({
+        "@type": "Event",
+        name: `AI Art Arena — Week ${c.week_number}`,
+        url: `${SITE_URL}/archive/${c.week_number}`,
+        startDate: c.start_date,
+        endDate: c.end_date,
+        eventStatus: "https://schema.org/EventEnded",
+        eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+      })),
+    } : {}),
+  };
+
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
       <div className="shell">
+        <JsonLd data={jsonLd} />
         <p
           style={{
             fontSize: "11px",
@@ -56,11 +78,14 @@ export default async function ArchivePage() {
             fontSize: "clamp(2rem, 5vw, 3rem)",
             letterSpacing: "-0.03em",
             color: "var(--color-text)",
-            marginBottom: "48px",
+            marginBottom: "12px",
           }}
         >
           Contest Archive
         </h1>
+        <p style={{ color: "var(--color-text-muted)", fontSize: "15px", margin: "0 0 48px" }}>
+          Every past contest, final votes, and winner on record.
+        </p>
 
         {!contests || contests.length === 0 ? (
           <div
@@ -84,8 +109,8 @@ export default async function ArchivePage() {
               gap: "16px",
             }}
           >
-            {(contests as Array<Contest & { artworks: Artwork[] }>).map((contest) => (
-              <ArchiveCard key={contest.id} contest={contest} />
+            {(contests as Array<Contest & { artworks: Artwork[] }>).map((contest, index) => (
+              <ArchiveCard key={contest.id} contest={contest} priority={index < 2} />
             ))}
           </div>
         )}
