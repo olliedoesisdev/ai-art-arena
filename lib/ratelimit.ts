@@ -12,22 +12,24 @@ export const voteRateLimit = new Ratelimit({
   prefix: "vote:authed",
 });
 
-// Anonymous users: up to 5 votes per IP per 24 hours.
-// Scoped per IP hash only — authenticated users bypass this limiter entirely.
+// Anonymous users: up to 50 votes per IP per contest.
+// Scoped per IP + contest so a new contest resets the window.
+// Authenticated users bypass this limiter entirely (use voteRateLimit above).
 export const anonVoteRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, "24 h"),
+  limiter: Ratelimit.slidingWindow(50, "24 h"),
   analytics: true,
   prefix: "vote:anon",
 });
 
 // Build a rate limit key for a vote attempt.
-// Authenticated: keyed by email hash (stronger signal than IP).
-// Anonymous: keyed by IP hash.
+// Authenticated: keyed by email hash (24h global window — one active contest per day).
+// Anonymous:     keyed by ip:${ipHash}:${contestId} so the cap resets per contest.
 // Raw PII never stored in Redis — always hashed with VOTE_HASH_SALT.
 export function buildVoteRateLimitKey(
   email: string | null | undefined,
   ipHash: string,
+  contestId?: string | null,
 ): string {
   const salt = process.env.VOTE_HASH_SALT;
   if (!salt) throw new Error("VOTE_HASH_SALT env var is required");
@@ -43,8 +45,9 @@ export function buildVoteRateLimitKey(
     return `email:${emailHash}`;
   }
 
-  // ipHash is already hashed by hashIP() in lib/utils.ts
-  return `ip:${ipHash}`;
+  // ipHash is already hashed by hashIP() in lib/utils.ts.
+  // Append contestId so the 50-vote window is per-contest, not global.
+  return contestId ? `ip:${ipHash}:${contestId}` : `ip:${ipHash}`;
 }
 
 // Hash an email address for storage in the votes table.

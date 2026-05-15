@@ -744,6 +744,7 @@ Current migrations (applied in order):
 21. `20240021_daily_contest_two_lane_voting.sql` — two-lane voting (auth vs anon) with max_votes_per_ip_per_contest system_config key
 22. `20240022_fix_submit_vote_ambiguous_contest_id.sql` — fixes error 42702: qualifies all votes/system_config column refs with table aliases to resolve ambiguity with RETURNS TABLE column named contest_id
 23. `20240023_fix_submit_vote_ambiguous_vote_count.sql` — fixes error 42702: qualifies UPDATE artworks RETURNING clause with table alias to resolve ambiguity with RETURNS TABLE column named vote_count
+24. `20240024_raise_anon_vote_cap.sql` — raises max_votes_per_ip_per_contest to 50; restores SET search_path = public, pg_temp on submit_vote (security regression from 20240023)
 
 ---
 
