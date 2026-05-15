@@ -55,20 +55,18 @@ function JoinHubInner() {
             letterSpacing: "-0.03em",
             margin: "0 0 12px",
           }}>
-            Join the Arena
+            Submit AI artwork. Compete weekly.
           </h1>
-          <p style={{ color: "var(--color-join-muted)", fontSize: "15px", margin: "0 0 10px" }}>Choose your path below.</p>
+          <p style={{ color: "var(--color-join-muted)", fontSize: "15px", margin: "0 0 10px" }}>Pick your track — artist or subscriber.</p>
           <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-subtle)", margin: 0, letterSpacing: "0.04em" }}>
             Built by <a href="/about" style={{ color: "var(--color-join-amber)", textDecoration: "none" }}>Oliver White</a>
           </p>
         </div>
 
         {track !== "choose" && (
-          <div
-            role="button"
-            tabIndex={0}
+          <button
             onClick={() => setTrack("choose")}
-            onKeyDown={(e) => { if (e.key === "Enter") setTrack("choose"); }}
+            aria-label="Go back to track selection"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -80,11 +78,13 @@ function JoinHubInner() {
               color: "var(--color-join-muted)",
               cursor: "pointer",
               marginBottom: "40px",
-              userSelect: "none",
+              background: "none",
+              border: "none",
+              padding: 0,
             }}
           >
-            â† Back
-          </div>
+            ← Back
+          </button>
         )}
 
         {track === "choose" && (
@@ -127,11 +127,10 @@ function JoinHubInner() {
                     Name + email. One step.
                   </p>
                 </div>
-                <div
-                  role="button"
-                  tabIndex={0}
+                <button
                   onClick={() => setTrack("subscriber")}
-                  onKeyDown={(e) => { if (e.key === "Enter") setTrack("subscriber"); }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(232,213,183,0.08)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                   style={{
                     padding: "11px 20px",
                     background: "transparent",
@@ -145,15 +144,12 @@ function JoinHubInner() {
                     textTransform: "uppercase",
                     textAlign: "center",
                     cursor: "pointer",
-                    userSelect: "none",
                     transition: "background 0.15s",
                     marginTop: "auto",
                   }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(232,213,183,0.08)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
                 >
                   Subscribe to Updates
-                </div>
+                </button>
               </div>
 
               {/* Artist card */}
@@ -175,11 +171,8 @@ function JoinHubInner() {
                     Four steps. One submission.
                   </p>
                 </div>
-                <div
-                  role="button"
-                  tabIndex={0}
+                <button
                   onClick={() => setTrack("artist")}
-                  onKeyDown={(e) => { if (e.key === "Enter") setTrack("artist"); }}
                   style={{
                     padding: "11px 20px",
                     background: "var(--color-join-amber)",
@@ -193,12 +186,11 @@ function JoinHubInner() {
                     textTransform: "uppercase",
                     textAlign: "center",
                     cursor: "pointer",
-                    userSelect: "none",
                     marginTop: "auto",
                   }}
                 >
                   Apply as an Artist
-                </div>
+                </button>
               </div>
             </div>
           </>
