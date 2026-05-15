@@ -39,8 +39,8 @@ function applySecurityHeaders(response: NextResponse, nonce: string): NextRespon
   h.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
 
   const scriptSrc = process.env.NODE_ENV === "development"
-    ? `'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval'`
-    : `'nonce-${nonce}'`;
+    ? `'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com`
+    : `'nonce-${nonce}' https://www.googletagmanager.com`;
 
   h.set(
     "Content-Security-Policy",
@@ -48,9 +48,9 @@ function applySecurityHeaders(response: NextResponse, nonce: string): NextRespon
       "default-src 'self'",
       `script-src 'self' ${scriptSrc}`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://*.supabase.co https://avatars.githubusercontent.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://avatars.githubusercontent.com https://www.googletagmanager.com https://www.google-analytics.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://*.supabase.co https://*.upstash.io https://o4511291575762944.ingest.us.sentry.io",
+      "connect-src 'self' https://*.supabase.co https://*.upstash.io https://o4511291575762944.ingest.us.sentry.io https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

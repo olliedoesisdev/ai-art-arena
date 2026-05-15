@@ -3,6 +3,7 @@ import { Syne, DM_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import { SITE_URL } from "@/lib/site";
 import { Toaster } from "sonner";
+import Script from "next/script";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NoiseOrbs } from "@/components/layout/NoiseOrbs";
@@ -49,6 +50,18 @@ export default async function RootLayout({
         )}
       </head>
       <body>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-ELG6RW124G"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-ELG6RW124G');
+          `}
+        </Script>
         <Providers>
           <NoiseOrbs />
           <Header />
