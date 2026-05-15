@@ -187,7 +187,7 @@ export default function AboutPage() {
               Oliver White — Full Stack Developer
             </p>
             <h1 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(2.25rem,6vw,4rem)", fontWeight: 800, letterSpacing: "-0.04em", color: "var(--color-text)", margin: "0 0 24px", lineHeight: 1.02, maxWidth: "800px" }}>
-              Good tools.<br />
+              Full stack developer.<br />
               <span style={{ color: "var(--color-text-muted)" }}>Clear decisions.</span><br />
               <span style={{ color: "var(--color-purple-light)" }}>Ships fast.</span>
             </h1>
@@ -239,7 +239,7 @@ export default function AboutPage() {
           <div className="shell">
             <div className="grid-about-reverse">
               <div style={{ maxWidth: "600px" }}>
-                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "20px" }}>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "20px" }}>
                   The builder
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "18px", fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)" }}>
@@ -292,7 +292,7 @@ export default function AboutPage() {
           <div className="shell">
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "36px" }}>
               <div>
-                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "8px" }}>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "8px" }}>
                   The stack
                 </p>
                 <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: 0 }}>
@@ -364,7 +364,7 @@ export default function AboutPage() {
           <div className="shell">
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", marginBottom: "28px" }}>
               <div>
-                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "8px" }}>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "8px" }}>
                   Writing
                 </p>
                 <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: 0 }}>
@@ -389,7 +389,7 @@ export default function AboutPage() {
         <section style={{ borderBottom: "1px solid var(--color-border-subtle)", padding: "64px 0", background: "var(--color-purple-dim2)" }}>
           <div className="shell">
             <div style={{ maxWidth: "640px" }}>
-              <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "20px" }}>
+              <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "20px" }}>
                 Directed Output
               </p>
               <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.375rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: "0 0 24px" }}>
@@ -415,7 +415,7 @@ export default function AboutPage() {
           <div className="shell">
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "32px" }}>
               <div>
-                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-dim)", marginBottom: "12px" }}>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "12px" }}>
                   Work together
                 </p>
                 <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "clamp(1.5rem,3vw,2rem)", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--color-text)", margin: "0 0 10px" }}>
@@ -428,7 +428,7 @@ export default function AboutPage() {
               <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
                 <a
                   href="mailto:hello@olliedoesis.dev"
-                  style={{ display: "inline-flex", alignItems: "center", padding: "12px 28px", background: "var(--color-purple)", borderRadius: "100px", fontFamily: "var(--font-syne)", fontSize: "0.9375rem", fontWeight: 700, color: "#fff", textDecoration: "none", letterSpacing: "0.01em" }}
+                  style={{ display: "inline-flex", alignItems: "center", padding: "12px 28px", background: "var(--color-purple)", borderRadius: "100px", fontFamily: "var(--font-syne)", fontSize: "0.9375rem", fontWeight: 700, color: "var(--color-text)", textDecoration: "none", letterSpacing: "0.01em" }}
                 >
                   Get in touch
                 </a>
