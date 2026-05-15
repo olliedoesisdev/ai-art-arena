@@ -107,7 +107,7 @@ export function ArtworkCard({
       ? `1.5px solid ${accent}`
       : hovered && clickable
       ? `1.5px solid ${accent}60`
-      : "1.5px solid rgba(255,255,255,0.08)",
+      : "1.5px solid var(--color-border-subtle)",
     transform: isUserVote ? "translateY(-4px)" : hovered && clickable ? "translateY(-2px)" : "none",
     boxShadow: isUserVote
       ? `0 12px 40px ${accent}28`
@@ -213,9 +213,9 @@ export function ArtworkCard({
             onClick={(e) => { e.stopPropagation(); handleShare(); }}
             className="mt-2 flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[var(--radius-sm)] px-0 py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
             style={{
-              background: copied ? `${accent}20` : "rgba(255,255,255,0.04)",
-              border: `1px solid ${copied ? accent : "rgba(255,255,255,0.1)"}`,
-              color: copied ? accent : "rgba(255,255,255,0.4)",
+              background: copied ? `${accent}20` : "var(--color-purple-dim2)",
+              border: `1px solid ${copied ? accent : "var(--color-border-subtle)"}`,
+              color: copied ? accent : "var(--color-text-muted)",
             }}
           >
             {copied ? "LINK COPIED ✓" : "SHARE →"}
@@ -256,8 +256,8 @@ function VoteButtonInline({
     <div
       className="w-full rounded-[var(--radius-sm)] px-0 py-[9px] text-center font-mono text-[12px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
       style={{
-        background: hovered ? `${accent}20` : "rgba(255,255,255,0.06)",
-        border: `1px solid ${hovered ? accent : "rgba(255,255,255,0.12)"}`,
+        background: hovered ? `${accent}20` : "var(--color-purple-dim2)",
+        border: `1px solid ${hovered ? accent : "var(--color-border-subtle)"}`,
         color: hovered ? accent : "var(--color-text)",
         cursor: isVoting ? "wait" : "pointer",
         pointerEvents: "none", // click handled by parent article

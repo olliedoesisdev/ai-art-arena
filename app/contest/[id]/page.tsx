@@ -123,7 +123,7 @@ export default async function ContestPage({ params }: Props) {
           status={contest.status}
         />
 
-        <StatsStrip totalVotes={totalVotes} artworkCount={artworks?.length ?? 0} />
+        <StatsStrip totalVotes={totalVotes} artworkCount={artworks?.length ?? 0} startDate={contest.start_date} />
 
         {/* Vote success alert */}
         {hasVoted && votedArtwork && (
@@ -224,14 +224,16 @@ export default async function ContestPage({ params }: Props) {
           }}
         >
           <div>
+            <div style={{ marginBottom: "8px" }}>
+              <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)" }}>
+                Built by <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Oliver White</a>
+              </span>
+            </div>
             <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 6px" }}>
               Want to compete?
             </h2>
-            <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: "0 0 8px" }}>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
               Apply to enter your AI artwork in tomorrow&apos;s contest.
-            </p>
-            <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0, letterSpacing: "0.04em" }}>
-              Built by <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Oliver White</a>
             </p>
           </div>
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>

@@ -1,9 +1,15 @@
 interface StatsStripProps {
   totalVotes: number;
   artworkCount: number;
+  startDate: string;
 }
 
-export function StatsStrip({ totalVotes, artworkCount }: StatsStripProps) {
+export function StatsStrip({ totalVotes, artworkCount, startDate }: StatsStripProps) {
+  const hoursActive = Math.max(1, Math.round((Date.now() - new Date(startDate).getTime()) / 3600000));
+  const timeLabel = hoursActive < 24
+    ? `in ${hoursActive} hour${hoursActive !== 1 ? "s" : ""}`
+    : `in ${Math.round(hoursActive / 24)} day${Math.round(hoursActive / 24) !== 1 ? "s" : ""}`;
+
   return (
     <div
       style={{
@@ -28,7 +34,9 @@ export function StatsStrip({ totalVotes, artworkCount }: StatsStripProps) {
         >
           {totalVotes.toLocaleString()}
         </span>
-        <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>votes cast</span>
+        <span style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+          votes cast {timeLabel}
+        </span>
       </div>
       <div
         style={{
