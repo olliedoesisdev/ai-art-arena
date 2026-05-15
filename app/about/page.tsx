@@ -244,13 +244,19 @@ export default function AboutPage() {
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "18px", fontSize: "1.0625rem", lineHeight: 1.72, color: "var(--color-text-muted)" }}>
                   <p style={{ margin: 0 }}>
-                    Three years ago I was selling life insurance. No CS degree, no bootcamp. I retrained deliberately — building real things, running into real problems, and learning exactly what each problem required.
+                    Three years ago I was selling life insurance. No CS degree, no bootcamp.
+                    I retrained deliberately — building real things, hitting real problems,
+                    and learning exactly what each one required.
                   </p>
                   <p style={{ margin: 0 }}>
-                    Sales taught me something that most developers miss: the work is not the code. The work is understanding what someone needs, deciding what to build, and getting it in front of them. Code is just the fastest path between those two points.
+                    Sales taught me something most developers miss: the work is not the code.
+                    The work is understanding what someone needs, deciding what to build, and
+                    getting it in front of them. Code is the fastest path between those two points.
                   </p>
                   <p style={{ margin: 0 }}>
-                    AI Art Arena exists because I needed a production project that demonstrated the full stack under real conditions. It is that. Every decision in it was made for a reason, and I can explain every one of them.
+                    AI Art Arena is a production project built under real conditions — real
+                    database constraints, real security requirements, real deployment pipeline.
+                    Every decision has a reason. I can explain every one of them.
                   </p>
                 </div>
               </div>
