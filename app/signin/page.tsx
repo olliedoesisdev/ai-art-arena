@@ -1,9 +1,28 @@
 ﻿import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { AuthForm } from "@/components/auth/AuthForm";
+import { SITE_URL } from "@/lib/site";
+import { JsonLd } from "@/components/layout/JsonLd";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Sign In — AI Art Arena",
+  description: "Sign in or create a free account to vote on AI-generated artwork at AI Art Arena, built by Oliver White.",
+  alternates: { canonical: `${SITE_URL}/signin` },
+  openGraph: {
+    title: "Sign In — AI Art Arena",
+    description: "Sign in or create a free account to vote on AI-generated artwork.",
+    url: `${SITE_URL}/signin`,
+    siteName: "AI Art Arena",
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "AI Art Arena — sign in" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sign In — AI Art Arena",
+    description: "Sign in or create a free account to vote on AI-generated artwork.",
+    images: [`${SITE_URL}/og-image.png`],
+  },
 };
 
 export default async function SignInPage({
@@ -27,6 +46,15 @@ export default async function SignInPage({
   const callbackUrl = params.callbackUrl || "/";
   const defaultTab = params.tab === "signup" ? "signup" : "signin";
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Sign In — AI Art Arena",
+    description: "Sign in or create a free account to vote on AI-generated artwork at AI Art Arena.",
+    url: `${SITE_URL}/signin`,
+    isPartOf: { "@type": "WebSite", name: "AI Art Arena", url: SITE_URL },
+  };
+
   return (
     <div
       style={{
@@ -37,10 +65,11 @@ export default async function SignInPage({
         padding: "40px 16px",
       }}
     >
+      <JsonLd data={jsonLd} />
       <div style={{ width: "100%", maxWidth: "420px" }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
-          <p
+          <h1
             style={{
               fontFamily: "var(--font-syne)",
               fontWeight: 800,
@@ -51,9 +80,15 @@ export default async function SignInPage({
             }}
           >
             AI Art Arena
+          </h1>
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: "4px" }}>
+            Vote on AI-generated artwork
           </p>
-          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
-            Sign in to vote on AI-generated artwork
+          <p style={{ fontSize: "0.75rem", color: "var(--color-text-dim)" }}>
+            Built by{" "}
+            <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>
+              Oliver White
+            </a>
           </p>
         </div>
 
@@ -61,7 +96,7 @@ export default async function SignInPage({
         <div
           style={{
             background: "var(--color-bg-surface)",
-            border: "1px solid rgba(139,92,246,0.12)",
+            border: "1px solid var(--color-border-subtle)",
             borderRadius: "14px",
             padding: "32px",
           }}

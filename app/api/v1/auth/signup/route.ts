@@ -17,12 +17,7 @@ export async function POST(request: Request) {
   logger.info({ requestId }, "signup request received");
 
   try {
-    const ipHash = hashIP(getClientIP(request));
-    const { success } = await authRateLimit.limit(`signup:${ipHash}`);
-    if (!success) {
-      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
-    }
-
+    // 1. Parse + Zod validate before touching Redis
     const body = await request.json();
     const result = SignUpSchema.safeParse(body);
 
@@ -31,6 +26,13 @@ export async function POST(request: Request) {
         { error: result.error.issues[0].message },
         { status: 400 }
       );
+    }
+
+    // 2. Rate limit — only burns budget on valid input
+    const ipHash = hashIP(getClientIP(request));
+    const { success } = await authRateLimit.limit(`signup:${ipHash}`);
+    if (!success) {
+      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
     }
 
     const { email, password, name } = result.data;

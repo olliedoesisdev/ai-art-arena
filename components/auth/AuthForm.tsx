@@ -152,7 +152,7 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
       {error && (
         <div
           style={{
-            background: "rgba(248,113,113,0.08)", /* status-error dim — no token; matches status-error-dim pattern */
+            background: "var(--color-status-error-dim)",
             border: "1px solid rgba(248,113,113,0.3)",
             borderRadius: "8px",
             padding: "10px 14px",
@@ -170,7 +170,7 @@ export function AuthForm({ callbackUrl, defaultTab }: AuthFormProps) {
         <div
           style={{
             background: "var(--color-status-success-dim)",
-            border: "1px solid rgba(52,211,153,0.3)",
+            border: "1px solid rgba(52,211,153,0.25)",
             borderRadius: "8px",
             padding: "10px 14px",
             marginBottom: "20px",
