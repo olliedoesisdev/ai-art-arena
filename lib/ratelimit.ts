@@ -33,6 +33,8 @@ export function buildVoteRateLimitKey(
   if (!salt) throw new Error("VOTE_HASH_SALT env var is required");
 
   if (email) {
+    // Prefix "email:" before hashing so this key can never collide with the
+    // DB email_hash column (hashEmail below), which hashes the bare email.
     const emailHash = crypto
       .createHash("sha256")
       .update("email:" + email.toLowerCase().trim() + salt)

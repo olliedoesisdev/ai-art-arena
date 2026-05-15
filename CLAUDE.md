@@ -397,13 +397,20 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_artworks_vote_count
 Replaces 5 sequential DB queries with 1 atomic transaction.
 ~200ms becomes ~40ms. No race conditions.
 
-The live version of this function is migration `20240017_fix_submit_vote_ambiguous_column.sql`.
-It adds a fifth parameter `p_email_hash TEXT DEFAULT NULL` and checks three duplicate-vote vectors:
+The live version of this function is migration `20240017_fix_submit_vote_ambiguous_column.sql`,
+updated by migration `20240020` which removed `p_contest_id` — the function now derives
+contest_id from artwork_id internally. Current signature is **4 parameters**:
+- `p_artwork_id UUID`
+- `p_user_id UUID DEFAULT NULL`
+- `p_ip_hash TEXT`
+- `p_email_hash TEXT DEFAULT NULL`
+
+It checks three duplicate-vote vectors:
 - `v.ip_hash = p_ip_hash`
 - `p_user_id IS NOT NULL AND v.user_id = p_user_id`
 - `p_email_hash IS NOT NULL AND v.email_hash = p_email_hash`
 
-Always call with all five parameters. See migration file for the full canonical body.
+Always call with all four parameters. See migration file for the full canonical body.
 
 ### get_homepage_stats — replaces 3 separate COUNT queries
 
