@@ -25,7 +25,7 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
             fontFamily: "var(--font-dm-mono)",
             fontSize: "11px",
             letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.35)",
+            color: "var(--color-text-muted)",
             marginBottom: "8px",
             textTransform: "uppercase",
           }}
@@ -43,7 +43,7 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
             margin: 0,
           }}
         >
-          The Arena
+          The Arena — Week {weekNumber}
         </h1>
       </div>
 
@@ -55,7 +55,7 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
               fontFamily: "var(--font-dm-mono)",
               fontSize: "10px",
               letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.3)",
+              color: "var(--color-text-muted)",
               marginBottom: "8px",
               textTransform: "uppercase",
             }}

@@ -34,12 +34,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: `Week ${week} is live. Pick your favourite AI artwork.`,
       url: `${SITE_URL}/contest/${id}`,
       siteName: "AI Art Arena",
-      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena — Week ${week} voting contest` }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title: week ? `Vote on AI Art — Week ${week} | AI Art Arena` : "Contest — AI Art Arena",
+      description: week
+        ? `Week ${week} is live. Pick your favourite AI-generated artwork — one vote per contest.`
+        : "Vote for your favourite AI-generated artwork. One vote per contest.",
       images: [`${SITE_URL}/og-image.png`],
     },
   };
