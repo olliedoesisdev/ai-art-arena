@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: post.publishedAt,
       authors: ["Oliver White"],
       tags: post.tags,
-      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `${post.title} — Oliver White` }],
     },
     twitter: {
       card: "summary_large_image",
@@ -69,10 +69,10 @@ function SectionCode({ language, content }: { language: string; content: string 
   return (
     <div style={{ margin: "24px 0", borderRadius: "10px", overflow: "hidden", border: "1px solid var(--color-border-subtle)" }}>
       <div style={{ background: "var(--color-bg-surface2)", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid var(--color-border-subtle)" }}>
-        <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>{language}</span>
+        <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>{language}</span>
       </div>
-      <pre style={{ background: "#0d0d14", margin: 0, padding: "20px 24px", overflowX: "auto" }}>
-        <code style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.8125rem", lineHeight: 1.7, color: "#c4b5fd" }}>
+      <pre style={{ background: "var(--color-code-bg)", margin: 0, padding: "20px 24px", overflowX: "auto" }}>
+        <code style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.8125rem", lineHeight: 1.7, color: "var(--color-purple-pale)" }}>
           {content.trim()}
         </code>
       </pre>
@@ -87,7 +87,7 @@ function SectionTable({ headers, rows }: { headers: string[]; rows: string[][] }
         <thead>
           <tr style={{ background: "var(--color-bg-surface2)" }}>
             {headers.map((h) => (
-              <th key={h} style={{ padding: "11px 16px", textAlign: "left", fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-dim)", borderBottom: "1px solid var(--color-border-subtle)", whiteSpace: "nowrap" }}>
+              <th key={h} style={{ padding: "11px 16px", textAlign: "left", fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-muted)", borderBottom: "1px solid var(--color-border-subtle)", whiteSpace: "nowrap" }}>
                 {h}
               </th>
             ))}
@@ -110,10 +110,10 @@ function SectionTable({ headers, rows }: { headers: string[]; rows: string[][] }
 }
 
 const CALLOUT_STYLES = {
-  info:    { bg: "rgba(6,182,212,0.08)",   border: "rgba(6,182,212,0.25)",   color: "#06b6d4",  icon: "ℹ" },
-  warning: { bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)",  color: "#fbbf24",  icon: "⚠" },
-  success: { bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.25)",  color: "#34d399",  icon: "✓" },
-  tip:     { bg: "rgba(139,92,246,0.08)",  border: "rgba(139,92,246,0.25)",  color: "#a78bfa",  icon: "→" },
+  info:    { bg: "var(--color-card-accent-2-dim)",    border: "var(--color-card-accent-2-border)", color: "var(--color-card-accent-2)", icon: "ℹ" },
+  warning: { bg: "var(--color-status-warning-dim)",   border: "var(--color-status-warning-border)", color: "var(--color-status-warning)", icon: "⚠" },
+  success: { bg: "var(--color-status-success-dim)",   border: "var(--color-status-success-border)", color: "var(--color-status-success)", icon: "✓" },
+  tip:     { bg: "var(--color-purple-dim)",           border: "var(--color-border-mid)",            color: "var(--color-purple-light)",  icon: "→" },
 };
 
 function SectionCallout({ variant, content }: { variant: "info" | "warning" | "success" | "tip"; content: string }) {
@@ -144,9 +144,9 @@ function SectionMetricGrid({ items }: { items: { label: string; value: string; s
     <div style={{ margin: "24px 0", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "12px" }}>
       {items.map((item) => (
         <div key={item.label} style={{ background: "var(--color-bg-surface)", border: "1px solid var(--color-border-subtle)", borderRadius: "10px", padding: "20px" }}>
-          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 6px" }}>{item.label}</p>
+          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 6px" }}>{item.label}</p>
           <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "1.75rem", fontWeight: 500, color: "var(--color-purple-light)", margin: "0 0 4px", letterSpacing: "-0.02em" }}>{item.value}</p>
-          {item.sub && <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>{item.sub}</p>}
+          {item.sub && <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: 0 }}>{item.sub}</p>}
         </div>
       ))}
     </div>
@@ -156,13 +156,16 @@ function SectionMetricGrid({ items }: { items: { label: string; value: string; s
 function SectionComparison({ left, right }: { left: { label: string; items: string[] }; right: { label: string; items: string[] } }) {
   return (
     <div style={{ margin: "24px 0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-      {[{ side: left, accent: "#f87171", dimBg: "rgba(248,113,113,0.05)" }, { side: right, accent: "#34d399", dimBg: "rgba(52,211,153,0.05)" }].map(({ side, accent, dimBg }) => (
-        <div key={side.label} style={{ background: dimBg, border: `1px solid ${accent}30`, borderRadius: "10px", padding: "20px" }}>
-          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: accent, margin: "0 0 14px" }}>{side.label}</p>
+      {[
+        { side: left,  bg: "var(--color-status-error-dim)",    border: "var(--color-status-error-border)",   color: "var(--color-status-error)" },
+        { side: right, bg: "var(--color-status-success-dim)",  border: "var(--color-status-success-border)", color: "var(--color-status-success)" },
+      ].map(({ side, bg, border, color }) => (
+        <div key={side.label} style={{ background: bg, border: `1px solid ${border}`, borderRadius: "10px", padding: "20px" }}>
+          <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color, margin: "0 0 14px" }}>{side.label}</p>
           <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px" }}>
             {side.items.map((item, i) => (
               <li key={i} style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", lineHeight: 1.5, display: "flex", gap: "8px", alignItems: "flex-start" }}>
-                <span style={{ color: accent, flexShrink: 0, paddingTop: "2px" }}>·</span>
+                <span style={{ color, flexShrink: 0, paddingTop: "2px" }}>·</span>
                 {item}
               </li>
             ))}
@@ -226,7 +229,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Back */}
           <Link
             href="/blog"
-            style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "var(--color-text-dim)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "40px" }}
+            style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "var(--color-text-muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "40px" }}
           >
             ← All posts
           </Link>
@@ -250,11 +253,11 @@ export default async function BlogPostPage({ params }: Props) {
             {/* Meta */}
             <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "48px", paddingBottom: "32px", borderBottom: "1px solid var(--color-border-subtle)" }}>
               <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--color-purple)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <span style={{ fontFamily: "var(--font-syne)", fontSize: "13px", fontWeight: 800, color: "#fff" }}>O</span>
+                <span style={{ fontFamily: "var(--font-syne)", fontSize: "13px", fontWeight: 800, color: "var(--color-text)" }}>O</span>
               </div>
               <div>
                 <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "12px", color: "var(--color-text)", margin: 0, fontWeight: 600 }}>Oliver White</p>
-                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: 0 }}>
                   {new Date(post.publishedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
                   {" · "}{post.readingTime} min read
                 </p>
@@ -269,7 +272,7 @@ export default async function BlogPostPage({ params }: Props) {
             {/* Footer */}
             <div style={{ marginTop: "56px", paddingTop: "32px", borderTop: "1px solid var(--color-border-subtle)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
               <div>
-                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: "0 0 4px" }}>Written by</p>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: "0 0 4px" }}>Written by</p>
                 <p style={{ fontFamily: "var(--font-syne)", fontSize: "0.9375rem", fontWeight: 700, color: "var(--color-text)", margin: 0 }}>Oliver White</p>
               </div>
               <Link

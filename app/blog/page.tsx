@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { SITE_URL } from "@/lib/site";
 import { BLOG_POSTS } from "@/lib/blog";
+import { JsonLd } from "@/components/layout/JsonLd";
 
 export const revalidate = 3600;
 
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
       "Real problems, real solutions. Deep dives into Next.js, PostgreSQL, Supabase, and production engineering.",
     url: `${SITE_URL}/blog`,
     siteName: "AI Art Arena",
-    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "Oliver White's engineering blog — AI Art Arena" }],
     type: "website",
   },
   twitter: {
@@ -112,10 +113,29 @@ const sorted = [...BLOG_POSTS].sort(
   (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
 );
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "Oliver White — Engineering Blog",
+  description: "Deep dives into Next.js, PostgreSQL, Supabase, rate limiting, authentication, and real production problems solved while building AI Art Arena.",
+  url: `${SITE_URL}/blog`,
+  author: { "@type": "Person", name: "Oliver White", url: `${SITE_URL}/about` },
+  publisher: { "@type": "Organization", name: "AI Art Arena", url: SITE_URL },
+  blogPost: BLOG_POSTS.map((post) => ({
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.publishedAt,
+    url: `${SITE_URL}/blog/${post.slug}`,
+    keywords: post.tags.join(", "),
+  })),
+};
+
 export default function BlogIndexPage() {
   return (
     <div className="animate-page" style={{ paddingTop: "56px", paddingBottom: "100px" }}>
       <div className="shell">
+        <JsonLd data={jsonLd} />
 
         {/* Header */}
         <div style={{ marginBottom: "56px" }}>
@@ -154,7 +174,7 @@ export default function BlogIndexPage() {
                 }}
               >
                 {/* Number */}
-                <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "var(--color-text-dim)", flexShrink: 0, paddingTop: "3px", minWidth: "24px" }}>
+                <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "var(--color-text-muted)", flexShrink: 0, paddingTop: "3px", minWidth: "24px" }}>
                   {String(sorted.length - i).padStart(2, "0")}
                 </span>
 
@@ -173,10 +193,10 @@ export default function BlogIndexPage() {
 
                 {/* Meta */}
                 <div style={{ flexShrink: 0, textAlign: "right", paddingTop: "2px" }}>
-                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: "0 0 4px" }}>
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: "0 0 4px" }}>
                     {new Date(post.publishedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                   </p>
-                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: 0 }}>
                     {post.readingTime} min read
                   </p>
                 </div>
