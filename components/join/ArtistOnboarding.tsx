@@ -242,7 +242,7 @@ function Step1({
       </div>
       <div style={{ marginTop: "8px" }}>
         <div role="button" tabIndex={0} onClick={handleNext} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} style={primaryBtn}>
-          Next â€” Your Practice â†’
+          Next &mdash; Your Practice &rarr;
         </div>
       </div>
     </div>
@@ -452,9 +452,9 @@ function Step2({
       </div>
 
       <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
-        <button onClick={onBack} style={ghostBtn}>â† Back</button>
+        <button onClick={onBack} style={ghostBtn}>← Back</button>
         <div role="button" tabIndex={0} onClick={handleNext} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} style={{ ...primaryBtn, flex: 1 }}>
-          Next â€” Your Submission â†’
+          Next &mdash; Your Submission &rarr;
         </div>
       </div>
     </div>
@@ -576,7 +576,7 @@ function Step3({
                   Drag and drop or click to upload
                 </p>
                 <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-subtle)", margin: 0, letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  JPEG, PNG, or WebP â€” max 10MB
+                  JPEG, PNG, or WebP &mdash; max 10MB
                 </p>
               </>
             )}
@@ -648,7 +648,7 @@ function Step3({
           onChange={(e) => { setPrompt(e.target.value); setErrors((p) => ({ ...p, prompt: "" })); }}
           rows={4}
           maxLength={1000}
-          placeholder="Describe the prompt, style references, settings, or technique â€” as much detail as you like."
+          placeholder=”Describe the prompt, style references, settings, or technique — as much detail as you like.”
           style={{ ...inputStyle, resize: "vertical", borderColor: errors.prompt ? "var(--color-status-error)" : "var(--color-join-border)" }}
           onFocus={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.prompt ? "var(--color-status-error)" : "var(--color-join-amber)"; }}
           onBlur={(e) => { (e.target as HTMLTextAreaElement).style.borderColor = errors.prompt ? "var(--color-status-error)" : "var(--color-join-border)"; }}
@@ -657,9 +657,9 @@ function Step3({
       </div>
 
       <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
-        <button onClick={onBack} style={ghostBtn}>â† Back</button>
+        <button onClick={onBack} style={ghostBtn}>← Back</button>
         <div role="button" tabIndex={0} onClick={handleNext} onKeyDown={(e) => { if (e.key === "Enter") handleNext(); }} style={{ ...primaryBtn, flex: 1 }}>
-          Next â€” Review Your Application â†’
+          Next &mdash; Review Your Application &rarr;
         </div>
       </div>
 
@@ -785,7 +785,7 @@ function Step4({
       </p>
 
       <div style={{ display: "flex", gap: "12px" }}>
-        <button onClick={onBack} style={ghostBtn}>â† Back</button>
+        <button onClick={onBack} style={ghostBtn}>← Back</button>
         <div
           role="button"
           tabIndex={0}
@@ -837,7 +837,7 @@ function SuccessScreen({ email }: { email: string }) {
           paddingBottom: "2px",
         }}
       >
-        Watch the Current Contest â†’
+        Watch the Current Contest &rarr;
       </Link>
     </div>
   );
@@ -885,7 +885,7 @@ export function ArtistOnboarding() {
       }
       setIsDone(true);
     } catch {
-      toast.error("Network error â€” please try again.");
+      toast.error(“Network error — please try again.”);
       setIsSubmitting(false);
     }
   }
