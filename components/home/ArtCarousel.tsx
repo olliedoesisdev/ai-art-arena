@@ -50,6 +50,8 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
           textAlign: "center",
           marginBottom: "32px",
           padding: "0 28px",
+          maxWidth: "1140px",
+          margin: "0 auto 32px",
         }}
       >
         <p
@@ -80,15 +82,16 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
         </h2>
       </div>
 
-      {/* Carousel wrapper — full bleed */}
-      <div style={{ position: "relative", width: "100%", overflow: "hidden" }}>
+      {/* Carousel wrapper — constrained and centred like the contest grid */}
+      <div style={{ maxWidth: "1140px", margin: "0 auto", padding: "0 28px" }}>
+        <div style={{ position: "relative", overflow: "hidden", borderRadius: "14px" }}>
         {/* Image grid */}
-        <div className="carousel-track" style={{ display: "grid", gap: "3px" }}>
+        <div className="carousel-track" style={{ display: "grid", gap: "12px" }}>
           {slides.map((artwork, offset) => (
             <div
               key={mounted ? `${artwork.id}-${offset}` : artwork.id}
               className="group"
-              style={{ position: "relative", overflow: "hidden", aspectRatio: "3 / 4" }}
+              style={{ position: "relative", overflow: "hidden", aspectRatio: "1 / 1", borderRadius: "14px", background: "var(--color-bg-surface)", border: "1.5px solid var(--color-border-subtle)" }}
             >
               <Image
                 src={artwork.image_url}
@@ -103,7 +106,7 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
           ))}
         </div>
 
-        {/* Fade-out bottom gradient */}
+        {/* Fade-out bottom gradient — subtle, just softens the bottom edge */}
         <div
           aria-hidden
           style={{
@@ -225,6 +228,7 @@ export function ArtCarousel({ artworks }: ArtCarouselProps) {
             ))}
           </div>
         )}
+        </div>
       </div>
 
       <style>{`
