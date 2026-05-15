@@ -141,6 +141,23 @@ export default async function HomePage() {
               >
                 Apply as an artist &rarr;
               </Link>
+              <Link
+                href="/signin"
+                style={{
+                  fontFamily: "var(--font-syne)",
+                  fontWeight: 600,
+                  fontSize: "0.9375rem",
+                  color: "var(--color-purple-light)",
+                  background: "transparent",
+                  border: "1px solid var(--color-border-mid)",
+                  padding: "13px 32px",
+                  borderRadius: "100px",
+                  textDecoration: "none",
+                  letterSpacing: "0.01em",
+                }}
+              >
+                Create profile &rarr;
+              </Link>
             </div>
           </div>
         </div>
