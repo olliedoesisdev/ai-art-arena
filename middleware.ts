@@ -39,8 +39,8 @@ function applySecurityHeaders(response: NextResponse, nonce: string): NextRespon
   h.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
 
   const scriptSrc = process.env.NODE_ENV === "development"
-    ? `'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com`
-    : `'nonce-${nonce}' 'unsafe-inline' https://www.googletagmanager.com`;
+    ? `'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com`
+    : `'nonce-${nonce}' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com`;
 
   h.set(
     "Content-Security-Policy",
