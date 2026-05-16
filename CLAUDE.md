@@ -821,6 +821,7 @@ INNGEST_SIGNING_KEY
 INNGEST_EVENT_KEY
 LOG_LEVEL
 ANTHROPIC_API_KEY
+NEXT_PUBLIC_GA_MEASUREMENT_ID
 ```
 
 Local dev: `.env.local` — never commit this file.
