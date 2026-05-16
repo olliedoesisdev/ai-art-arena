@@ -210,42 +210,106 @@ export default async function AiArtContestPage({ params }: Props) {
         )}
 
         {/* Join CTA */}
-        <div
-          style={{
-            marginTop: "64px",
-            background: "var(--color-bg-surface)",
-            border: "1px solid var(--color-join-border)",
-            borderRadius: "12px",
-            padding: "32px 36px",
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "24px",
-          }}
-        >
-          <div>
-            <div style={{ marginBottom: "8px" }}>
-              <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)" }}>
-                Built by <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Oliver White</a>
-              </span>
+        <div style={{ marginTop: "64px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          {/* AI art entry */}
+          <div
+            style={{
+              background: "var(--color-bg-surface)",
+              border: "1px solid var(--color-join-border)",
+              borderRadius: "12px",
+              padding: "28px 32px",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "20px",
+            }}
+          >
+            <div>
+              <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "6px" }}>
+                AI Art Contest
+              </div>
+              <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 4px" }}>
+                Compete as an AI artist
+              </h2>
+              <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
+                Apply to enter your AI-generated artwork in the next contest.
+              </p>
             </div>
-            <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 6px" }}>
-              Want to compete?
-            </h2>
-            <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
-              Apply to enter your AI artwork in the next contest.
-            </p>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <Link
+                href="/join?track=subscriber"
+                style={{
+                  padding: "9px 18px",
+                  background: "transparent",
+                  border: "1px solid rgba(232,213,183,0.4)",
+                  borderRadius: "6px",
+                  color: "var(--color-join-amber)",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Subscribe
+              </Link>
+              <Link
+                href="/join?track=artist"
+                style={{
+                  padding: "9px 18px",
+                  background: "var(--color-join-amber)",
+                  borderRadius: "6px",
+                  color: "var(--color-join-ink)",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Apply as Artist
+              </Link>
+            </div>
           </div>
-          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+
+          {/* Photo contest entry */}
+          <div
+            style={{
+              background: "var(--color-bg-surface)",
+              border: "1px solid var(--color-border-subtle)",
+              borderRadius: "12px",
+              padding: "28px 32px",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "20px",
+            }}
+          >
+            <div>
+              <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "6px" }}>
+                Photo Contest
+              </div>
+              <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 4px" }}>
+                Enter with your photography
+              </h2>
+              <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
+                Sign in and upload your photo directly — no application required.
+              </p>
+            </div>
             <Link
-              href="/join?track=subscriber"
+              href="/contests"
               style={{
-                padding: "10px 20px",
-                background: "transparent",
-                border: "1px solid rgba(232,213,183,0.4)",
+                padding: "9px 18px",
+                background: "var(--color-purple-dim)",
+                border: "1px solid rgba(139,92,246,0.35)",
                 borderRadius: "6px",
-                color: "var(--color-join-amber)",
+                color: "var(--color-purple-light)",
                 fontFamily: "var(--font-dm-mono)",
                 fontSize: "11px",
                 fontWeight: 600,
@@ -255,25 +319,7 @@ export default async function AiArtContestPage({ params }: Props) {
                 whiteSpace: "nowrap",
               }}
             >
-              Subscribe
-            </Link>
-            <Link
-              href="/join?track=artist"
-              style={{
-                padding: "10px 20px",
-                background: "var(--color-join-amber)",
-                borderRadius: "6px",
-                color: "var(--color-join-ink)",
-                fontFamily: "var(--font-dm-mono)",
-                fontSize: "11px",
-                fontWeight: 700,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Apply as Artist
+              View photo contests →
             </Link>
           </div>
         </div>

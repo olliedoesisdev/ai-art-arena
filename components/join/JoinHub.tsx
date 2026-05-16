@@ -55,9 +55,9 @@ function JoinHubInner() {
             letterSpacing: "-0.03em",
             margin: "0 0 12px",
           }}>
-            Submit AI artwork. Compete daily.
+            Compete. Vote. Follow.
           </h1>
-          <p style={{ color: "var(--color-join-muted)", fontSize: "15px", margin: "0 0 10px" }}>Pick your track — artist or subscriber.</p>
+          <p style={{ color: "var(--color-join-muted)", fontSize: "15px", margin: "0 0 10px" }}>Pick your track — AI artist, photographer, or subscriber.</p>
           <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-join-subtle)", margin: 0, letterSpacing: "0.04em" }}>
             Built by <a href="/about" style={{ color: "var(--color-join-amber)", textDecoration: "none" }}>Oliver White</a>
           </p>
@@ -152,7 +152,7 @@ function JoinHubInner() {
                 </button>
               </div>
 
-              {/* Artist card */}
+              {/* AI Artist card */}
               <div style={cardBase}>
                 <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "var(--color-join-card-icon)", border: "1px solid var(--color-join-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-join-amber)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -162,13 +162,13 @@ function JoinHubInner() {
                 </div>
                 <div>
                   <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.375rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.02em", margin: "0 0 8px" }}>
-                    Compete as an Artist
+                    AI Art Contest
                   </h2>
                   <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 10px" }}>
-                    Submit your AI-generated artwork for consideration in the daily contest. Tell us about your process, your tools, and let your work speak.
+                    Submit your AI-generated artwork for consideration. Tell us about your process, your tools, and let the work speak.
                   </p>
                   <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-subtle)", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>
-                    Four steps. One submission.
+                    Application reviewed by admin.
                   </p>
                 </div>
                 <button
@@ -189,8 +189,50 @@ function JoinHubInner() {
                     marginTop: "auto",
                   }}
                 >
-                  Apply as an Artist
+                  Apply as AI Artist
                 </button>
+              </div>
+
+              {/* Photo contest card */}
+              <div style={cardBase}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "var(--color-join-card-icon)", border: "1px solid var(--color-join-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-join-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.375rem", fontWeight: 800, color: "var(--color-join-text)", letterSpacing: "-0.02em", margin: "0 0 8px" }}>
+                    Photo Contest
+                  </h2>
+                  <p style={{ color: "var(--color-join-body)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 10px" }}>
+                    Upload your photo directly to an active contest. Sign in, pick a contest, and submit — no application needed.
+                  </p>
+                  <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", color: "var(--color-join-subtle)", letterSpacing: "0.08em", textTransform: "uppercase", margin: 0 }}>
+                    Reviewed before going live.
+                  </p>
+                </div>
+                <a
+                  href="/contests"
+                  style={{
+                    padding: "11px 20px",
+                    background: "transparent",
+                    border: "1px solid rgba(139,92,246,0.4)",
+                    borderRadius: "6px",
+                    color: "rgba(167,139,250,1)",
+                    fontFamily: "var(--font-dm-mono)",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    textAlign: "center",
+                    textDecoration: "none",
+                    marginTop: "auto",
+                    display: "block",
+                  }}
+                >
+                  Browse photo contests →
+                </a>
               </div>
             </div>
           </>
