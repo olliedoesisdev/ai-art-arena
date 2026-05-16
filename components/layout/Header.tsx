@@ -23,13 +23,12 @@ export async function Header() {
     auth(),
   ]);
 
-  const contestHref = activeContestId ? `/contest/${activeContestId}` : "/archive";
+  const contestHref = "/contests";
   const isAdmin = session?.user?.role === "admin";
 
   const NAV_LINKS = [
     { href: "/", label: "Home" },
-    { href: contestHref, label: "Contest" },
-    { href: "/archive", label: "Archive" },
+    { href: "/contests", label: "Contests" },
     { href: "/leaderboard", label: "Leaderboard" },
     { href: "/about", label: "About" },
   ];

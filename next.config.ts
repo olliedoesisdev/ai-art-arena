@@ -5,7 +5,16 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_GA_MEASUREMENT_ID: "G-ELG6RW124G",
   },
-  serverExternalPackages: ["pino", "pino-pretty"],
+  serverExternalPackages: ["pino", "pino-pretty", "sharp"],
+  async redirects() {
+    return [
+      {
+        source: "/contest/:id",
+        destination: "/contests/ai-art/:id",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

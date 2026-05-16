@@ -1,12 +1,31 @@
+// components/contest/ContestHeader.tsx [SERVER]
+import Link from "next/link";
 import { ContestTimer } from "./ContestTimer";
+import { ThemeBadge } from "./ThemeBadge";
+import { ContestType } from "@/lib/types";
 
 interface ContestHeaderProps {
+  contestId: string;
   weekNumber: number;
   endDate: string;
   status: "active" | "archived";
+  contestType: ContestType;
+  theme?: string | null;
+  themeDescription?: string | null;
 }
 
-export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProps) {
+export function ContestHeader({
+  contestId,
+  weekNumber,
+  endDate,
+  status,
+  contestType,
+  theme,
+  themeDescription,
+}: ContestHeaderProps) {
+  const typeLabel = contestType === "photo" ? "Photo Contest" : "AI Art Contest";
+  const basePath = contestType === "photo" ? "/contests/photo" : "/contests/ai-art";
+
   return (
     <div
       style={{
@@ -18,7 +37,7 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
         marginBottom: "40px",
       }}
     >
-      {/* Left: eyebrow + title */}
+      {/* Left: eyebrow + title + theme */}
       <div>
         <div
           style={{
@@ -30,8 +49,10 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
             textTransform: "uppercase",
           }}
         >
-          Day {weekNumber} &middot; {status === "active" ? "Open for voting" : "Archived"}
+          {typeLabel} &middot; Day {weekNumber} &middot;{" "}
+          {status === "active" ? "Open for voting" : "Archived"}
         </div>
+
         <h1
           style={{
             fontFamily: "var(--font-syne)",
@@ -40,11 +61,57 @@ export function ContestHeader({ weekNumber, endDate, status }: ContestHeaderProp
             letterSpacing: "-0.03em",
             color: "var(--color-text)",
             lineHeight: 1.05,
-            margin: 0,
+            margin: "0 0 12px",
           }}
         >
-          The Arena — Day {weekNumber}
+          {theme ? theme : `The Arena — Day ${weekNumber}`}
         </h1>
+
+        {/* Theme badge + description */}
+        {theme && (
+          <div style={{ marginBottom: "12px" }}>
+            <ThemeBadge theme={theme} />
+            {themeDescription && (
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "var(--color-text-muted)",
+                  lineHeight: 1.55,
+                  margin: "8px 0 0",
+                  maxWidth: "480px",
+                }}
+              >
+                {themeDescription}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Photo contest submit CTA */}
+        {contestType === "photo" && status === "active" && (
+          <Link
+            href={`${basePath}/${contestId}/submit`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              marginTop: "8px",
+              padding: "8px 16px",
+              background: "var(--color-purple-dim)",
+              border: "1px solid rgba(139,92,246,0.35)",
+              borderRadius: "100px",
+              color: "var(--color-purple-light)",
+              fontFamily: "var(--font-dm-mono)",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+            }}
+          >
+            Submit your photo →
+          </Link>
+        )}
       </div>
 
       {/* Right: timer */}

@@ -50,7 +50,16 @@ export default async function ContestDetailPage({ params }: RouteContext) {
             </h1>
           </div>
           <div style={{ display: "flex", gap: "10px", alignItems: "center", flexShrink: 0, paddingTop: "28px" }}>
-            <Link href={`/contest/${id}`} target="_blank" style={{
+            {contest.contest_type === "photo" && (
+              <Link href={`/admin/contests/${id}/submissions`} style={{
+                fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-status-success)",
+                border: "1px solid rgba(52,211,153,0.25)", borderRadius: "8px",
+                padding: "8px 16px", textDecoration: "none",
+              }}>
+                Submissions →
+              </Link>
+            )}
+            <Link href={`/contests/${contest.contest_type === "photo" ? "photo" : "ai-art"}/${id}`} target="_blank" style={{
               fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-purple)",
               border: "1px solid rgba(139,92,246,0.3)", borderRadius: "8px",
               padding: "8px 16px", textDecoration: "none",

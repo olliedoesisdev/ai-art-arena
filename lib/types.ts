@@ -1,3 +1,6 @@
+export type ContestType = "ai_art" | "photo";
+export type SubmissionStatus = "pending" | "approved" | "rejected";
+
 // Database types
 export interface Contest {
   id: string;
@@ -7,10 +10,28 @@ export interface Contest {
   start_date: string;
   end_date: string;
   status: "active" | "archived";
+  contest_type: ContestType;
+  theme?: string | null;
+  theme_description?: string | null;
+  max_submissions?: number | null;
   artwork_count: number;
   created_at: string;
   updated_at: string;
   artworks?: Artwork[];
+}
+
+export interface Submission {
+  id: string;
+  contest_id: string;
+  user_id: string;
+  image_url: string;
+  public_image_url?: string | null;
+  title: string;
+  description?: string | null;
+  status: SubmissionStatus;
+  submitted_at: string;
+  reviewed_at?: string | null;
+  reviewed_by?: string | null;
 }
 
 export interface Artwork {

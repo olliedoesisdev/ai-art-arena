@@ -93,3 +93,11 @@ export const resetRateLimit = new Ratelimit({
   analytics: true,
   prefix: "reset",
 });
+
+// 5 photo submissions per user per hour
+export const submissionRateLimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "1 h"),
+  analytics: true,
+  prefix: "submission",
+});
