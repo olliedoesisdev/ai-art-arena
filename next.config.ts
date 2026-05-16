@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: "G-ELG6RW124G",
+  },
   serverExternalPackages: ["pino", "pino-pretty"],
   images: {
     remotePatterns: [
