@@ -19,17 +19,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient();
   const { data: contest } = await supabase
     .from("contests")
-    .select("week_number, theme")
+    .select("contest_number, theme")
     .eq("id", id)
     .single();
 
   const title = contest?.theme
     ? `${contest.theme} — Photo Contest | AI Art Arena`
-    : `Photo Contest — Day ${contest?.week_number} | AI Art Arena`;
+    : `Photo Contest #${contest?.contest_number} | AI Art Arena`;
 
   const description = contest?.theme
     ? `Vote for the best photo in the "${contest.theme}" contest.`
-    : `Vote for the best photo in Day ${contest?.week_number}. One vote per contest.`;
+    : `Vote for the best photo in Contest #${contest?.contest_number}. One vote per contest.`;
 
   return {
     title,
@@ -71,7 +71,7 @@ export default async function PhotoContestPage({ params }: Props) {
       .select("id")
       .eq("status", "active")
       .eq("contest_type", "photo")
-      .order("week_number", { ascending: false })
+      .order("contest_number", { ascending: false })
       .limit(1)
       .single();
     redirect(active ? `/contests/photo/${active.id}` : "/contests");
@@ -99,7 +99,7 @@ export default async function PhotoContestPage({ params }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: contest.theme ? `Photo Contest — ${contest.theme}` : `Photo Contest — Day ${contest.week_number}`,
+    name: contest.theme ? `Photo Contest — ${contest.theme}` : `Photo Contest #${contest.contest_number}`,
     description: `Vote for the best photo. One vote per contest.`,
     startDate: contest.start_date,
     endDate: contest.end_date,
@@ -118,7 +118,7 @@ export default async function PhotoContestPage({ params }: Props) {
       <div className="shell">
         <ContestHeader
           contestId={contest.id}
-          weekNumber={contest.week_number}
+          contestNumber={contest.contest_number}
           endDate={contest.end_date}
           status={contest.status}
           contestType="photo"

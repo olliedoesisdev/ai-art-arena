@@ -44,8 +44,8 @@ export default async function ArchiveWeekPage({ params }: Props) {
 
   const { data: contest, error } = await supabase
     .from("contests")
-    .select("id, week_number, start_date, end_date, status, artworks(id, title, image_url, vote_count, prompt)")
-    .eq("week_number", week)
+    .select("id, contest_number, start_date, end_date, status, artworks(id, title, image_url, vote_count, prompt)")
+    .eq("contest_number", week)
     .eq("status", "archived")
     .single();
 
@@ -67,15 +67,15 @@ export default async function ArchiveWeekPage({ params }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: `AI Art Arena — Day ${contest.week_number} Results`,
-    description: `Final results for Day ${contest.week_number} of the AI Art Arena AI art voting contest.`,
+    name: `AI Art Arena — Contest #${contest.contest_number} Results`,
+    description: `Final results for Contest #${contest.contest_number} of the AI Art Arena AI art voting contest.`,
     startDate: contest.start_date,
     endDate: contest.end_date,
     eventStatus: "https://schema.org/EventEnded",
     eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
-    location: { "@type": "VirtualLocation", url: `${SITE_URL}/archive/${contest.week_number}` },
+    location: { "@type": "VirtualLocation", url: `${SITE_URL}/archive/${contest.contest_number}` },
     organizer: { "@type": "Organization", name: "AI Art Arena", url: SITE_URL },
-    url: `${SITE_URL}/archive/${contest.week_number}`,
+    url: `${SITE_URL}/archive/${contest.contest_number}`,
     ...(winner ? { winner: { "@type": "CreativeWork", name: winner.title } } : {}),
   };
 
@@ -123,7 +123,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
               marginBottom: "16px",
             }}
           >
-            Day {contest.week_number} Results
+            Contest #{contest.contest_number} Results
           </h1>
           <div style={{ display: "flex", gap: "6px", alignItems: "baseline" }}>
             <span
@@ -192,7 +192,7 @@ export default async function ArchiveWeekPage({ params }: Props) {
                   marginBottom: "10px",
                 }}
               >
-                ★ Day {contest.week_number} Champion
+                ★ Contest #{contest.contest_number} Champion
               </span>
               <h2
                 style={{

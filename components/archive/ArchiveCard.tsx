@@ -13,7 +13,7 @@ export function ArchiveCard({ contest, priority = false }: ArchiveCardProps) {
   const totalVotes = contest.artworks?.reduce((sum, a) => sum + a.vote_count, 0) ?? 0;
 
   return (
-    <Link href={`/archive/${contest.week_number}`} style={{ textDecoration: "none", display: "block" }}>
+    <Link href={`/archive/${contest.contest_number}`} style={{ textDecoration: "none", display: "block" }}>
       <article
         className="group"
         style={{
@@ -60,7 +60,7 @@ export function ArchiveCard({ contest, priority = false }: ArchiveCardProps) {
                 color: "var(--color-text)",
               }}
             >
-              Day {contest.week_number}
+              Contest #{contest.contest_number}
             </h3>
             <span
               style={{

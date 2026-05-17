@@ -16,22 +16,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = createPublicClient();
   const { data } = await supabase
     .from("artworks")
-    .select("title, prompt, contests(week_number)")
+    .select("title, prompt, contests(contest_number)")
     .eq("id", id)
     .single();
 
   if (!data) return { title: "Artwork — AI Art Arena" };
 
   const contestsRaw = data.contests;
-  const weekRow = Array.isArray(contestsRaw) ? contestsRaw[0] : contestsRaw;
-  const week = (weekRow as { week_number: number } | null)?.week_number;
+  const contestRow = Array.isArray(contestsRaw) ? contestsRaw[0] : contestsRaw;
+  const contestNum = (contestRow as { contest_number: number } | null)?.contest_number;
   return {
     title: `${data.title} — AI Art Arena`,
-    description: data.prompt ?? `AI-generated artwork from Week ${week} of AI Art Arena.`,
+    description: data.prompt ?? `AI-generated artwork from Contest #${contestNum} of AI Art Arena.`,
     alternates: { canonical: `${SITE_URL}/artwork/${id}` },
     openGraph: {
       title: data.title,
-      description: data.prompt ?? `AI-generated artwork from Week ${week}.`,
+      description: data.prompt ?? `AI-generated artwork from Contest #${contestNum}.`,
       url: `${SITE_URL}/artwork/${id}`,
       siteName: "AI Art Arena",
       type: "website",
@@ -45,7 +45,7 @@ export default async function ArtworkPage({ params }: Props) {
 
   const { data: artwork } = await supabase
     .from("artworks")
-    .select("id, title, image_url, prompt, vote_count, contest_id, created_at, contests(id, week_number, status, end_date)")
+    .select("id, title, image_url, prompt, vote_count, contest_id, created_at, contests(id, contest_number, status, end_date)")
     .eq("id", id)
     .single();
 
@@ -53,7 +53,7 @@ export default async function ArtworkPage({ params }: Props) {
 
   const contest = Array.isArray(artwork.contests)
     ? artwork.contests[0]
-    : artwork.contests as { id: string; week_number: number; status: string; end_date: string } | null;
+    : artwork.contests as { id: string; contest_number: number; status: string; end_date: string } | null;
 
   const contestEnded = contest ? new Date(contest.end_date) <= new Date() : true;
   const contestHref = contest ? `/contest/${contest.id}` : "/archive";
@@ -76,7 +76,7 @@ export default async function ArtworkPage({ params }: Props) {
             fontFamily: "var(--font-dm-mono)",
           }}
         >
-          ← {contest ? `Week ${contest.week_number}` : "Back"}
+          ← {contest ? `Contest #${contest.contest_number}` : "Back"}
         </Link>
 
         {/* Main layout: image left, details right */}
@@ -115,7 +115,7 @@ export default async function ArtworkPage({ params }: Props) {
                 color: "var(--color-purple-light)",
                 margin: 0,
               }}>
-                Week {contest.week_number} &mdash; {contestEnded ? "Final results" : "Voting open"}
+                Contest #{contest.contest_number} &mdash; {contestEnded ? "Final results" : "Voting open"}
               </p>
             )}
 
@@ -209,7 +209,7 @@ export default async function ArtworkPage({ params }: Props) {
                   letterSpacing: "0.01em",
                 }}
               >
-                Vote in Week {contest.week_number} &rarr;
+                Vote in Contest #{contest.contest_number} &rarr;
               </Link>
             )}
           </div>

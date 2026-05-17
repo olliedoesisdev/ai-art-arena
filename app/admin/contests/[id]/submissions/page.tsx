@@ -11,8 +11,8 @@ type RouteContext = { params: Promise<{ id: string }> };
 export async function generateMetadata({ params }: RouteContext) {
   const { id } = await params;
   const supabase = createAdminClient();
-  const { data } = await supabase.from("contests").select("week_number, theme").eq("id", id).single();
-  const label = data?.theme ?? `Day ${data?.week_number}`;
+  const { data } = await supabase.from("contests").select("contest_number, theme").eq("id", id).single();
+  const label = data?.theme ?? `Contest #${data?.contest_number}`;
   return { title: `Submissions — ${label} — Admin` };
 }
 
@@ -25,7 +25,7 @@ export default async function SubmissionsPage({ params }: RouteContext) {
 
   const { data: contest, error: contestError } = await supabase
     .from("contests")
-    .select("id, week_number, theme, status, contest_type")
+    .select("id, contest_number, theme, status, contest_type")
     .eq("id", id)
     .single();
 
@@ -60,7 +60,7 @@ export default async function SubmissionsPage({ params }: RouteContext) {
     })
   );
 
-  const label = contest.theme ?? `Day ${contest.week_number}`;
+  const label = contest.theme ?? `Contest #${contest.contest_number}`;
   const pending = submissionsWithUrls.filter((s) => s.status === "pending");
   const reviewed = submissionsWithUrls.filter((s) => s.status !== "pending");
 

@@ -6,7 +6,7 @@ import Image from "next/image";
 
 interface Contest {
   id: string;
-  week_number: number;
+  contest_number: number;
   status: string;
   start_date: string;
   end_date: string;
@@ -193,7 +193,7 @@ export function UploadArtworksForm({ contests, defaultContestId, defaultArtworkC
           <option value="">â€” Select a contest â€”</option>
           {contests.map((c) => (
             <option key={c.id} value={c.id}>
-              Week {c.week_number} ({c.status}) â€” {new Date(c.start_date).toLocaleDateString()}
+              Contest #{c.contest_number} ({c.status}) — {new Date(c.start_date).toLocaleDateString()}
             </option>
           ))}
         </select>

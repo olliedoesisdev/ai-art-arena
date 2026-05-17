@@ -4,7 +4,7 @@ export type SubmissionStatus = "pending" | "approved" | "rejected";
 // Database types
 export interface Contest {
   id: string;
-  week_number: number;
+  contest_number: number;
   title: string;
   description?: string;
   start_date: string;
@@ -96,7 +96,7 @@ export interface VoteHistoryItem {
   artwork_image_url: string;
   artwork_vote_count: number;
   contest_id: string;
-  contest_week: number;
+  contest_number: number;
   contest_status: "active" | "archived";
 }
 
@@ -107,7 +107,7 @@ export interface CommentHistoryItem {
   comment_body: string;
   commented_at: string;
   contest_id: string;
-  contest_week: number;
+  contest_number: number;
   contest_status: "active" | "archived";
 }
 
@@ -123,7 +123,7 @@ export interface ActivityFeedItem {
   artwork_image_url: string | null;
   artwork_vote_count: number | null;
   contest_id: string;
-  contest_week: number;
+  contest_number: number;
   contest_status: "active" | "archived";
   comment_body: string | null;
 }
@@ -154,7 +154,7 @@ export interface DailyVoteStat {
 
 export interface ContestVoteStat {
   id: string;
-  week_number: number;
+  contest_number: number;
   status: "active" | "archived";
   start_date: string;
   end_date: string;
@@ -176,7 +176,7 @@ export interface TopArtwork {
   title: string;
   image_url: string;
   vote_count: number;
-  contest_week: number | null;
+  contest_number: number | null;
 }
 
 export interface AnalyticsSummary {

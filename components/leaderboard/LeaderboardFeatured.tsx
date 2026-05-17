@@ -6,7 +6,7 @@ interface LeaderboardFeaturedProps {
     title: string;
     image_url: string;
     vote_count: number;
-    contests: { week_number: number } | null;
+    contests: { contest_number: number } | null;
   };
 }
 
@@ -71,7 +71,7 @@ export function LeaderboardFeatured({ artwork }: LeaderboardFeaturedProps) {
 
         {artwork.contests && (
           <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginBottom: "16px" }}>
-            Day {artwork.contests.week_number}
+            Contest #{artwork.contests.contest_number}
           </p>
         )}
 

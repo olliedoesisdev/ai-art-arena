@@ -26,13 +26,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const { week_number, start_date, end_date, status } = result.data;
+    const { contest_number, start_date, end_date, status } = result.data;
     const supabase = await createClient();
 
     const { data: contest, error } = await supabase
       .from("contests")
       .insert({
-        week_number,
+        contest_number,
         start_date: new Date(start_date).toISOString(),
         end_date: new Date(end_date).toISOString(),
         status: status || "active",

@@ -1083,7 +1083,7 @@ export async function POST(request: Request) {
         ordered: true,
         items: [
           "archive-contest: runs hourly, checks for any active contest past its end_date, sets status = 'archived', fires contest/archived event",
-          "create-next-contest: triggered by contest/archived event, reads contest duration from system_config, creates the new contest row with week_number + 1",
+          "create-next-contest: triggered by contest/archived event, reads contest duration from system_config, creates the new contest row with contest_number + 1",
           "send-vote-reminder: runs hourly, finds contests ending in the next 24–25 hours, emails subscribed users via Resend",
         ],
       },

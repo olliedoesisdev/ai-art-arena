@@ -5,7 +5,7 @@ const validUUID = '123e4567-e89b-12d3-a456-426614174000'
 
 describe('CreateContestSchema', () => {
   const validContest = {
-    week_number: 1,
+    contest_number: 1,
     start_date: '2026-01-01T00:00:00.000Z',
     end_date: '2026-01-08T00:00:00.000Z',
     status: 'active' as const,
@@ -16,12 +16,12 @@ describe('CreateContestSchema', () => {
     expect(CreateContestSchema.safeParse(validContest).success).toBe(true)
   })
 
-  it('rejects week_number of 0', () => {
-    expect(CreateContestSchema.safeParse({ ...validContest, week_number: 0 }).success).toBe(false)
+  it('rejects contest_number of 0', () => {
+    expect(CreateContestSchema.safeParse({ ...validContest, contest_number: 0 }).success).toBe(false)
   })
 
-  it('rejects negative week_number', () => {
-    expect(CreateContestSchema.safeParse({ ...validContest, week_number: -1 }).success).toBe(false)
+  it('rejects negative contest_number', () => {
+    expect(CreateContestSchema.safeParse({ ...validContest, contest_number: -1 }).success).toBe(false)
   })
 
   it('rejects invalid status', () => {

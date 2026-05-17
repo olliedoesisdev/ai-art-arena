@@ -26,7 +26,7 @@ export default async function PhotoSubmitLandingPage() {
 
   const { data: activeContests } = await supabase
     .from("contests")
-    .select("id, week_number, theme, theme_description, end_date")
+    .select("id, contest_number, theme, theme_description, end_date")
     .eq("status", "active")
     .eq("contest_type", "photo")
     .order("end_date", { ascending: true });
@@ -118,7 +118,7 @@ export default async function PhotoSubmitLandingPage() {
             {activeContests.map((contest) => {
               const endsAt = new Date(contest.end_date);
               const daysLeft = Math.ceil((endsAt.getTime() - Date.now()) / 86400000);
-              const contestTitle = contest.theme ?? `Photo Contest — Day ${contest.week_number}`;
+              const contestTitle = contest.theme ?? `Photo Contest #${contest.contest_number}`;
 
               return (
                 <Link
@@ -141,7 +141,7 @@ export default async function PhotoSubmitLandingPage() {
                   >
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "6px" }}>
-                        Day {contest.week_number}
+                        Contest #{contest.contest_number}
                       </p>
                       <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1.0625rem", color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 4px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {contestTitle}

@@ -26,7 +26,7 @@ export function ContestBarChart({ data }: Props) {
   }
 
   const chartData = data.map((c) => ({
-    week: `Wk ${c.week_number}`,
+    week: `#${c.contest_number}`,
     Votes: c.total_votes,
     active: c.status === "active",
   }));

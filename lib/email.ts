@@ -65,14 +65,14 @@ interface CommentNotificationData {
   commenterEmail: string | null;
   commentBody: string;
   artworkTitle: string;
-  weekNumber: number;
+  contestNumber: number;
   contestId: string;
 }
 
 export async function sendCommentNotification(data: CommentNotificationData): Promise<void> {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  const { commenterName, commenterEmail, commentBody, artworkTitle, weekNumber, contestId } = data;
+  const { commenterName, commenterEmail, commentBody, artworkTitle, contestNumber, contestId } = data;
 
   const pageUrl = `${SITE_URL}/contest/${contestId}`;
   const adminEmail = process.env.ADMIN_EMAIL;
@@ -87,7 +87,7 @@ export async function sendCommentNotification(data: CommentNotificationData): Pr
   await resend.emails.send({
     from: "AI Art Arena <notifications@olliedoesis.dev>",
     to: adminEmail,
-    subject: `New comment on "${artworkTitle}" — Day ${weekNumber}`,
+    subject: `New comment on "${artworkTitle}" — Contest #${contestNumber}`,
     html: `
       <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;
                   background: #111119; color: #eeeeff; padding: 40px;
@@ -102,7 +102,7 @@ export async function sendCommentNotification(data: CommentNotificationData): Pr
           New comment
         </h1>
         <p style="font-size: 13px; color: #7878a0; margin: 0 0 32px 0;">
-          Day ${weekNumber} &mdash; ${artworkTitle}
+          Contest #${contestNumber} &mdash; ${artworkTitle}
         </p>
 
         <div style="background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.2);

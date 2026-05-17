@@ -11,7 +11,7 @@ async function getActiveContestId(): Promise<string | null> {
     .from("contests")
     .select("id")
     .eq("status", "active")
-    .order("week_number", { ascending: false })
+    .order("contest_number", { ascending: false })
     .limit(1)
     .maybeSingle();
   return data?.id ?? null;

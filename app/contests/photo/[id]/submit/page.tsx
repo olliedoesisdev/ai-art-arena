@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient();
   const { data: contest } = await supabase
     .from("contests")
-    .select("theme, week_number")
+    .select("theme, contest_number")
     .eq("id", id)
     .single();
 
@@ -42,7 +42,7 @@ export default async function PhotoSubmitPage({ params }: Props) {
 
   const { data: contest, error } = await supabase
     .from("contests")
-    .select("id, week_number, status, contest_type, theme, theme_description, max_submissions")
+    .select("id, contest_number, status, contest_type, theme, theme_description, max_submissions")
     .eq("id", id)
     .single();
 
@@ -127,7 +127,7 @@ export default async function PhotoSubmitPage({ params }: Props) {
     );
   }
 
-  const contestTitle = contest.theme ?? `Photo Contest — Day ${contest.week_number}`;
+  const contestTitle = contest.theme ?? `Photo Contest #${contest.contest_number}`;
 
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>

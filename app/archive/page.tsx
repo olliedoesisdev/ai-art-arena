@@ -31,9 +31,9 @@ export default async function ArchivePage() {
 
   const { data: contests } = await supabase
     .from("contests")
-    .select("id, week_number, start_date, end_date, status, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
+    .select("id, contest_number, start_date, end_date, status, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
     .eq("status", "archived")
-    .order("week_number", { ascending: false });
+    .order("contest_number", { ascending: false });
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -45,8 +45,8 @@ export default async function ArchivePage() {
     ...(contests && contests.length > 0 ? {
       hasPart: contests.map((c) => ({
         "@type": "Event",
-        name: `AI Art Arena — Day ${c.week_number}`,
-        url: `${SITE_URL}/archive/${c.week_number}`,
+        name: `AI Art Arena — Contest #${c.contest_number}`,
+        url: `${SITE_URL}/archive/${c.contest_number}`,
         startDate: c.start_date,
         endDate: c.end_date,
         eventStatus: "https://schema.org/EventEnded",

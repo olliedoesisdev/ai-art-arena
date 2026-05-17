@@ -12,8 +12,8 @@ export default async function UploadArtworksPage() {
   const supabase = createAdminClient();
   const { data: contests } = await supabase
     .from("contests")
-    .select("id, week_number, status, start_date, end_date, artwork_count")
-    .order("week_number", { ascending: false });
+    .select("id, contest_number, status, start_date, end_date, artwork_count")
+    .order("contest_number", { ascending: false });
 
   const activeContest = contests?.find((c) => c.status === "active");
 

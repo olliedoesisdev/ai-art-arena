@@ -18,30 +18,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient();
   const { data: contest } = await supabase
     .from("contests")
-    .select("week_number")
+    .select("contest_number")
     .eq("id", id)
     .single();
 
-  const week = contest?.week_number;
+  const num = contest?.contest_number;
   return {
-    title: week ? `Vote on AI Art — Day ${week} | AI Art Arena` : "Contest — AI Art Arena",
-    description: week
-      ? `Vote for the best AI-generated artwork in Day ${week}. One vote per contest, no account needed.`
+    title: num ? `Vote on AI Art — Contest #${num} | AI Art Arena` : "Contest — AI Art Arena",
+    description: num
+      ? `Vote for the best AI-generated artwork in Contest #${num}. One vote per contest, no account needed.`
       : "Vote for your favourite AI-generated artwork.",
     alternates: { canonical: `${SITE_URL}/contest/${id}` },
     openGraph: {
-      title: week ? `Vote on AI Art — Day ${week} | AI Art Arena` : "Contest — AI Art Arena",
-      description: `Day ${week} is live. Pick your favourite AI artwork.`,
+      title: num ? `Vote on AI Art — Contest #${num} | AI Art Arena` : "Contest — AI Art Arena",
+      description: `Contest #${num} is live. Pick your favourite AI artwork.`,
       url: `${SITE_URL}/contest/${id}`,
       siteName: "AI Art Arena",
-      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena — Day ${week} voting contest` }],
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena — Contest #${num} voting` }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: week ? `Vote on AI Art — Day ${week} | AI Art Arena` : "Contest — AI Art Arena",
-      description: week
-        ? `Day ${week} is live. Pick your favourite AI-generated artwork — one vote per contest.`
+      title: num ? `Vote on AI Art — Contest #${num} | AI Art Arena` : "Contest — AI Art Arena",
+      description: num
+        ? `Contest #${num} is live. Pick your favourite AI-generated artwork — one vote per contest.`
         : "Vote for your favourite AI-generated artwork. One vote per contest.",
       images: [`${SITE_URL}/og-image.png`],
     },
@@ -69,7 +69,7 @@ export default async function ContestPage({ params }: Props) {
       .from("contests")
       .select("id")
       .eq("status", "active")
-      .order("week_number", { ascending: false })
+      .order("contest_number", { ascending: false })
       .limit(1)
       .single();
     redirect(active ? `/contest/${active.id}` : "/");
@@ -100,8 +100,8 @@ export default async function ContestPage({ params }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: `AI Art Arena — Day ${contest.week_number}`,
-    description: `Vote for the best AI-generated artwork in Day ${contest.week_number}. One vote per contest.`,
+    name: `AI Art Arena — Contest #${contest.contest_number}`,
+    description: `Vote for the best AI-generated artwork in Contest #${contest.contest_number}. One vote per contest.`,
     startDate: contest.start_date,
     endDate: contest.end_date,
     eventStatus: contest.status === "active"
@@ -119,7 +119,7 @@ export default async function ContestPage({ params }: Props) {
       <div className="shell">
         <ContestHeader
           contestId={contest.id}
-          weekNumber={contest.week_number}
+          contestNumber={contest.contest_number}
           endDate={contest.end_date}
           status={contest.status}
           contestType={contest.contest_type ?? "ai_art"}

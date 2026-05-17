@@ -5,7 +5,7 @@ export interface HomeStats {
   total_artworks: number;
   total_contests: number;
   active_id: string | null;
-  active_week: number | null;
+  active_number: number | null;
 }
 
 export interface MosaicArtwork {
@@ -26,7 +26,7 @@ export interface HomeData {
   stats: HomeStats | null;
   mosaicArtworks: MosaicArtwork[];
   lastWinner: LastWinnerArtwork | null;
-  lastWinnerWeek: number | null;
+  lastWinnerContestNumber: number | null;
 }
 
 export async function getHomeData(): Promise<HomeData> {
@@ -44,9 +44,9 @@ export async function getHomeData(): Promise<HomeData> {
     // limit(1) + maybeSingle() avoids an error when no archived contests exist yet
     supabase
       .from("contests")
-      .select("id, week_number, artworks(id, title, image_url, vote_count, contest_id)")
+      .select("id, contest_number, artworks(id, title, image_url, vote_count, contest_id)")
       .eq("status", "archived")
-      .order("week_number", { ascending: false })
+      .order("contest_number", { ascending: false })
       .limit(1)
       .maybeSingle(),
   ]);
@@ -64,16 +64,16 @@ export async function getHomeData(): Promise<HomeData> {
 
   const lastWinnerContest = lastWinnerResult.data;
   let lastWinner: LastWinnerArtwork | null = null;
-  let lastWinnerWeek: number | null = null;
+  let lastWinnerContestNumber: number | null = null;
 
   if (lastWinnerContest) {
     const artworks = lastWinnerContest.artworks as LastWinnerArtwork[];
     const winner = artworks?.sort((a, b) => b.vote_count - a.vote_count)[0] ?? null;
     if (winner) {
       lastWinner = winner;
-      lastWinnerWeek = lastWinnerContest.week_number;
+      lastWinnerContestNumber = lastWinnerContest.contest_number;
     }
   }
 
-  return { stats, mosaicArtworks, lastWinner, lastWinnerWeek };
+  return { stats, mosaicArtworks, lastWinner, lastWinnerContestNumber };
 }

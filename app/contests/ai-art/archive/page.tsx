@@ -33,7 +33,7 @@ export default async function AiArtArchivePage() {
 
   const { data: contests } = await supabase
     .from("contests")
-    .select("id, week_number, start_date, end_date, status, contest_type, theme, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
+    .select("id, contest_number, start_date, end_date, status, contest_type, theme, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
     .eq("status", "archived")
     .eq("contest_type", "ai_art")
     .order("end_date", { ascending: false });

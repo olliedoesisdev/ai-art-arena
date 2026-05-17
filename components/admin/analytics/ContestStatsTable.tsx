@@ -14,7 +14,7 @@ export function ContestStatsTable({ data }: Props) {
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid rgba(139,92,246,0.12)" }}>
-            {["Week", "Status", "Artworks", "Total Votes", "Avg / Artwork", "vs Prev"].map((h) => (
+            {["Contest #", "Status", "Artworks", "Total Votes", "Avg / Artwork", "vs Prev"].map((h) => (
               <th
                 key={h}
                 style={{
@@ -41,7 +41,7 @@ export function ContestStatsTable({ data }: Props) {
             return (
               <tr key={contest.id} style={{ borderBottom: "1px solid rgba(139,92,246,0.06)" }}>
                 <td style={{ padding: "12px 12px", color: "var(--color-text)", fontWeight: 600, fontFamily: "var(--font-dm-mono)" }}>
-                  {contest.week_number}
+                  {contest.contest_number}
                 </td>
                 <td style={{ padding: "12px 12px" }}>
                   <span style={{

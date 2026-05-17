@@ -6,7 +6,7 @@ import { ContestType } from "@/lib/types";
 
 interface ContestHeaderProps {
   contestId: string;
-  weekNumber: number;
+  contestNumber: number;
   endDate: string;
   status: "active" | "archived";
   contestType: ContestType;
@@ -16,7 +16,7 @@ interface ContestHeaderProps {
 
 export function ContestHeader({
   contestId,
-  weekNumber,
+  contestNumber,
   endDate,
   status,
   contestType,
@@ -49,7 +49,7 @@ export function ContestHeader({
             textTransform: "uppercase",
           }}
         >
-          {typeLabel} &middot; Day {weekNumber} &middot;{" "}
+          {typeLabel} &middot; Contest #{contestNumber} &middot;{" "}
           {status === "active" ? "Open for voting" : "Archived"}
         </div>
 
@@ -64,7 +64,7 @@ export function ContestHeader({
             margin: "0 0 12px",
           }}
         >
-          {theme ? theme : `The Arena — Day ${weekNumber}`}
+          {theme ? theme : `The Arena — Contest #${contestNumber}`}
         </h1>
 
         {/* Theme badge + description */}

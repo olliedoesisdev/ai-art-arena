@@ -23,11 +23,11 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
     supabase.from("artworks").select("id", { count: "exact", head: true }),
     supabase.from("contests").select("id", { count: "exact", head: true }),
     supabase.from("daily_vote_stats").select("day, vote_count"),
-    supabase.from("contest_vote_stats").select("*").order("week_number", { ascending: true }),
+    supabase.from("contest_vote_stats").select("*").order("contest_number", { ascending: true }),
     supabase.from("vote_engagement_stats").select("*").single(),
     supabase
       .from("artworks")
-      .select("id, title, image_url, vote_count, contests(week_number)")
+      .select("id, title, image_url, vote_count, contests(contest_number)")
       .order("vote_count", { ascending: false })
       .limit(10),
   ]);
@@ -37,16 +37,16 @@ export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   const tc = totalContests ?? 0;
 
   const topArtworks: TopArtwork[] = (topArtworksRaw ?? []).map((a) => {
-    const contests = a.contests as { week_number: number } | { week_number: number }[] | null;
-    const week = Array.isArray(contests)
-      ? (contests[0]?.week_number ?? null)
-      : (contests?.week_number ?? null);
+    const contests = a.contests as { contest_number: number } | { contest_number: number }[] | null;
+    const num = Array.isArray(contests)
+      ? (contests[0]?.contest_number ?? null)
+      : (contests?.contest_number ?? null);
     return {
       id: a.id,
       title: a.title,
       image_url: a.image_url,
       vote_count: a.vote_count,
-      contest_week: week,
+      contest_number: num,
     };
   });
 

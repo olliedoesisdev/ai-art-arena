@@ -14,7 +14,7 @@ export const archiveContest = inngest.createFunction(
     const expired = await step.run('find-expired-contests', async () => {
       const { data, error } = await supabase
         .from('contests')
-        .select('id, week_number, contest_type, theme')
+        .select('id, contest_number, contest_type, theme')
         .eq('status', 'active')
         .lt('end_date', new Date().toISOString())
       if (error) throw error
@@ -34,7 +34,7 @@ export const archiveContest = inngest.createFunction(
 
       await step.run(`notify-archived-${contest.id}`, async () => {
         const resend = new Resend(process.env.RESEND_API_KEY)
-        const label = contest.theme ?? `Day ${contest.week_number}`
+        const label = contest.theme ?? `Contest #${contest.contest_number}`
         const typeLabel = contest.contest_type === 'photo' ? 'Photo Contest' : 'AI Art Contest'
         await resend.emails.send({
           from: 'AI Art Arena <no-reply@olliedoesis.dev>',

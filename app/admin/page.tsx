@@ -27,8 +27,8 @@ export default async function AdminPage() {
       supabase.from("artworks").select("id", { count: "exact", head: true }),
       supabase.from("votes").select("id", { count: "exact", head: true }),
       supabase.from("votes").select("id", { count: "exact", head: true }).gte("created_at", todayISO),
-      supabase.from("contests").select("id, week_number, status, start_date, end_date").order("week_number", { ascending: false }).limit(5),
-      supabase.from("votes").select("id, created_at, artworks(title, contests(week_number))").order("created_at", { ascending: false }).limit(8),
+      supabase.from("contests").select("id, contest_number, status, start_date, end_date").order("contest_number", { ascending: false }).limit(5),
+      supabase.from("votes").select("id, created_at, artworks(title, contests(contest_number))").order("created_at", { ascending: false }).limit(8),
     ]);
 
   const activeContests = contestsResult.data?.filter((c) => c.status === "active").length ?? 0;
@@ -102,7 +102,7 @@ export default async function AdminPage() {
             ) : (recentContests.data ?? []).map((c) => (
               <div key={c.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "var(--color-bg-surface2)", borderRadius: "8px" }}>
                 <div>
-                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>Day {c.week_number}</div>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>Contest #{c.contest_number}</div>
                   <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
                     {new Date(c.start_date).toLocaleDateString()} &ndash; {new Date(c.end_date).toLocaleDateString()}
                   </div>
@@ -131,7 +131,7 @@ export default async function AdminPage() {
               <p style={{ fontSize: "0.875rem", color: "var(--color-text-dim)" }}>No votes yet</p>
             ) : (recentVotes.data ?? []).map((v, i) => {
               const artworkRaw = Array.isArray(v.artworks) ? v.artworks[0] : v.artworks;
-              const artwork = artworkRaw as { title: string; contests: { week_number: number }[] | null } | null;
+              const artwork = artworkRaw as { title: string; contests: { contest_number: number }[] | null } | null;
               return (
                 <div key={v.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "8px 14px", background: "var(--color-bg-surface2)", borderRadius: "8px" }}>
                   <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "var(--color-text-dim)", minWidth: "20px" }}>
@@ -141,7 +141,7 @@ export default async function AdminPage() {
                     <div style={{ fontSize: "0.8125rem", color: "var(--color-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {artwork?.title ?? "Unknown"}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Day {artwork?.contests?.[0]?.week_number ?? "?"}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>Contest #{artwork?.contests?.[0]?.contest_number ?? "?"}</div>
                   </div>
                   <div style={{ fontSize: "0.6875rem", color: "var(--color-text-dim)" }}>
                     {new Date(v.created_at).toLocaleDateString()}

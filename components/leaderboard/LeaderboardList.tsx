@@ -6,7 +6,7 @@ interface LeaderboardEntry {
   image_url: string;
   vote_count: number;
   contest_id: string;
-  contests: { week_number: number } | null;
+  contests: { contest_number: number } | null;
 }
 
 const RANK_COLORS: Record<number, string> = {
@@ -98,7 +98,7 @@ export function LeaderboardList({ artworks }: { artworks: LeaderboardEntry[] }) 
               </p>
               {artwork.contests && (
                 <p style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                  Day {artwork.contests.week_number}
+                  Contest #{artwork.contests.contest_number}
                 </p>
               )}
             </div>

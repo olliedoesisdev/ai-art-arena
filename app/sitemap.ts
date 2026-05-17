@@ -11,9 +11,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [{ data: contests }, { data: active }] = await Promise.all([
     supabase
       .from("contests")
-      .select("week_number, created_at")
+      .select("contest_number, created_at")
       .eq("status", "archived")
-      .order("week_number", { ascending: false }),
+      .order("contest_number", { ascending: false }),
     supabase
       .from("contests")
       .select("id")
@@ -23,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const archiveUrls: MetadataRoute.Sitemap = (contests ?? []).map((c) => ({
-    url: `${BASE}/archive/${c.week_number}`,
+    url: `${BASE}/archive/${c.contest_number}`,
     lastModified: new Date(c.created_at),
     changeFrequency: "never",
     priority: 0.6,

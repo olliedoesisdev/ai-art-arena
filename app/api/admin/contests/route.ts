@@ -7,7 +7,7 @@ import { getClientIP, hashIP } from "@/lib/utils";
 import { z } from "zod";
 
 const CreateContestSchema = z.object({
-  week_number: z.number().int().positive(),
+  contest_number: z.number().int().positive(),
   title: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
   start_date: z.iso.datetime(),
@@ -53,28 +53,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { week_number, title, description, start_date, end_date, status, artwork_count } = result.data;
+    const { contest_number, title, description, start_date, end_date, status, artwork_count } = result.data;
     const supabase = createAdminClient();
 
     const { data: existingContest } = await supabase
       .from("contests")
       .select("id")
-      .eq("week_number", week_number)
+      .eq("contest_number", contest_number)
       .single();
 
     if (existingContest) {
-      return jsonResponse(requestId, { error: `Week ${week_number} already exists` }, { status: 409 });
+      return jsonResponse(requestId, { error: `Contest #${contest_number} already exists` }, { status: 409 });
     }
 
     if (status === "active") {
       const { data: activeContests } = await supabase
         .from("contests")
-        .select("id, week_number")
+        .select("id, contest_number")
         .eq("status", "active");
 
       if (activeContests && activeContests.length > 0) {
-        return jsonResponse(requestId, 
-          { error: `There is already an active contest (Week ${activeContests[0].week_number}). Archive it first.` },
+        return jsonResponse(requestId,
+          { error: `There is already an active contest (Contest #${activeContests[0].contest_number}). Archive it first.` },
           { status: 409 }
         );
       }
@@ -83,8 +83,8 @@ export async function POST(request: NextRequest) {
     const { data: newContest, error: insertError } = await supabase
       .from("contests")
       .insert({
-        week_number,
-        title: title ?? `Week ${week_number}`,
+        contest_number,
+        title: title ?? `Contest #${contest_number}`,
         description: description ?? null,
         start_date: new Date(start_date).toISOString(),
         end_date: new Date(end_date).toISOString(),

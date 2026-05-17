@@ -95,21 +95,21 @@ export async function POST(request: Request) {
         try {
           const { data } = await supabase
             .from("artworks")
-            .select("title, contest_id, contests(week_number)")
+            .select("title, contest_id, contests(contest_number)")
             .eq("id", artwork_id)
             .single();
           if (!data) return;
           const contestRow = Array.isArray(data.contests)
             ? data.contests[0]
             : data.contests;
-          const week = (contestRow as { week_number: number } | null)?.week_number;
-          if (!week) return;
+          const contestNum = (contestRow as { contest_number: number } | null)?.contest_number;
+          if (!contestNum) return;
           await sendCommentNotification({
             commenterName: name,
             commenterEmail: email || null,
             commentBody,
             artworkTitle: data.title,
-            weekNumber: week,
+            contestNumber: contestNum,
             contestId: data.contest_id,
           });
         } catch (err) {

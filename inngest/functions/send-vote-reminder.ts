@@ -21,7 +21,7 @@ export const sendVoteReminder = inngest.createFunction(
     const upcoming = await step.run('find-ending-contests', async () => {
       const { data, error } = await supabase
         .from('contests')
-        .select('id, week_number, end_date')
+        .select('id, contest_number, end_date')
         .eq('status', 'active')
         .gte('end_date', in24h.toISOString())
         .lte('end_date', in25h.toISOString())
@@ -36,8 +36,8 @@ export const sendVoteReminder = inngest.createFunction(
         await resend.emails.send({
           from: 'AI Art Arena <no-reply@olliedoesis.dev>',
           to: [adminEmail],
-          subject: `Last chance to vote — Day ${contest.week_number} ends soon`,
-          html: `<p>Day ${contest.week_number} closes soon. <a href="https://olliedoesis.dev/contest/${contest.id}">Cast your vote now.</a></p>`,
+          subject: `Last chance to vote — Contest #${contest.contest_number} ends soon`,
+          html: `<p>Contest #${contest.contest_number} closes soon. <a href="https://olliedoesis.dev/contest/${contest.id}">Cast your vote now.</a></p>`,
         })
       })
     }

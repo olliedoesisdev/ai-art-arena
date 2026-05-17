@@ -31,7 +31,7 @@ export default async function LeaderboardPage() {
 
   const { data: artworks } = await supabase
     .from("artworks")
-    .select("id, title, image_url, vote_count, contest_id, contests(week_number)")
+    .select("id, title, image_url, vote_count, contest_id, contests(contest_number)")
     .order("vote_count", { ascending: false })
     .limit(20);
 
@@ -41,7 +41,7 @@ export default async function LeaderboardPage() {
     image_url: string;
     vote_count: number;
     contest_id: string;
-    contests: { week_number: number } | null;
+    contests: { contest_number: number } | null;
   };
 
   type RawRow = {
@@ -50,7 +50,7 @@ export default async function LeaderboardPage() {
     image_url: string;
     vote_count: number;
     contest_id: string;
-    contests: { week_number: number } | { week_number: number }[] | null;
+    contests: { contest_number: number } | { contest_number: number }[] | null;
   };
 
   const entries: LeaderboardEntry[] = ((artworks ?? []) as RawRow[]).map((a) => ({
@@ -60,8 +60,8 @@ export default async function LeaderboardPage() {
     vote_count: a.vote_count,
     contest_id: a.contest_id,
     contests: Array.isArray(a.contests)
-      ? (a.contests[0] as { week_number: number } | undefined) ?? null
-      : (a.contests as { week_number: number } | null),
+      ? (a.contests[0] as { contest_number: number } | undefined) ?? null
+      : (a.contests as { contest_number: number } | null),
   }));
 
   const topArtwork = entries[0] ?? null;
@@ -77,7 +77,7 @@ export default async function LeaderboardPage() {
       "@type": "ListItem",
       position: i + 1,
       name: a.title,
-      url: a.contests?.week_number ? `${SITE_URL}/archive/${a.contests.week_number}` : `${SITE_URL}/leaderboard`,
+      url: a.contests?.contest_number ? `${SITE_URL}/archive/${a.contests.contest_number}` : `${SITE_URL}/leaderboard`,
     })),
   };
 

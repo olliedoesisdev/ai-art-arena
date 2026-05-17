@@ -13,8 +13,8 @@ export default async function ManageContestsPage() {
   const supabase = createAdminClient();
   const { data: contests } = await supabase
     .from("contests")
-    .select("id, week_number, start_date, end_date, status, artworks(count)")
-    .order("week_number", { ascending: false });
+    .select("id, contest_number, start_date, end_date, status, artworks(count)")
+    .order("contest_number", { ascending: false });
 
   const total = contests?.length ?? 0;
   const active = contests?.filter((c) => c.status === "active").length ?? 0;
@@ -72,7 +72,7 @@ export default async function ManageContestsPage() {
               borderBottom: i < contests.length - 1 ? "1px solid rgba(139,92,246,0.08)" : "none",
             }}>
               <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", fontWeight: 500, color: "var(--color-text)" }}>
-                W{c.week_number}
+                #{c.contest_number}
               </div>
               <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>{new Date(c.start_date).toLocaleDateString()}</div>
               <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>{new Date(c.end_date).toLocaleDateString()}</div>

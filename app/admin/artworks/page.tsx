@@ -13,7 +13,7 @@ export default async function ManageArtworksPage() {
   const supabase = createAdminClient();
   const { data: artworks } = await supabase
     .from("artworks")
-    .select("id, title, prompt, image_url, vote_count, created_at, contests(id, week_number, status)")
+    .select("id, title, prompt, image_url, vote_count, created_at, contests(id, contest_number, status)")
     .order("created_at", { ascending: false });
 
   return (
@@ -45,7 +45,7 @@ export default async function ManageArtworksPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
           {artworks.map((artwork) => {
             const contestRaw = Array.isArray(artwork.contests) ? artwork.contests[0] : artwork.contests;
-            const contest = contestRaw as { id: string; week_number: number; status: string } | null;
+            const contest = contestRaw as { id: string; contest_number: number; status: string } | null;
             return (
               <div key={artwork.id} style={{ background: "var(--color-bg-surface)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden" }}>
                 <div style={{ position: "relative", aspectRatio: "1", background: "var(--color-bg-surface2)" }}>
@@ -63,7 +63,7 @@ export default async function ManageArtworksPage() {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       {contest && (
-                        <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--color-text-muted)" }}>W{contest.week_number}</span>
+                        <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--color-text-muted)" }}>#{contest.contest_number}</span>
                       )}
                       {contest && (
                         <span style={{

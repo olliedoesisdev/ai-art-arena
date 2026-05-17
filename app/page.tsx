@@ -64,7 +64,7 @@ const carouselPosts = [...BLOG_POSTS]
   }));
 
 export default async function HomePage() {
-  const [{ stats, mosaicArtworks, lastWinner, lastWinnerWeek }, session] = await Promise.all([
+  const [{ stats, mosaicArtworks, lastWinner, lastWinnerContestNumber }, session] = await Promise.all([
     getHomeData(),
     auth(),
   ]);
@@ -399,7 +399,7 @@ export default async function HomePage() {
                   lineHeight: 1.1,
                 }}>
                   {activeId
-                    ? `Day ${stats?.active_week ?? ""} is live.`
+                    ? `Contest #${stats?.active_number ?? ""} is live.`
                     : "No contest running right now."}
                 </h2>
                 <p style={{ fontSize: "0.9375rem", color: "var(--color-text-muted)", lineHeight: 1.65, margin: 0, maxWidth: "480px" }}>
@@ -530,8 +530,8 @@ export default async function HomePage() {
       </section>
 
       {/* ── Last winner ──────────────────────────────────────────── */}
-      {lastWinner && lastWinnerWeek !== null && (
-        <LastWinner artwork={lastWinner} weekNumber={lastWinnerWeek} />
+      {lastWinner && lastWinnerContestNumber !== null && (
+        <LastWinner artwork={lastWinner} contestNumber={lastWinnerContestNumber} />
       )}
 
       {/* ── Live stats ───────────────────────────────────────────── */}

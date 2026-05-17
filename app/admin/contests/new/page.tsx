@@ -12,12 +12,12 @@ export default async function NewContestPage() {
   const supabase = createAdminClient();
   const { data: latest } = await supabase
     .from("contests")
-    .select("week_number")
-    .order("week_number", { ascending: false })
+    .select("contest_number")
+    .order("contest_number", { ascending: false })
     .limit(1)
     .single();
 
-  const suggestedWeekNumber = latest ? latest.week_number + 1 : 1;
+  const suggestedContestNumber = latest ? latest.contest_number + 1 : 1;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
@@ -27,7 +27,7 @@ export default async function NewContestPage() {
       </div>
 
       <div style={{ background: "var(--color-bg-surface)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", padding: "32px", maxWidth: "560px" }}>
-        <CreateContestForm suggestedWeekNumber={suggestedWeekNumber} />
+        <CreateContestForm suggestedContestNumber={suggestedContestNumber} />
       </div>
 
       <div style={{ background: "rgba(139,92,246,0.05)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "12px", padding: "20px 24px", maxWidth: "560px" }}>

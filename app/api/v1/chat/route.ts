@@ -17,9 +17,9 @@ async function getActiveContestContext(): Promise<string> {
     const supabase = createPublicClient();
     const { data: contest } = await supabase
       .from("contests")
-      .select("id, week_number, end_date, artworks(id, title, vote_count)")
+      .select("id, contest_number, end_date, artworks(id, title, vote_count)")
       .eq("status", "active")
-      .order("week_number", { ascending: false })
+      .order("contest_number", { ascending: false })
       .limit(1)
       .maybeSingle();
 
@@ -36,7 +36,7 @@ async function getActiveContestContext(): Promise<string> {
       .map((a, i) => `  ${i + 1}. "${a.title}" — ${a.vote_count} vote${a.vote_count !== 1 ? "s" : ""}`)
       .join("\n");
 
-    return `ACTIVE CONTEST: Day ${contest.week_number}
+    return `ACTIVE CONTEST: Contest #${contest.contest_number}
 Voting closes in: ${timeLeft}
 Contest page: /contest/${contest.id}
 Artworks in this contest (ranked by votes):

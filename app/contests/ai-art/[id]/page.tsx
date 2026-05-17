@@ -20,19 +20,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const supabase = await createClient();
   const { data: contest } = await supabase
     .from("contests")
-    .select("week_number, theme")
+    .select("contest_number, theme")
     .eq("id", id)
     .single();
 
   const title = contest?.theme
     ? `${contest.theme} — AI Art Contest | AI Art Arena`
-    : contest?.week_number
-    ? `Vote on AI Art — Day ${contest.week_number} | AI Art Arena`
+    : contest?.contest_number
+    ? `Vote on AI Art — Contest #${contest.contest_number} | AI Art Arena`
     : "Contest — AI Art Arena";
 
   const description = contest?.theme
     ? `Vote for the best AI-generated artwork in the "${contest.theme}" contest.`
-    : `Vote for the best AI-generated artwork in Day ${contest?.week_number}. One vote per contest.`;
+    : `Vote for the best AI-generated artwork in Contest #${contest?.contest_number}. One vote per contest.`;
 
   return {
     title,
@@ -74,7 +74,7 @@ export default async function AiArtContestPage({ params }: Props) {
       .select("id")
       .eq("status", "active")
       .eq("contest_type", "ai_art")
-      .order("week_number", { ascending: false })
+      .order("contest_number", { ascending: false })
       .limit(1)
       .single();
     redirect(active ? `/contests/ai-art/${active.id}` : "/contests");
@@ -102,7 +102,7 @@ export default async function AiArtContestPage({ params }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    name: contest.theme ? `AI Art Arena — ${contest.theme}` : `AI Art Arena — Day ${contest.week_number}`,
+    name: contest.theme ? `AI Art Arena — ${contest.theme}` : `AI Art Arena — Contest #${contest.contest_number}`,
     description: `Vote for the best AI-generated artwork. One vote per contest.`,
     startDate: contest.start_date,
     endDate: contest.end_date,
@@ -121,7 +121,7 @@ export default async function AiArtContestPage({ params }: Props) {
       <div className="shell">
         <ContestHeader
           contestId={contest.id}
-          weekNumber={contest.week_number}
+          contestNumber={contest.contest_number}
           endDate={contest.end_date}
           status={contest.status}
           contestType="ai_art"

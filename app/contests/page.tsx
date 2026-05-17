@@ -150,7 +150,7 @@ function ContestCard({
               marginBottom: "6px",
             }}
           >
-            {contest.theme ?? `Day ${contest.week_number}`}
+            {contest.theme ?? `Contest #${contest.contest_number}`}
           </h2>
 
           {contest.theme_description && (
@@ -211,7 +211,7 @@ export default async function ContestsPage() {
 
   const { data: contests } = await supabase
     .from("contests")
-    .select("id, week_number, status, contest_type, theme, theme_description, start_date, end_date, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
+    .select("id, contest_number, status, contest_type, theme, theme_description, start_date, end_date, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
     .eq("status", "active")
     .order("created_at", { ascending: false });
 

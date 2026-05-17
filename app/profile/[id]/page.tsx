@@ -52,10 +52,10 @@ export default async function ProfilePage({ params }: Props) {
 
   const { profile, activityFeed, totalVotes, totalComments, isOwnProfile } = data;
   const weeksActive = new Set(
-    activityFeed.filter((a) => a.activity_type === "vote").map((a) => a.contest_week)
+    activityFeed.filter((a) => a.activity_type === "vote").map((a) => a.contest_number)
   ).size;
 
-  let photoContests: Array<{ id: string; week_number: number; theme: string | null; theme_description: string | null; end_date: string }> = [];
+  let photoContests: Array<{ id: string; contest_number: number; theme: string | null; theme_description: string | null; end_date: string }> = [];
   let mySubmissions: Array<{ contest_id: string; status: string }> = [];
 
   if (isOwnProfile && session?.user?.id) {
@@ -63,7 +63,7 @@ export default async function ProfilePage({ params }: Props) {
     const [{ data: contests }, { data: subs }] = await Promise.all([
       supabase
         .from("contests")
-        .select("id, week_number, theme, theme_description, end_date")
+        .select("id, contest_number, theme, theme_description, end_date")
         .eq("status", "active")
         .eq("contest_type", "photo")
         .order("end_date", { ascending: true }),
@@ -137,7 +137,7 @@ export default async function ProfilePage({ params }: Props) {
                   const submission = mySubmissions.find((s) => s.contest_id === contest.id);
                   const endsAt = new Date(contest.end_date);
                   const daysLeft = Math.ceil((endsAt.getTime() - Date.now()) / 86400000);
-                  const contestTitle = contest.theme ?? `Photo Contest — Day ${contest.week_number}`;
+                  const contestTitle = contest.theme ?? `Photo Contest #${contest.contest_number}`;
 
                   const statusColors: Record<string, { text: string; bg: string; border: string }> = {
                     pending: { text: "var(--color-status-warning)", bg: "var(--color-status-warningDim)", border: "rgba(251,191,36,0.25)" },
@@ -162,7 +162,7 @@ export default async function ProfilePage({ params }: Props) {
                     >
                       <div style={{ minWidth: 0 }}>
                         <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "4px" }}>
-                          Day {contest.week_number} &middot; {daysLeft > 0 ? `${daysLeft}d left` : "Closing soon"}
+                          Contest #{contest.contest_number} &middot; {daysLeft > 0 ? `${daysLeft}d left` : "Closing soon"}
                         </p>
                         <p style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1rem", color: "var(--color-text)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                           {contestTitle}

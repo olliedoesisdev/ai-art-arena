@@ -1,24 +1,30 @@
 # CLAUDE.md — AI Art Arena
 # Machine-readable context file. Read this ENTIRE file before writing any code.
 # This file is the source of truth. If a conversation conflicts with this file, this file wins.
-# Last updated: 2026-05-13
+# Last updated: 2026-05-16
 
 ---
 
 ## 1. WHAT THIS PROJECT IS
 
-**AI Art Arena** is a daily voting contest platform for AI-generated artwork.
+**AI Art Arena** is a voting contest platform for AI-generated artwork and photography.
 Live at: `olliedoesis.dev`
 Repo: `https://github.com/olliedoesisdev/ai-art-arena`
 Local path: `D:\Projects\ai-art-arena-v2\`
 Git user: `olliedoesisdev`
 
 **Core loop:**
-- A variable number of AI artworks are posted each day in a contest (set per-contest by the admin at creation time)
+- Admin creates contests manually — no fixed cadence, no weekly schedule. Each contest has a contest_number, a type (ai_art or photo), an optional theme, and admin-chosen start/end dates.
+- AI art contests: admin-curated submissions. Photo contests: user-submitted photos go through an approval queue before going live.
 - Visitors vote once per contest (cooldown via IP hash + Upstash Redis)
-- At midnight, the contest auto-archives and a new one begins
+- Contests auto-archive when their end_date passes (Inngest cron)
 - Archive page shows all past contests and results
 - Leaderboard shows all-time highest-voted artworks across every contest
+
+**Contest numbering:**
+- Contests are identified by `contest_number` (sequential integer, admin-assigned at creation).
+- There are NO week numbers, NO daily cadence, NO fixed duration. Duration is whatever the admin sets.
+- Never reference "Week N" or "Day N" in UI copy — use "Contest #N" or the contest title.
 
 **I am the architect. You are the builder.**
 Never make structural decisions without asking. Follow the patterns in this file exactly.
@@ -304,12 +310,17 @@ created_at    TIMESTAMPTZ DEFAULT NOW()
 updated_at    TIMESTAMPTZ DEFAULT NOW()
 
 -- contests
-id           UUID PRIMARY KEY DEFAULT uuid_generate_v4()
-week_number  INTEGER NOT NULL
-start_date   TIMESTAMPTZ NOT NULL
-end_date     TIMESTAMPTZ NOT NULL
-status       TEXT CHECK (status IN ('active', 'archived'))
-created_at   TIMESTAMPTZ DEFAULT NOW()
+id              UUID PRIMARY KEY DEFAULT uuid_generate_v4()
+contest_number  INTEGER NOT NULL UNIQUE   -- sequential contest ID, admin-assigned, not tied to weeks
+title           TEXT NOT NULL
+start_date      TIMESTAMPTZ NOT NULL
+end_date        TIMESTAMPTZ NOT NULL      -- admin sets duration; no fixed cadence
+status          TEXT CHECK (status IN ('active', 'archived'))
+contest_type    TEXT CHECK (contest_type IN ('ai_art', 'photo')) DEFAULT 'ai_art'
+theme           TEXT                      -- optional theme label
+theme_description TEXT                   -- optional theme context
+max_submissions INTEGER                  -- NULL = unlimited
+created_at      TIMESTAMPTZ DEFAULT NOW()
 
 -- artworks
 id            UUID PRIMARY KEY DEFAULT uuid_generate_v4()
@@ -383,7 +394,7 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_contests_status
   ON contests(status);
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_contests_week_status
-  ON contests(week_number DESC, status);
+  ON contests(contest_number DESC, status);
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_votes_unique_ip_contest
   ON votes(ip_hash, contest_id);
@@ -435,7 +446,7 @@ BEGIN
     (SELECT COUNT(*) FROM artworks)::BIGINT,
     (SELECT COUNT(*) FROM contests)::BIGINT,
     (SELECT id          FROM contests WHERE status = 'active' LIMIT 1),
-    (SELECT week_number FROM contests WHERE status = 'active' LIMIT 1);
+    (SELECT contest_number FROM contests WHERE status = 'active' LIMIT 1);
 END;
 $$;
 ```
@@ -676,7 +687,7 @@ Inngest handles the daily cycle. Functions live in `inngest/functions/`.
 
 `create-next-contest.ts`
 - Trigger: event `contest/archived`
-- Action: create new contest row using week_number + 1, read duration from system_config (1 day)
+- Disabled — contest creation is fully manual via the admin dashboard. Admin assigns contest_number, title, type, start/end dates, and optional theme at creation time.
 
 `send-vote-reminder.ts`
 - Trigger: cron `0 * * * *`, guards on contests ending within 24–25 hours
@@ -692,12 +703,12 @@ Resend client instantiated inside the handler function — never at module top l
 
 Route: `app/leaderboard/page.tsx` — Server Component, `revalidate = 60`.
 
-Query: artworks ordered by `vote_count DESC`, joined with their contest week_number. No pagination on initial launch — show top 20.
+Query: artworks ordered by `vote_count DESC`, joined with their contest contest_number. No pagination on initial launch — show top 20.
 
 ```typescript
 const { data } = await supabase
   .from('artworks')
-  .select('id, title, image_url, vote_count, artist_prompt, contest_id, contests(week_number)')
+  .select('id, title, image_url, vote_count, artist_prompt, contest_id, contests(contest_number, title)')
   .order('vote_count', { ascending: false })
   .limit(20)
 ```

@@ -9,10 +9,10 @@ interface LastWinnerProps {
     vote_count: number;
     contest_id: string;
   };
-  weekNumber: number;
+  contestNumber: number;
 }
 
-export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
+export function LastWinner({ artwork, contestNumber }: LastWinnerProps) {
   return (
     <section style={{ paddingBottom: "100px" }}>
       <div className="shell">
@@ -86,7 +86,7 @@ export function LastWinner({ artwork, weekNumber }: LastWinnerProps) {
                   marginBottom: "10px",
                 }}
               >
-                ★ Day {weekNumber} Winner
+                ★ Contest #{contestNumber} Winner
               </span>
 
               <h3

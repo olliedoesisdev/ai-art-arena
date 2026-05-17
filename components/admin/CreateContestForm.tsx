@@ -31,10 +31,10 @@ const hintStyle: React.CSSProperties = {
 };
 
 interface CreateContestFormProps {
-  suggestedWeekNumber: number;
+  suggestedContestNumber: number;
 }
 
-export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProps) {
+export function CreateContestForm({ suggestedContestNumber }: CreateContestFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProp
 
   const [formData, setFormData] = useState({
     contestType: "ai_art" as "ai_art" | "photo",
-    weekNumber: suggestedWeekNumber,
+    contestNumber: suggestedContestNumber,
     startDate: fmt(today),
     endDate: fmt(nextWeek),
     status: "active" as "active" | "archived",
@@ -73,7 +73,7 @@ export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProp
 
     try {
       const body: Record<string, unknown> = {
-        week_number: formData.weekNumber,
+        contest_number: formData.contestNumber,
         contest_type: formData.contestType,
         start_date: new Date(formData.startDate).toISOString(),
         end_date: new Date(formData.endDate).toISOString(),
@@ -125,18 +125,18 @@ export function CreateContestForm({ suggestedWeekNumber }: CreateContestFormProp
         </select>
       </div>
 
-      {/* Week number */}
+      {/* Contest number */}
       <div>
-        <label style={labelStyle}>Week / day number</label>
+        <label style={labelStyle}>Contest number</label>
         <input
           type="number"
           min="1"
           required
-          value={formData.weekNumber}
+          value={formData.contestNumber}
           style={inputStyle}
-          onChange={(e) => set("weekNumber", parseInt(e.target.value))}
+          onChange={(e) => set("contestNumber", parseInt(e.target.value))}
         />
-        <p style={hintStyle}>Suggested: {suggestedWeekNumber}</p>
+        <p style={hintStyle}>Suggested: {suggestedContestNumber}</p>
       </div>
 
       {/* Theme (optional) */}
