@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
   if (contest.contest_type !== "photo") {
     return NextResponse.json({ error: "This contest does not accept photo submissions" }, { status: 400 });
   }
-  if (contest.status !== "active") {
+  if (contest.status !== "upcoming") {
     return NextResponse.json({ error: "This contest is not currently accepting submissions" }, { status: 400 });
   }
 
