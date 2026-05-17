@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import Link from "next/link";
 import Image from "next/image";
+import { DeleteArtworkButton } from "@/components/admin/DeleteArtworkButton";
+import { EditArtworkModal } from "@/components/admin/EditArtworkModal";
+import { ArtworkLightbox } from "@/components/admin/ArtworkLightbox";
 
 export const metadata = { title: "Artworks — Admin" };
 
@@ -48,8 +51,10 @@ export default async function ManageArtworksPage() {
             const contest = contestRaw as { id: string; contest_number: number; status: string } | null;
             return (
               <div key={artwork.id} style={{ background: "var(--color-bg-surface)", border: "1px solid rgba(139,92,246,0.12)", borderRadius: "14px", overflow: "hidden" }}>
+                {/* Clickable image → lightbox */}
                 <div style={{ position: "relative", aspectRatio: "1", background: "var(--color-bg-surface2)" }}>
                   <Image src={artwork.image_url} alt={artwork.title} fill style={{ objectFit: "cover" }} sizes="33vw" />
+                  <ArtworkLightbox src={artwork.image_url} alt={artwork.title} cover />
                 </div>
                 <div style={{ padding: "16px" }}>
                   <div style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--color-text)", marginBottom: "4px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -60,7 +65,7 @@ export default async function ManageArtworksPage() {
                       {artwork.prompt}
                     </div>
                   )}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       {contest && (
                         <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--color-text-muted)" }}>#{contest.contest_number}</span>
@@ -80,11 +85,19 @@ export default async function ManageArtworksPage() {
                       {artwork.vote_count ?? 0} votes
                     </span>
                   </div>
-                  {contest && (
-                    <Link href={`/contest/${contest.id}`} target="_blank" style={{ display: "block", marginTop: "10px", fontSize: "0.75rem", color: "var(--color-purple)", textDecoration: "none" }}>
-                      View contest →
-                    </Link>
-                  )}
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    <EditArtworkModal
+                      artworkId={artwork.id}
+                      initialTitle={artwork.title}
+                      initialPrompt={artwork.prompt ?? null}
+                    />
+                    <DeleteArtworkButton artworkId={artwork.id} artworkTitle={artwork.title} />
+                    {contest && (
+                      <Link href={`/contest/${contest.id}`} target="_blank" style={{ fontSize: "0.75rem", color: "var(--color-purple)", textDecoration: "none", marginLeft: "auto" }}>
+                        View →
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             );

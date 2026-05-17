@@ -4,6 +4,10 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArchiveButton } from "@/components/admin/ArchiveButton";
+import { StartContestButton } from "@/components/admin/StartContestButton";
+import { DeleteArtworkButton } from "@/components/admin/DeleteArtworkButton";
+import { EditArtworkModal } from "@/components/admin/EditArtworkModal";
+import { ArtworkLightbox } from "@/components/admin/ArtworkLightbox";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -66,6 +70,7 @@ export default async function ContestDetailPage({ params }: RouteContext) {
             }}>
               View live →
             </Link>
+            {contest.status === "upcoming" && <StartContestButton contestId={id} />}
             {contest.status === "active" && <ArchiveButton contestId={id} />}
           </div>
         </div>
@@ -113,8 +118,8 @@ export default async function ContestDetailPage({ params }: RouteContext) {
         ) : (
           <>
             {/* Table header */}
-            <div style={{ display: "grid", gridTemplateColumns: "48px 1fr 1fr 80px 100px", gap: "8px", padding: "8px 16px", borderBottom: "1px solid rgba(139,92,246,0.08)" }}>
-              {["#", "Artwork", "Prompt", "Votes", "Share"].map((h) => (
+            <div style={{ display: "grid", gridTemplateColumns: "48px 1fr 1fr 80px 160px", gap: "8px", padding: "8px 16px", borderBottom: "1px solid rgba(139,92,246,0.08)" }}>
+              {["#", "Artwork", "Prompt", "Votes", "Actions"].map((h) => (
                 <div key={h} style={{ fontSize: "0.6875rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-dim)" }}>{h}</div>
               ))}
             </div>
@@ -124,16 +129,14 @@ export default async function ContestDetailPage({ params }: RouteContext) {
               const isLeading = artwork.id === leading?.id && totalVotes > 0;
               return (
                 <div key={artwork.id} style={{
-                  display: "grid", gridTemplateColumns: "48px 1fr 1fr 80px 100px",
+                  display: "grid", gridTemplateColumns: "48px 1fr 1fr 80px 160px",
                   gap: "8px", alignItems: "center",
                   borderBottom: i < artworks.length - 1 ? "1px solid rgba(139,92,246,0.08)" : "none",
                   background: isLeading ? "rgba(251,191,36,0.04)" : "transparent",
                 }}>
-                  {/* Thumbnail + rank */}
+                  {/* Lightbox thumbnail */}
                   <div style={{ ...cell, paddingRight: 0 }}>
-                    <div style={{ position: "relative", width: "36px", height: "36px", borderRadius: "6px", overflow: "hidden", background: "var(--color-bg-surface2)" }}>
-                      <Image src={artwork.image_url} alt={artwork.title} fill sizes="36px" style={{ objectFit: "cover" }} />
-                    </div>
+                    <ArtworkLightbox src={artwork.image_url} alt={artwork.title} thumbSize={36} />
                   </div>
 
                   {/* Title + bar */}
@@ -158,11 +161,14 @@ export default async function ContestDetailPage({ params }: RouteContext) {
                     <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "var(--color-text-dim)", marginLeft: "4px" }}>{pct}%</span>
                   </div>
 
-                  {/* Display order */}
-                  <div style={cell}>
-                    <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.75rem", color: "var(--color-text-dim)" }}>
-                      #{artwork.display_order}
-                    </span>
+                  {/* Actions */}
+                  <div style={{ ...cell, display: "flex", gap: "6px", alignItems: "center" }}>
+                    <EditArtworkModal
+                      artworkId={artwork.id}
+                      initialTitle={artwork.title}
+                      initialPrompt={artwork.prompt}
+                    />
+                    <DeleteArtworkButton artworkId={artwork.id} artworkTitle={artwork.title} />
                   </div>
                 </div>
               );
