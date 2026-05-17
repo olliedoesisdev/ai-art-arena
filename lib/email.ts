@@ -196,6 +196,73 @@ export async function sendSubscriberWelcome(data: {
   });
 }
 
+export async function sendCommentOnYourArtwork(data: {
+  ownerEmail: string;
+  ownerName: string | null;
+  commenterName: string;
+  commentBody: string;
+  artworkTitle: string;
+  contestNumber: number;
+  contestId: string;
+  contestType: string;
+}): Promise<void> {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  const isPhoto = data.contestType === "photo";
+  const contestPath = isPhoto ? "photo" : "ai-art";
+  const contestUrl = `${SITE_URL_PUBLIC}/contests/${contestPath}/${data.contestId}`;
+  const greeting = data.ownerName ? `Hi ${data.ownerName}` : "Hi";
+
+  await resend.emails.send({
+    from: "AI Art Arena <notifications@olliedoesis.dev>",
+    to: data.ownerEmail,
+    subject: `Someone commented on your artwork — AI Art Arena`,
+    html: `
+      <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;
+                  background: #111119; color: #eeeeff; padding: 40px;
+                  border-radius: 12px; border: 1px solid rgba(139,92,246,0.2);">
+
+        <p style="margin: 0 0 4px 0; font-size: 11px; font-weight: 600;
+                  letter-spacing: 0.12em; text-transform: uppercase; color: #a78bfa;">
+          AI Art Arena
+        </p>
+        <h1 style="font-size: 22px; font-weight: 800; color: #eeeeff;
+                   margin: 0 0 8px 0; letter-spacing: -0.02em;">
+          New comment on your artwork
+        </h1>
+        <p style="font-size: 14px; color: #7878a0; margin: 0 0 28px 0; line-height: 1.6;">
+          ${greeting} — ${data.commenterName} left a comment on <strong style="color: #eeeeff;">${data.artworkTitle}</strong>.
+        </p>
+
+        <div style="background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.2);
+                    border-left: 3px solid #8b5cf6; padding: 20px 24px;
+                    border-radius: 8px; margin-bottom: 28px;">
+          <p style="margin: 0 0 10px 0; font-size: 13px; font-weight: 600;
+                    color: #a78bfa; letter-spacing: 0.04em;">
+            ${data.commenterName}
+          </p>
+          <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #eeeeff;">
+            &ldquo;${data.commentBody}&rdquo;
+          </p>
+        </div>
+
+        <a href="${contestUrl}"
+           style="display: inline-block; background: #8b5cf6; color: #ffffff;
+                  padding: 13px 28px; text-decoration: none; font-size: 14px;
+                  font-weight: 700; border-radius: 8px; letter-spacing: 0.01em;
+                  margin-bottom: 32px;">
+          View contest &rarr;
+        </a>
+
+        <p style="margin: 32px 0 0 0; font-size: 11px; color: #3a3a58; line-height: 1.6;">
+          You are receiving this because you submitted artwork to AI Art Arena.
+          Questions? Reply to this email.
+        </p>
+      </div>
+    `,
+  });
+}
+
 export async function sendSubmissionApproved(data: {
   email: string;
   submitterName: string | null;

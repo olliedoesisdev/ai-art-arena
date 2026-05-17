@@ -3,7 +3,7 @@ import { createPublicClient } from "@/lib/supabase/server";
 import { CreateCommentSchema } from "@/lib/validators";
 import { getClientIP, hashIP } from "@/lib/utils";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
-import { sendCommentNotification } from "@/lib/email";
+import { sendCommentNotification, sendCommentOnYourArtwork } from "@/lib/email";
 import { auth } from "@/auth";
 
 export async function POST(request: Request) {
@@ -89,29 +89,65 @@ export async function POST(request: Request) {
     const ms = Date.now() - start;
     logger.info({ requestId, ms }, "comment inserted");
 
-    // Fire email notification — never blocks the response
-    if (process.env.RESEND_API_KEY && process.env.ADMIN_EMAIL) {
+    // Fire email notifications — never blocks the response
+    if (process.env.RESEND_API_KEY) {
       void (async () => {
         try {
-          const { data } = await supabase
+          const { data: artworkData } = await supabase
             .from("artworks")
-            .select("title, contest_id, contests(contest_number)")
+            .select("title, contest_id, contests(contest_number, contest_type)")
             .eq("id", artwork_id)
             .single();
-          if (!data) return;
-          const contestRow = Array.isArray(data.contests)
-            ? data.contests[0]
-            : data.contests;
-          const contestNum = (contestRow as { contest_number: number } | null)?.contest_number;
-          if (!contestNum) return;
-          await sendCommentNotification({
-            commenterName: name,
-            commenterEmail: email || null,
-            commentBody,
-            artworkTitle: data.title,
-            contestNumber: contestNum,
-            contestId: data.contest_id,
-          });
+          if (!artworkData) return;
+
+          const contestRow = Array.isArray(artworkData.contests)
+            ? artworkData.contests[0]
+            : artworkData.contests;
+          const contest = contestRow as { contest_number: number; contest_type: string } | null;
+          if (!contest) return;
+
+          // 1. Notify admin
+          if (process.env.ADMIN_EMAIL) {
+            await sendCommentNotification({
+              commenterName: name,
+              commenterEmail: email || null,
+              commentBody,
+              artworkTitle: artworkData.title,
+              contestNumber: contest.contest_number,
+              contestId: artworkData.contest_id,
+            });
+          }
+
+          // 2. Notify artwork owner (if submitted by a user and they have an email)
+          const { data: submission } = await supabase
+            .from("submissions")
+            .select("user_id")
+            .eq("contest_id", artworkData.contest_id)
+            .eq("title", artworkData.title)
+            .eq("status", "approved")
+            .maybeSingle();
+
+          if (submission?.user_id) {
+            const { data: owner } = await supabase
+              .from("users")
+              .select("email, name")
+              .eq("id", submission.user_id)
+              .single();
+
+            // Don't notify if owner is the one commenting
+            if (owner?.email && owner.email !== (email || null)) {
+              await sendCommentOnYourArtwork({
+                ownerEmail: owner.email,
+                ownerName: owner.name,
+                commenterName: name,
+                commentBody,
+                artworkTitle: artworkData.title,
+                contestNumber: contest.contest_number,
+                contestId: artworkData.contest_id,
+                contestType: contest.contest_type,
+              });
+            }
+          }
         } catch (err) {
           logger.warn({ requestId, err }, "comment email notification failed");
         }

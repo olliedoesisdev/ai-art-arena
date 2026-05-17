@@ -32,6 +32,7 @@ export default async function LeaderboardPage() {
   const { data: artworks } = await supabase
     .from("artworks")
     .select("id, title, image_url, vote_count, contest_id, contests(contest_number)")
+    .gte("vote_count", 25)
     .order("vote_count", { ascending: false })
     .limit(20);
 
@@ -124,7 +125,7 @@ export default async function LeaderboardPage() {
             }}
           >
             <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
-              No votes have been cast yet. Be the first to vote!
+              No artworks have reached 25 votes yet. Check back soon.
             </p>
           </div>
         ) : (
