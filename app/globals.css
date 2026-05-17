@@ -8,21 +8,21 @@
   --color-bg-surface3: #1f1f2a;
 
   /* ── Borders ─────────────────────────────────────────── */
-  --color-border-subtle: rgba(139, 92, 246, 0.12);
-  --color-border-mid:    rgba(139, 92, 246, 0.25);
-  --color-border-strong: rgba(139, 92, 246, 0.50);
+  --color-border-subtle: rgba(139, 92, 246, 0.18);
+  --color-border-mid:    rgba(139, 92, 246, 0.35);
+  --color-border-strong: rgba(139, 92, 246, 0.55);
 
   /* ── Purple accent ───────────────────────────────────── */
   --color-purple:         #8b5cf6;
   --color-purple-light:   #a78bfa;
   --color-purple-pale:    #c4b5fd;
-  --color-purple-dim:     rgba(139, 92, 246, 0.10);
-  --color-purple-dim2:    rgba(139, 92, 246, 0.05);
+  --color-purple-dim:     rgba(139, 92, 246, 0.14);
+  --color-purple-dim2:    rgba(139, 92, 246, 0.08);
 
   /* ── Text ────────────────────────────────────────────── */
-  --color-text:       #eeeeff;
-  --color-text-muted: #7878a0;
-  --color-text-dim:   #3a3a58;
+  --color-text:       #f2f2ff;
+  --color-text-muted: #9898b8;
+  --color-text-dim:   #52527a;
 
   /* ── Status ──────────────────────────────────────────── */
   --color-status-success:        #34d399;
