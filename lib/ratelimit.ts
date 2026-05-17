@@ -2,22 +2,18 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import crypto from "crypto";
 
-// Authenticated users: 1 vote per 24 hours, keyed by email hash.
-// One vote per contest — the daily cadence makes per-identity global scope
-// equivalent to per-identity-per-contest since only one contest is active.
+// Authenticated users: 3 votes per contest window, keyed by email hash + contest.
 export const voteRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(1, "24 h"),
+  limiter: Ratelimit.slidingWindow(3, "24 h"),
   analytics: true,
   prefix: "vote:authed",
 });
 
-// Anonymous users: up to 50 votes per IP per contest.
-// Scoped per IP + contest so a new contest resets the window.
-// Authenticated users bypass this limiter entirely (use voteRateLimit above).
+// Anonymous users: 3 votes per IP per contest.
 export const anonVoteRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(50, "24 h"),
+  limiter: Ratelimit.slidingWindow(3, "24 h"),
   analytics: true,
   prefix: "vote:anon",
 });
@@ -35,14 +31,13 @@ export function buildVoteRateLimitKey(
   if (!salt) throw new Error("VOTE_HASH_SALT env var is required");
 
   if (email) {
-    // Prefix "email:" before hashing so this key can never collide with the
-    // DB email_hash column (hashEmail below), which hashes the bare email.
     const emailHash = crypto
       .createHash("sha256")
       .update("email:" + email.toLowerCase().trim() + salt)
       .digest("hex")
       .slice(0, 32);
-    return `email:${emailHash}`;
+    // Scope per contest so each contest gets its own 3-vote window per account
+    return contestId ? `email:${emailHash}:${contestId}` : `email:${emailHash}`;
   }
 
   // ipHash is already hashed by hashIP() in lib/utils.ts.

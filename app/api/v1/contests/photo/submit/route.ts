@@ -87,27 +87,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This contest is not currently accepting submissions" }, { status: 400 });
   }
 
-  // 6. Check for existing submission
-  const { data: existing } = await supabase
+  // 6. Check per-user submission count against max_submissions
+  const { count: userCount } = await supabase
     .from("submissions")
-    .select("id")
+    .select("id", { count: "exact", head: true })
     .eq("contest_id", contest_id)
     .eq("user_id", userId)
-    .single();
+    .neq("status", "rejected");
 
-  if (existing) {
-    return NextResponse.json({ error: "You have already submitted to this contest" }, { status: 409 });
+  const perUserMax = contest.max_submissions ?? 1;
+  if ((userCount ?? 0) >= perUserMax) {
+    return NextResponse.json(
+      { error: perUserMax === 1 ? "You have already submitted to this contest" : `You have reached the submission limit of ${perUserMax} for this contest` },
+      { status: 409 }
+    );
   }
 
-  // 7. Check max_submissions cap if set
+  // 7. Check overall contest submission cap (2x max_submissions as a ceiling)
   if (contest.max_submissions) {
-    const { count } = await supabase
+    const { count: totalCount } = await supabase
       .from("submissions")
       .select("id", { count: "exact", head: true })
       .eq("contest_id", contest_id)
       .neq("status", "rejected");
 
-    if (count !== null && count >= contest.max_submissions) {
+    if ((totalCount ?? 0) >= contest.max_submissions * 10) {
       return NextResponse.json({ error: "This contest has reached its submission limit" }, { status: 400 });
     }
   }

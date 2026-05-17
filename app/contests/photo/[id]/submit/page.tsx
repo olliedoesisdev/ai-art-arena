@@ -91,20 +91,18 @@ export default async function PhotoSubmitPage({ params }: Props) {
     );
   }
 
-  // Check for existing submission
-  const { data: existing } = await supabase
+  // Check how many non-rejected submissions this user already has
+  const { count: submissionCount } = await supabase
     .from("submissions")
-    .select("id, status")
+    .select("id", { count: "exact", head: true })
     .eq("contest_id", id)
     .eq("user_id", session.user.id)
-    .single();
+    .neq("status", "rejected");
 
-  if (existing) {
-    const statusLabel: Record<string, string> = {
-      pending: "pending review",
-      approved: "approved and live",
-      rejected: "not accepted",
-    };
+  const perUserMax = contest.max_submissions ?? 1;
+  const slotsRemaining = perUserMax - (submissionCount ?? 0);
+
+  if (slotsRemaining <= 0) {
     return (
       <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
         <div className="shell" style={{ maxWidth: "640px" }}>
@@ -112,7 +110,7 @@ export default async function PhotoSubmitPage({ params }: Props) {
             href={`/contests/photo/${id}`}
             style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "0.8125rem", color: "var(--color-text-muted)", textDecoration: "none", marginBottom: "32px" }}
           >
-            ← Back to contest
+            Back to contest
           </Link>
           <div
             style={{
@@ -124,17 +122,13 @@ export default async function PhotoSubmitPage({ params }: Props) {
             }}
           >
             <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "12px" }}>
-              Already submitted
+              Submission limit reached
             </p>
             <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.5rem", color: "var(--color-text)", marginBottom: "10px" }}>
-              You have a submission
+              {perUserMax === 1 ? "You have a submission" : `You have submitted ${submissionCount} of ${perUserMax}`}
             </h1>
             <p style={{ fontSize: "0.9375rem", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
-              Your entry is currently{" "}
-              <strong style={{ color: "var(--color-text)" }}>
-                {statusLabel[existing.status] ?? existing.status}
-              </strong>
-              . Only one submission is allowed per contest.
+              You have used all {perUserMax} submission slot{perUserMax !== 1 ? "s" : ""} for this contest.
             </p>
           </div>
         </div>
