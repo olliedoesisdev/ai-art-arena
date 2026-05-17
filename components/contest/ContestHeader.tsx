@@ -8,7 +8,7 @@ interface ContestHeaderProps {
   contestId: string;
   contestNumber: number;
   endDate: string;
-  status: "active" | "archived";
+  status: "active" | "archived" | "upcoming";
   contestType: ContestType;
   theme?: string | null;
   themeDescription?: string | null;
@@ -50,7 +50,7 @@ export function ContestHeader({
           }}
         >
           {typeLabel} &middot; Contest #{contestNumber} &middot;{" "}
-          {status === "active" ? "Open for voting" : "Archived"}
+          {status === "active" ? "Open for voting" : status === "upcoming" ? "Coming soon" : "Archived"}
         </div>
 
         <h1

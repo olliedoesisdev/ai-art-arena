@@ -2,6 +2,7 @@
 import { redirect, notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { Metadata } from "next";
+import Link from "next/link";
 import { ContestHeader } from "@/components/contest/ContestHeader";
 import { SITE_URL } from "@/lib/site";
 import { StatsStrip } from "@/components/contest/StatsStrip";
@@ -53,13 +54,18 @@ export default async function ContestPage({ params }: Props) {
   const supabase = await createClient();
   const session = await auth();
 
-  const [{ data: contest, error: contestError }, { data: artworks }] = await Promise.all([
+  const [{ data: contest, error: contestError }, { data: artworks }, { data: upcomingContests }] = await Promise.all([
     supabase.from("contests").select("*").eq("id", id).single(),
     supabase
       .from("artworks")
       .select("*")
       .eq("contest_id", id)
       .order("display_order"),
+    supabase
+      .from("contests")
+      .select("id, contest_number, contest_type, theme, theme_description, submissions_open_at, start_date, end_date, status")
+      .eq("status", "upcoming")
+      .order("contest_number", { ascending: true }),
   ]);
 
   if (contestError || !contest) notFound();
@@ -212,6 +218,96 @@ export default async function ContestPage({ params }: Props) {
             </p>
           </div>
         )}
+        {/* Up Next — upcoming contests */}
+        {upcomingContests && upcomingContests.length > 0 && (
+          <div style={{ marginTop: "64px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
+              <div style={{ flex: 1, height: "1px", background: "rgba(139,92,246,0.1)" }} />
+              <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-text-muted)", whiteSpace: "nowrap" }}>
+                Up Next
+              </span>
+              <div style={{ flex: 1, height: "1px", background: "rgba(139,92,246,0.1)" }} />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {upcomingContests.map((uc) => {
+                const isPhoto = uc.contest_type === "photo";
+                const submitHref = isPhoto
+                  ? session?.user
+                    ? `/contests/photo/${uc.id}/submit`
+                    : `/api/auth/signin?callbackUrl=${encodeURIComponent(`/contests/photo/${uc.id}/submit`)}`
+                  : null;
+                const votingOpens = new Date(uc.start_date);
+                const now = new Date();
+                const daysUntil = Math.ceil((votingOpens.getTime() - now.getTime()) / 86400000);
+                const opensLabel = daysUntil <= 0 ? "Starting soon" : daysUntil === 1 ? "Voting opens tomorrow" : `Voting opens in ${daysUntil} days`;
+
+                return (
+                  <div
+                    key={uc.id}
+                    style={{
+                      background: "var(--color-bg-surface)",
+                      border: "1px solid var(--color-border-subtle)",
+                      borderRadius: "14px",
+                      padding: "24px 28px",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "20px",
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                        <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)" }}>
+                          {isPhoto ? "Photo Contest" : "AI Art Contest"} &middot; #{uc.contest_number}
+                        </span>
+                        <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.08em", color: "var(--color-status-success)", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)", borderRadius: "100px", padding: "2px 8px" }}>
+                          Submissions open
+                        </span>
+                      </div>
+                      <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.25rem", color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 6px" }}>
+                        {uc.theme ?? `Contest #${uc.contest_number}`}
+                      </h2>
+                      {uc.theme_description && (
+                        <p style={{ fontSize: "14px", color: "var(--color-text-muted)", lineHeight: 1.55, margin: "0 0 8px", maxWidth: "480px" }}>
+                          {uc.theme_description}
+                        </p>
+                      )}
+                      <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>
+                        {opensLabel}
+                      </p>
+                    </div>
+
+                    {isPhoto && submitHref && (
+                      <Link
+                        href={submitHref}
+                        style={{
+                          padding: "10px 22px",
+                          background: "var(--color-purple-dim)",
+                          border: "1px solid rgba(139,92,246,0.35)",
+                          borderRadius: "100px",
+                          color: "var(--color-purple-light)",
+                          fontFamily: "var(--font-dm-mono)",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
+                          textDecoration: "none",
+                          whiteSpace: "nowrap",
+                          flexShrink: 0,
+                        }}
+                      >
+                        Submit your photo →
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Join CTA strip */}
         <div style={{ marginTop: "64px", display: "flex", flexDirection: "column", gap: "12px" }}>
           <div
