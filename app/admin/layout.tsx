@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { signOut } from "@/auth";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { createAdminClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,6 +15,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!session?.user || session.user.role !== "admin") {
     redirect("/signin");
   }
+
+  const supabase = createAdminClient();
+  const { count: pendingSubmissions } = await supabase
+    .from("submissions")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending");
 
   return (
     <>
@@ -41,7 +48,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         }
       `}</style>
 
-      <AdminSidebar email={session.user.email ?? ""} />
+      <AdminSidebar email={session.user.email ?? ""} pendingSubmissions={pendingSubmissions ?? 0} />
 
       <div className="admin-main-wrap" style={{ minHeight: "100dvh", background: "var(--color-bg-base)" }}>
         {/* Desktop top bar */}

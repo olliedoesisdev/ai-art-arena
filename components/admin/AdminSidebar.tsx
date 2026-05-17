@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/contests", label: "Contests" },
   { href: "/admin/artworks", label: "Artworks" },
+  { href: "/admin/submissions", label: "Submissions", badgeKey: "pendingSubmissions" as const },
   { href: "/admin/comments", label: "Comments" },
   { href: "/admin/analytics", label: "Analytics" },
   { href: "/admin/applications", label: "Applications" },
@@ -15,9 +16,11 @@ const NAV_ITEMS = [
 
 interface AdminSidebarProps {
   email: string;
+  pendingSubmissions: number;
 }
 
-export function AdminSidebar({ email }: AdminSidebarProps) {
+export function AdminSidebar({ email, pendingSubmissions }: AdminSidebarProps) {
+  const badges: Record<string, number> = { pendingSubmissions };
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -139,15 +142,18 @@ export function AdminSidebar({ email }: AdminSidebarProps) {
 
         {/* Nav links */}
         <nav style={{ flex: 1, padding: "12px 10px", display: "flex", flexDirection: "column", gap: "2px", overflowY: "auto" }}>
-          {NAV_ITEMS.map(({ href, label }) => {
-            const active = pathname === href;
+          {NAV_ITEMS.map(({ href, label, badgeKey }) => {
+            const active = pathname === href || (href !== "/admin" && pathname.startsWith(href));
+            const badgeCount = badgeKey ? (badges[badgeKey] ?? 0) : 0;
             return (
               <Link
                 key={href}
                 href={href}
                 onClick={() => setOpen(false)}
                 style={{
-                  display: "block",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   fontSize: "0.875rem",
                   fontWeight: active ? 600 : 500,
                   color: active ? "var(--color-purple-pale)" : "var(--color-text-muted)",
@@ -159,6 +165,21 @@ export function AdminSidebar({ email }: AdminSidebarProps) {
                 }}
               >
                 {label}
+                {badgeCount > 0 && (
+                  <span style={{
+                    fontFamily: "var(--font-dm-mono)",
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    color: "var(--color-status-warning)",
+                    background: "rgba(251,191,36,0.15)",
+                    border: "1px solid rgba(251,191,36,0.3)",
+                    borderRadius: "100px",
+                    padding: "1px 7px",
+                    lineHeight: "16px",
+                  }}>
+                    {badgeCount}
+                  </span>
+                )}
               </Link>
             );
           })}
