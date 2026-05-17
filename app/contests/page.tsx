@@ -1,5 +1,6 @@
 // app/contests/page.tsx [SERVER]
 import { createPublicClient } from "@/lib/supabase/server";
+import { auth } from "@/auth";
 import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
 import Image from "next/image";
@@ -37,6 +38,94 @@ function contestHref(contest: Contest) {
 
 function typeLabel(type: string) {
   return type === "photo" ? "Photo" : "AI Art";
+}
+
+type UpcomingContest = {
+  id: string;
+  contest_number: number;
+  contest_type: string;
+  theme: string | null;
+  theme_description: string | null;
+  start_date: string;
+  end_date: string;
+};
+
+function UpcomingCard({ contest, submitHref }: { contest: UpcomingContest; submitHref: string | null }) {
+  const isPhoto = contest.contest_type === "photo";
+  const votingOpens = new Date(contest.start_date);
+  const now = new Date();
+  const daysUntil = Math.ceil((votingOpens.getTime() - now.getTime()) / 86400000);
+  const opensLabel = daysUntil <= 0 ? "Starting soon" : daysUntil === 1 ? "Voting opens tomorrow" : `Voting opens in ${daysUntil} days`;
+
+  return (
+    <div
+      style={{
+        background: "var(--color-bg-surface)",
+        border: "1px solid var(--color-border-subtle)",
+        borderRadius: "14px",
+        padding: "24px 28px",
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "16px",
+      }}
+    >
+      <div style={{ minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)" }}>
+            Contest #{contest.contest_number}
+          </span>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.08em", color: "var(--color-status-success)", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)", borderRadius: "100px", padding: "2px 8px" }}>
+            {isPhoto ? "Submissions open" : "Coming soon"}
+          </span>
+        </div>
+        <h3
+          style={{
+            fontFamily: "var(--font-syne)",
+            fontWeight: 800,
+            fontSize: "1.125rem",
+            color: "var(--color-text)",
+            letterSpacing: "-0.02em",
+            margin: "0 0 4px",
+          }}
+        >
+          {contest.theme ?? `Contest #${contest.contest_number}`}
+        </h3>
+        {contest.theme_description && (
+          <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.55, margin: "0 0 6px", maxWidth: "480px" }}>
+            {contest.theme_description}
+          </p>
+        )}
+        <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>
+          {opensLabel}
+        </p>
+      </div>
+
+      {isPhoto && submitHref && (
+        <Link
+          href={submitHref}
+          style={{
+            padding: "9px 20px",
+            background: "var(--color-purple-dim)",
+            border: "1px solid rgba(139,92,246,0.35)",
+            borderRadius: "100px",
+            color: "var(--color-purple-light)",
+            fontFamily: "var(--font-dm-mono)",
+            fontSize: "11px",
+            fontWeight: 700,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+            flexShrink: 0,
+          }}
+        >
+          Submit your photo →
+        </Link>
+      )}
+    </div>
+  );
 }
 
 function EmptySection({ label }: { label: string }) {
@@ -208,16 +297,27 @@ function ContestCard({
 
 export default async function ContestsPage() {
   const supabase = createPublicClient();
+  const session = await auth();
 
-  const { data: contests } = await supabase
-    .from("contests")
-    .select("id, contest_number, status, contest_type, theme, theme_description, start_date, end_date, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
-    .eq("status", "active")
-    .order("created_at", { ascending: false });
+  const [{ data: contests }, { data: upcomingContests }] = await Promise.all([
+    supabase
+      .from("contests")
+      .select("id, contest_number, status, contest_type, theme, theme_description, start_date, end_date, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
+      .eq("status", "active")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("contests")
+      .select("id, contest_number, contest_type, theme, theme_description, submissions_open_at, start_date, end_date")
+      .eq("status", "upcoming")
+      .order("contest_number", { ascending: true }),
+  ]);
 
   const allContests = (contests ?? []) as Array<Contest & { artworks: Artwork[] }>;
   const aiArt = allContests.filter((c) => c.contest_type === "ai_art");
   const photo = allContests.filter((c) => c.contest_type === "photo");
+
+  const upcomingAiArt = (upcomingContests ?? []).filter((c) => c.contest_type === "ai_art");
+  const upcomingPhoto = (upcomingContests ?? []).filter((c) => c.contest_type === "photo");
 
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
@@ -300,6 +400,14 @@ export default async function ContestsPage() {
               ))}
             </div>
           )}
+
+          {upcomingAiArt.length > 0 && (
+            <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+              {upcomingAiArt.map((uc) => (
+                <UpcomingCard key={uc.id} contest={uc} submitHref={null} />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Photo section */}
@@ -350,6 +458,17 @@ export default async function ContestsPage() {
               {photo.map((contest, i) => (
                 <ContestCard key={contest.id} contest={contest} priority={false} />
               ))}
+            </div>
+          )}
+
+          {upcomingPhoto.length > 0 && (
+            <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+              {upcomingPhoto.map((uc) => {
+                const submitHref = session?.user
+                  ? `/contests/photo/${uc.id}/submit`
+                  : `/api/auth/signin?callbackUrl=${encodeURIComponent(`/contests/photo/${uc.id}/submit`)}`;
+                return <UpcomingCard key={uc.id} contest={uc} submitHref={submitHref} />;
+              })}
             </div>
           )}
         </section>
