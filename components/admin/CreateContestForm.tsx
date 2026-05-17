@@ -47,9 +47,10 @@ export function CreateContestForm({ suggestedContestNumber }: CreateContestFormP
   const [formData, setFormData] = useState({
     contestType: "ai_art" as "ai_art" | "photo",
     contestNumber: suggestedContestNumber,
+    submissionsOpenAt: fmt(today),
     startDate: fmt(today),
     endDate: fmt(nextWeek),
-    status: "active" as "active" | "archived",
+    status: "upcoming" as "upcoming" | "active" | "archived",
     artworkCount: 6,
     theme: "",
     themeDescription: "",
@@ -70,11 +71,11 @@ export function CreateContestForm({ suggestedContestNumber }: CreateContestFormP
       setIsSubmitting(false);
       return;
     }
-
     try {
       const body: Record<string, unknown> = {
         contest_number: formData.contestNumber,
         contest_type: formData.contestType,
+        submissions_open_at: new Date(formData.submissionsOpenAt).toISOString(),
         start_date: new Date(formData.startDate).toISOString(),
         end_date: new Date(formData.endDate).toISOString(),
         status: formData.status,
@@ -210,9 +211,24 @@ export function CreateContestForm({ suggestedContestNumber }: CreateContestFormP
         </div>
       )}
 
-      {/* Start date */}
+      {/* Submissions open (photo only) */}
+      {formData.contestType === "photo" && (
+        <div>
+          <label style={labelStyle}>Submissions open</label>
+          <input
+            type="datetime-local"
+            required
+            value={formData.submissionsOpenAt}
+            style={inputStyle}
+            onChange={(e) => set("submissionsOpenAt", e.target.value)}
+          />
+          <p style={hintStyle}>When people can start uploading photos.</p>
+        </div>
+      )}
+
+      {/* Start date — voting opens */}
       <div>
-        <label style={labelStyle}>Start date &amp; time</label>
+        <label style={labelStyle}>{formData.contestType === "photo" ? "Voting starts" : "Start date"} &amp; time</label>
         <input
           type="datetime-local"
           required
@@ -220,6 +236,7 @@ export function CreateContestForm({ suggestedContestNumber }: CreateContestFormP
           style={inputStyle}
           onChange={(e) => set("startDate", e.target.value)}
         />
+        {formData.contestType === "photo" && <p style={hintStyle}>Submissions close, voting opens.</p>}
       </div>
 
       {/* End date */}
@@ -232,7 +249,7 @@ export function CreateContestForm({ suggestedContestNumber }: CreateContestFormP
           style={inputStyle}
           onChange={(e) => set("endDate", e.target.value)}
         />
-        <p style={hintStyle}>The contest archives automatically when this date passes.</p>
+        <p style={hintStyle}>Contest archives automatically when this passes.</p>
       </div>
 
       {/* Status */}
@@ -242,10 +259,11 @@ export function CreateContestForm({ suggestedContestNumber }: CreateContestFormP
           required
           value={formData.status}
           style={inputStyle}
-          onChange={(e) => set("status", e.target.value as "active" | "archived")}
+          onChange={(e) => set("status", e.target.value as "upcoming" | "active" | "archived")}
         >
-          <option value="active">Active — live now</option>
-          <option value="archived">Archived — not accepting votes</option>
+          <option value="upcoming">Upcoming — accepting submissions, voting not yet open</option>
+          <option value="active">Active — voting live now</option>
+          <option value="archived">Archived — contest ended</option>
         </select>
       </div>
 

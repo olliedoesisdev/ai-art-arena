@@ -76,7 +76,7 @@ export default async function ContestDetailPage({ params }: RouteContext) {
         {[
           { label: "Status", value: contest.status },
           { label: "Total votes", value: totalVotes },
-          { label: "Artworks", value: artworks?.length ?? 0 },
+          { label: contest.contest_type === "photo" ? "Submissions" : "Artworks", value: artworks?.length ?? 0 },
           { label: "Ends", value: new Date(contest.end_date).toLocaleDateString() },
         ].map(({ label, value }) => (
           <div key={label} style={{ background: "var(--color-bg-surface)", padding: "20px 24px" }}>
@@ -90,7 +90,9 @@ export default async function ContestDetailPage({ params }: RouteContext) {
       <div style={{ background: "var(--color-bg-surface)", border: "1px solid var(--color-border-subtle)", borderRadius: "14px", overflow: "hidden" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid var(--color-border-subtle)" }}>
           <p style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-            Artworks ({artworks?.length ?? 0} / {contest.artwork_count})
+            {contest.contest_type === "photo"
+              ? `Submissions (${artworks?.length ?? 0}${contest.max_submissions ? ` / ${contest.max_submissions}` : ""})`
+              : `Artworks (${artworks?.length ?? 0} / ${contest.artwork_count})`}
           </p>
           <Link href="/admin/artworks/upload" style={{
             fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-status-success)",
