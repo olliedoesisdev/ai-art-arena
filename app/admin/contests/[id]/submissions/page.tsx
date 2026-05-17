@@ -31,13 +31,13 @@ export default async function SubmissionsPage({ params }: RouteContext) {
 
   if (contestError || !contest) notFound();
 
-  if (contest.contest_type !== "photo") {
+  if (contest.contest_type !== "photo" && contest.contest_type !== "ai_art") {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <Link href={`/admin/contests/${id}`} style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", textDecoration: "none" }}>
-          ← Back to contest
+          Back to contest
         </Link>
-        <p style={{ color: "var(--color-text-muted)" }}>This is not a photo contest. No submission queue.</p>
+        <p style={{ color: "var(--color-text-muted)" }}>This contest does not have a user submission queue.</p>
       </div>
     );
   }

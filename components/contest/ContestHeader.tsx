@@ -88,7 +88,7 @@ export function ContestHeader({
         )}
 
         {/* Photo contest submit CTA */}
-        {contestType === "photo" && status === "active" && (
+        {contestType === "photo" && status === "upcoming" && (
           <Link
             href={`${basePath}/${contestId}/submit`}
             style={{

@@ -209,60 +209,41 @@ export default async function AiArtContestPage({ params }: Props) {
           </div>
         )}
 
-        {/* Join CTA */}
+        {/* CTA strip */}
         <div style={{ marginTop: "64px", display: "flex", flexDirection: "column", gap: "12px" }}>
-          {/* AI art entry */}
-          <div
-            style={{
-              background: "var(--color-bg-surface)",
-              border: "1px solid var(--color-join-border)",
-              borderRadius: "12px",
-              padding: "28px 32px",
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "20px",
-            }}
-          >
-            <div>
-              <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "6px" }}>
-                AI Art Contest
+          {contest.status === "upcoming" ? (
+            /* Submissions open — direct submit CTA */
+            <div
+              style={{
+                background: "var(--color-bg-surface)",
+                border: "1px solid var(--color-border-mid)",
+                borderRadius: "12px",
+                padding: "28px 32px",
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "20px",
+              }}
+            >
+              <div>
+                <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "6px" }}>
+                  Submissions open
+                </div>
+                <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 4px" }}>
+                  Enter this contest
+                </h2>
+                <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
+                  Upload your AI-generated artwork for review. Approved entries go live when voting opens.
+                </p>
               </div>
-              <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 4px" }}>
-                Compete as an AI artist
-              </h2>
-              <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
-                Apply to enter your AI-generated artwork in the next contest.
-              </p>
-            </div>
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
               <Link
-                href="/join?track=subscriber"
+                href={`/contests/ai-art/${contest.id}/submit`}
                 style={{
-                  padding: "9px 18px",
-                  background: "transparent",
-                  border: "1px solid rgba(232,213,183,0.4)",
+                  padding: "9px 20px",
+                  background: "var(--color-purple)",
                   borderRadius: "6px",
-                  color: "var(--color-join-amber)",
-                  fontFamily: "var(--font-dm-mono)",
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  textDecoration: "none",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Subscribe
-              </Link>
-              <Link
-                href="/join?track=artist"
-                style={{
-                  padding: "9px 18px",
-                  background: "var(--color-join-amber)",
-                  borderRadius: "6px",
-                  color: "var(--color-join-ink)",
+                  color: "#fff",
                   fontFamily: "var(--font-dm-mono)",
                   fontSize: "11px",
                   fontWeight: 700,
@@ -272,56 +253,56 @@ export default async function AiArtContestPage({ params }: Props) {
                   whiteSpace: "nowrap",
                 }}
               >
-                Apply as Artist
+                Submit artwork &rarr;
               </Link>
             </div>
-          </div>
-
-          {/* Photo contest entry */}
-          <div
-            style={{
-              background: "var(--color-bg-surface)",
-              border: "1px solid var(--color-border-subtle)",
-              borderRadius: "12px",
-              padding: "28px 32px",
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "20px",
-            }}
-          >
-            <div>
-              <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "6px" }}>
-                Photo Contest
-              </div>
-              <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 4px" }}>
-                Enter with your photography
-              </h2>
-              <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
-                Sign in and upload your photo directly — no application required.
-              </p>
-            </div>
-            <Link
-              href="/contests"
+          ) : (
+            /* Active/closed — show photo contest crosslink */
+            <div
               style={{
-                padding: "9px 18px",
-                background: "var(--color-purple-dim)",
-                border: "1px solid rgba(139,92,246,0.35)",
-                borderRadius: "6px",
-                color: "var(--color-purple-light)",
-                fontFamily: "var(--font-dm-mono)",
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
+                background: "var(--color-bg-surface)",
+                border: "1px solid var(--color-border-subtle)",
+                borderRadius: "12px",
+                padding: "28px 32px",
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "20px",
               }}
             >
-              View photo contests →
-            </Link>
-          </div>
+              <div>
+                <div style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "6px" }}>
+                  Photo Contest
+                </div>
+                <h2 style={{ fontFamily: "var(--font-syne)", fontSize: "1.125rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em", margin: "0 0 4px" }}>
+                  Enter with your photography
+                </h2>
+                <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: 0 }}>
+                  Sign in and upload your photo directly — no application required.
+                </p>
+              </div>
+              <Link
+                href="/contests"
+                style={{
+                  padding: "9px 18px",
+                  background: "var(--color-purple-dim)",
+                  border: "1px solid rgba(139,92,246,0.35)",
+                  borderRadius: "6px",
+                  color: "var(--color-purple-light)",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                View photo contests &rarr;
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

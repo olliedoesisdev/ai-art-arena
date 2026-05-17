@@ -49,44 +49,35 @@ export async function POST(req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: `Submission is already ${submission.status}` }, { status: 400 });
   }
 
-  // 4. Copy image from private bucket to public artworks bucket
+  // 4. Download from private bucket, upload to public artworks bucket
   const destPath = `photo/${submission.contest_id}/${submissionId}.webp`;
 
-  const { error: copyError } = await supabase.storage
+  const { data: fileData, error: downloadError } = await supabase.storage
+    .from("photo-submissions-private")
+    .download(submission.image_url);
+
+  if (downloadError || !fileData) {
+    log.error({ downloadError }, "failed to download submission image");
+    return NextResponse.json({ error: "Failed to retrieve image" }, { status: 500 });
+  }
+
+  const buffer = Buffer.from(await fileData.arrayBuffer());
+  const { error: uploadError } = await supabase.storage
     .from("artworks")
-    .copy(`photo-submissions-private/${submission.image_url}` as never, destPath);
+    .upload(destPath, buffer, {
+      contentType: "image/webp",
+      cacheControl: "31536000",
+      upsert: false,
+    });
 
-  // If copy fails, try using download + upload approach (different bucket API)
-  let publicImageUrl: string;
-  if (copyError) {
-    // Download from private bucket then upload to public
-    const { data: fileData, error: downloadError } = await supabase.storage
-      .from("photo-submissions-private")
-      .download(submission.image_url);
-
-    if (downloadError || !fileData) {
-      log.error({ downloadError }, "failed to download submission image");
-      return NextResponse.json({ error: "Failed to retrieve image" }, { status: 500 });
-    }
-
-    const buffer = Buffer.from(await fileData.arrayBuffer());
-    const { error: uploadError } = await supabase.storage
-      .from("artworks")
-      .upload(destPath, buffer, {
-        contentType: "image/webp",
-        cacheControl: "31536000",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      log.error({ uploadError }, "failed to upload to artworks bucket");
-      return NextResponse.json({ error: "Failed to publish image" }, { status: 500 });
-    }
+  if (uploadError) {
+    log.error({ uploadError }, "failed to upload to artworks bucket");
+    return NextResponse.json({ error: "Failed to publish image" }, { status: 500 });
   }
 
   // 5. Get public URL
   const { data: urlData } = supabase.storage.from("artworks").getPublicUrl(destPath);
-  publicImageUrl = urlData.publicUrl;
+  const publicImageUrl = urlData.publicUrl;
 
   // 6. Insert into artworks table
   const { data: artwork, error: artworkError } = await supabase
@@ -95,7 +86,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       contest_id: submission.contest_id,
       image_url: publicImageUrl,
       title: submission.title,
-      artist_prompt: submission.description ?? null,
+      prompt: submission.description ?? null,
       vote_count: 0,
     })
     .select("id")
@@ -126,6 +117,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   // 9. Revalidate contest page
   revalidatePath(`/contests/photo/${submission.contest_id}`);
+  revalidatePath(`/admin/contests/${submission.contest_id}/submissions`);
 
   log.info({ submissionId, artworkId: artwork.id }, "submission approved");
   return NextResponse.json({ success: true, artwork_id: artwork.id }, { status: 200 });

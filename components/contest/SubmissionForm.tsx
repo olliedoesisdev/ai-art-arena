@@ -10,6 +10,7 @@ interface SubmissionFormProps {
   contestTitle: string;
   theme?: string | null;
   themeDescription?: string | null;
+  contestType?: "photo" | "ai_art";
 }
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -41,7 +42,9 @@ export function SubmissionForm({
   contestTitle,
   theme,
   themeDescription,
+  contestType = "photo",
 }: SubmissionFormProps) {
+  const isAiArt = contestType === "ai_art";
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -168,7 +171,7 @@ export function SubmissionForm({
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "560px" }}>
         {/* File upload */}
         <div>
-          <label style={labelStyle}>Photo</label>
+          <label style={labelStyle}>{isAiArt ? "Artwork" : "Photo"}</label>
           <div
             onClick={() => fileInputRef.current?.click()}
             style={{
@@ -215,7 +218,7 @@ export function SubmissionForm({
                 }}
               >
                 <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "13px", color: "var(--color-text-muted)", marginBottom: "6px" }}>
-                  Click to select a photo
+                  {isAiArt ? "Click to select your artwork" : "Click to select a photo"}
                 </p>
                 <p style={{ fontSize: "12px", color: "var(--color-text-dim)" }}>
                   JPEG, PNG or WebP &middot; max 8 MB
@@ -243,7 +246,7 @@ export function SubmissionForm({
             maxLength={100}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Give your photo a title"
+            placeholder={isAiArt ? "Give your artwork a title" : "Give your photo a title"}
             style={inputStyle}
           />
         </div>
@@ -257,7 +260,7 @@ export function SubmissionForm({
             maxLength={300}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Tell us about this shot — location, technique, story."
+            placeholder={isAiArt ? "Describe your artwork — tools used, prompt, creative process." : "Tell us about this shot — location, technique, story."}
             rows={3}
             style={{ ...inputStyle, resize: "vertical", lineHeight: 1.6 }}
           />
@@ -279,7 +282,7 @@ export function SubmissionForm({
             transition: "background 0.2s",
           }}
         >
-          {isSubmitting ? "Uploading..." : "Submit photo"}
+          {isSubmitting ? "Uploading..." : isAiArt ? "Submit artwork" : "Submit photo"}
         </button>
       </form>
     </div>

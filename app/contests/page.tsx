@@ -77,7 +77,7 @@ function UpcomingCard({ contest, submitHref }: { contest: UpcomingContest; submi
             Contest #{contest.contest_number}
           </span>
           <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.08em", color: "var(--color-status-success)", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)", borderRadius: "100px", padding: "2px 8px" }}>
-            {isPhoto ? "Submissions open" : "Coming soon"}
+            Submissions open
           </span>
         </div>
         <h3
@@ -111,7 +111,7 @@ function UpcomingCard({ contest, submitHref }: { contest: UpcomingContest; submi
         </div>
       </div>
 
-      {isPhoto && submitHref && (
+      {submitHref && (
         <Link
           href={submitHref}
           style={{
@@ -130,7 +130,7 @@ function UpcomingCard({ contest, submitHref }: { contest: UpcomingContest; submi
             flexShrink: 0,
           }}
         >
-          Submit your photo →
+          {isPhoto ? "Submit your photo →" : "Submit artwork →"}
         </Link>
       )}
     </div>
@@ -360,11 +360,12 @@ export default async function ContestsPage() {
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {(upcomingContests ?? []).map((uc) => {
-                const submitHref = uc.contest_type === "photo"
-                  ? session?.user
-                    ? `/contests/photo/${uc.id}/submit`
-                    : `/api/auth/signin?callbackUrl=${encodeURIComponent(`/contests/photo/${uc.id}/submit`)}`
-                  : null;
+                const submitPath = uc.contest_type === "photo"
+                  ? `/contests/photo/${uc.id}/submit`
+                  : `/contests/ai-art/${uc.id}/submit`;
+              const submitHref = session?.user
+                  ? submitPath
+                  : `/api/auth/signin?callbackUrl=${encodeURIComponent(submitPath)}`;
                 return <UpcomingCard key={uc.id} contest={uc} submitHref={submitHref} />;
               })}
             </div>

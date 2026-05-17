@@ -80,8 +80,8 @@ export async function POST(req: NextRequest) {
   if (contestError || !contest) {
     return NextResponse.json({ error: "Contest not found" }, { status: 404 });
   }
-  if (contest.contest_type !== "photo") {
-    return NextResponse.json({ error: "This contest does not accept photo submissions" }, { status: 400 });
+  if (contest.contest_type !== "photo" && contest.contest_type !== "ai_art") {
+    return NextResponse.json({ error: "This contest does not accept user submissions" }, { status: 400 });
   }
   if (contest.status !== "upcoming") {
     return NextResponse.json({ error: "This contest is not currently accepting submissions" }, { status: 400 });
