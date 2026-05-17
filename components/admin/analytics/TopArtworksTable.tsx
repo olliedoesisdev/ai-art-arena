@@ -59,9 +59,9 @@ export function TopArtworksTable({ artworks }: Props) {
                 <div style={{ flex: 1, height: "3px", background: "var(--color-bg-base)", borderRadius: "100px", overflow: "hidden" }}>
                   <div style={{ width: `${pct}%`, height: "100%", background: rankColor, borderRadius: "100px", transition: "width 0.3s" }} />
                 </div>
-                {artwork.contest_week !== null && (
+                {artwork.contest_number !== null && (
                   <span style={{ fontSize: "0.6875rem", color: "var(--color-text-dim)", fontFamily: "var(--font-dm-mono)", flexShrink: 0 }}>
-                    Wk {artwork.contest_week}
+                    #{artwork.contest_number}
                   </span>
                 )}
               </div>

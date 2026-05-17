@@ -33,7 +33,7 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
   const timeLabel = useRelativeTime(vote.voted_at);
   const href = vote.contest_status === "active"
     ? `/contest/${vote.contest_id}`
-    : `/archive/${vote.contest_week}`;
+    : `/archive/${vote.contest_number}`;
 
   return (
     <Link href={href} style={{ textDecoration: "none", display: "block" }}>
@@ -107,7 +107,7 @@ function VoteCard({ vote }: { vote: VoteHistoryItem }) {
               padding: "2px 7px",
               borderRadius: "100px",
             }}>
-              Day {vote.contest_week}
+              Contest #{vote.contest_number}
             </span>
             {vote.contest_status === "active" && (
               <span style={{
@@ -181,20 +181,20 @@ export function VoteHistory({ votes }: Props) {
     );
   }
 
-  // Group by contest week
+  // Group by contest_number
   const grouped = new Map<number, VoteHistoryItem[]>();
   for (const vote of votes) {
-    const week = vote.contest_week;
-    if (!grouped.has(week)) grouped.set(week, []);
-    grouped.get(week)!.push(vote);
+    const num = vote.contest_number;
+    if (!grouped.has(num)) grouped.set(num, []);
+    grouped.get(num)!.push(vote);
   }
-  const sortedWeeks = [...grouped.keys()].sort((a, b) => b - a);
+  const sortedNums = [...grouped.keys()].sort((a, b) => b - a);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
-      {sortedWeeks.map((week) => (
-        <div key={week}>
-          {/* Week divider */}
+      {sortedNums.map((num) => (
+        <div key={num}>
+          {/* Contest divider */}
           <div style={{
             display: "flex",
             alignItems: "center",
@@ -210,13 +210,13 @@ export function VoteHistory({ votes }: Props) {
               textTransform: "uppercase",
               color: "var(--color-text-dim)",
             }}>
-              Day {String(week).padStart(2, "0")}
+              Contest #{num}
             </span>
             <div style={{ flex: 1, height: "1px", background: "rgba(139,92,246,0.08)" }} />
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            {grouped.get(week)!.map((vote) => (
+            {grouped.get(num)!.map((vote) => (
               <VoteCard key={vote.vote_id} vote={vote} />
             ))}
           </div>

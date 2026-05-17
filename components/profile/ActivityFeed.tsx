@@ -41,7 +41,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
   const timeLabel = useRelativeTime(item.activity_at);
   const href = item.contest_status === "active"
     ? `/contest/${item.contest_id}`
-    : `/archive/${item.contest_week}`;
+    : `/archive/${item.contest_number}`;
 
   return (
     <Link href={href} style={{ textDecoration: "none", display: "block" }}>
@@ -119,7 +119,7 @@ function VoteItem({ item, index }: { item: ActivityFeedItem; index: number }) {
             color: "var(--color-status-success)",
             letterSpacing: "0.06em",
           }}>
-            Voted on Day {item.contest_week}
+            Voted on Contest #{item.contest_number}
           </div>
         </div>
 
@@ -142,7 +142,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
   const [expanded, setExpanded] = useState(false);
   const href = item.contest_status === "active"
     ? `/contest/${item.contest_id}`
-    : `/archive/${item.contest_week}`;
+    : `/archive/${item.contest_number}`;
   const body = item.comment_body ?? "";
   const isLong = body.length > 200;
 
@@ -184,7 +184,7 @@ function CommentItem({ item, index }: { item: ActivityFeedItem; index: number })
             color: "var(--color-purple-light)",
             letterSpacing: "0.06em",
           }}>
-            Commented on Day {item.contest_week}
+            Commented on Contest #{item.contest_number}
           </span>
           <span style={{
             fontFamily: "var(--font-dm-mono)",

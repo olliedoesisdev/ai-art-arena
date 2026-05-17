@@ -62,15 +62,30 @@ export default async function PhotoSubmitPage({ params }: Props) {
     );
   }
 
-  if (contest.status !== "active") {
+  // Submissions only accepted during the upcoming phase
+  if (contest.status === "archived") {
     return (
       <div style={{ paddingTop: "80px", paddingBottom: "80px", textAlign: "center" }}>
         <div className="shell">
           <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "2rem", color: "var(--color-text)", marginBottom: "12px" }}>
             Contest closed
           </h1>
-          <p style={{ color: "var(--color-text-muted)", marginBottom: "24px" }}>This contest is no longer accepting submissions.</p>
-          <Link href="/contests" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Browse active contests</Link>
+          <p style={{ color: "var(--color-text-muted)", marginBottom: "24px" }}>This contest has ended — submissions are no longer accepted.</p>
+          <Link href="/contests" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Browse contests</Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (contest.status === "active") {
+    return (
+      <div style={{ paddingTop: "80px", paddingBottom: "80px", textAlign: "center" }}>
+        <div className="shell">
+          <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "2rem", color: "var(--color-text)", marginBottom: "12px" }}>
+            Voting is live
+          </h1>
+          <p style={{ color: "var(--color-text-muted)", marginBottom: "24px" }}>This contest is now open for voting — submissions are closed.</p>
+          <Link href={`/contests/photo/${id}`} style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Go vote &rarr;</Link>
         </div>
       </div>
     );

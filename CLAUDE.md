@@ -14,10 +14,12 @@ Local path: `D:\Projects\ai-art-arena-v2\`
 Git user: `olliedoesisdev`
 
 **Core loop:**
-- Admin creates contests manually — no fixed cadence, no weekly schedule. Each contest has a contest_number, a type (ai_art or photo), an optional theme, and admin-chosen start/end dates.
-- AI art contests: admin-curated submissions. Photo contests: user-submitted photos go through an approval queue before going live.
+- Admin creates contests manually — no fixed cadence, no weekly schedule. Each contest has a contest_number, a type (ai_art or photo), an optional theme, and admin-chosen dates.
+- Three phases: upcoming (submissions open) → active (voting live) → archived (results final)
+- Photo contests: users submit photos during the upcoming phase; admin approves/rejects before voting starts
+- AI art contests: admin uploads artworks directly; upcoming phase used for setup
 - Visitors vote once per contest (cooldown via IP hash + Upstash Redis)
-- Contests auto-archive when their end_date passes (Inngest cron)
+- Inngest cron advances contests: upcoming→active when start_date passes, active→archived when end_date passes
 - Archive page shows all past contests and results
 - Leaderboard shows all-time highest-voted artworks across every contest
 
@@ -310,17 +312,23 @@ created_at    TIMESTAMPTZ DEFAULT NOW()
 updated_at    TIMESTAMPTZ DEFAULT NOW()
 
 -- contests
-id              UUID PRIMARY KEY DEFAULT uuid_generate_v4()
-contest_number  INTEGER NOT NULL UNIQUE   -- sequential contest ID, admin-assigned, not tied to weeks
-title           TEXT NOT NULL
-start_date      TIMESTAMPTZ NOT NULL
-end_date        TIMESTAMPTZ NOT NULL      -- admin sets duration; no fixed cadence
-status          TEXT CHECK (status IN ('active', 'archived'))
-contest_type    TEXT CHECK (contest_type IN ('ai_art', 'photo')) DEFAULT 'ai_art'
-theme           TEXT                      -- optional theme label
-theme_description TEXT                   -- optional theme context
-max_submissions INTEGER                  -- NULL = unlimited
-created_at      TIMESTAMPTZ DEFAULT NOW()
+id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4()
+contest_number      INTEGER NOT NULL UNIQUE   -- sequential contest ID, admin-assigned, not tied to weeks
+title               TEXT NOT NULL
+submissions_open_at TIMESTAMPTZ NOT NULL      -- when photo submissions open (upcoming phase begins)
+start_date          TIMESTAMPTZ NOT NULL      -- when voting opens (active phase begins)
+end_date            TIMESTAMPTZ NOT NULL      -- when voting closes (archived)
+status              TEXT CHECK (status IN ('upcoming', 'active', 'archived'))
+contest_type        TEXT CHECK (contest_type IN ('ai_art', 'photo')) DEFAULT 'ai_art'
+theme               TEXT                      -- optional theme label
+theme_description   TEXT                      -- optional theme context
+max_submissions     INTEGER                   -- NULL = unlimited
+created_at          TIMESTAMPTZ DEFAULT NOW()
+
+-- Contest lifecycle (three states):
+-- upcoming  → submissions_open_at has passed; photo submissions accepted; voting not yet open
+-- active    → start_date has passed; voting is live; no new submissions accepted
+-- archived  → end_date has passed; results final
 
 -- artworks
 id            UUID PRIMARY KEY DEFAULT uuid_generate_v4()

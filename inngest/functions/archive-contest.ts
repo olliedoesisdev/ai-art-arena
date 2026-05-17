@@ -3,20 +3,32 @@ import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
 
 export const archiveContest = inngest.createFunction(
-  { id: 'archive-contest', name: 'Archive Ended Contests', triggers: [{ cron: '0 * * * *' }] },
+  { id: 'archive-contest', name: 'Advance Contest Lifecycle', triggers: [{ cron: '0 * * * *' }] },
   async ({ step }) => {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    // Find all contests past their end_date regardless of type
+    const now = new Date().toISOString()
+
+    // Advance upcoming → active when start_date has passed
+    await step.run('activate-ready-contests', async () => {
+      const { error } = await supabase
+        .from('contests')
+        .update({ status: 'active' })
+        .eq('status', 'upcoming')
+        .lt('start_date', now)
+      if (error) throw error
+    })
+
+    // Find all active contests past their end_date
     const expired = await step.run('find-expired-contests', async () => {
       const { data, error } = await supabase
         .from('contests')
         .select('id, contest_number, contest_type, theme')
         .eq('status', 'active')
-        .lt('end_date', new Date().toISOString())
+        .lt('end_date', now)
       if (error) throw error
       return data ?? []
     })

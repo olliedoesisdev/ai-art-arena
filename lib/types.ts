@@ -9,7 +9,8 @@ export interface Contest {
   description?: string;
   start_date: string;
   end_date: string;
-  status: "active" | "archived";
+  status: "upcoming" | "active" | "archived";
+  submissions_open_at?: string | null;
   contest_type: ContestType;
   theme?: string | null;
   theme_description?: string | null;
@@ -97,7 +98,7 @@ export interface VoteHistoryItem {
   artwork_vote_count: number;
   contest_id: string;
   contest_number: number;
-  contest_status: "active" | "archived";
+  contest_status: "upcoming" | "active" | "archived";
 }
 
 export interface CommentHistoryItem {
@@ -108,7 +109,7 @@ export interface CommentHistoryItem {
   commented_at: string;
   contest_id: string;
   contest_number: number;
-  contest_status: "active" | "archived";
+  contest_status: "upcoming" | "active" | "archived";
 }
 
 export type ActivityType = "vote" | "comment";
@@ -124,7 +125,7 @@ export interface ActivityFeedItem {
   artwork_vote_count: number | null;
   contest_id: string;
   contest_number: number;
-  contest_status: "active" | "archived";
+  contest_status: "upcoming" | "active" | "archived";
   comment_body: string | null;
 }
 

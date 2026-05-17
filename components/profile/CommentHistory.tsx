@@ -33,7 +33,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
   const timeLabel = useRelativeTime(comment.commented_at);
   const href = comment.contest_status === "active"
     ? `/contest/${comment.contest_id}`
-    : `/archive/${comment.contest_week}`;
+    : `/archive/${comment.contest_number}`;
 
   return (
     <Link href={href} style={{ textDecoration: "none", display: "block" }}>
@@ -79,7 +79,7 @@ function CommentCard({ comment }: { comment: CommentHistoryItem }) {
               padding: "2px 7px",
               borderRadius: "100px",
             }}>
-              Day {comment.contest_week}
+              Contest #{comment.contest_number}
             </span>
             {comment.contest_status === "active" && (
               <span style={{

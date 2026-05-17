@@ -55,7 +55,7 @@ export default async function ProfilePage({ params }: Props) {
     activityFeed.filter((a) => a.activity_type === "vote").map((a) => a.contest_number)
   ).size;
 
-  let photoContests: Array<{ id: string; contest_number: number; theme: string | null; theme_description: string | null; end_date: string }> = [];
+  let photoContests: Array<{ id: string; contest_number: number; theme: string | null; theme_description: string | null; end_date: string; start_date: string }> = [];
   let mySubmissions: Array<{ contest_id: string; status: string }> = [];
 
   if (isOwnProfile && session?.user?.id) {
@@ -63,10 +63,10 @@ export default async function ProfilePage({ params }: Props) {
     const [{ data: contests }, { data: subs }] = await Promise.all([
       supabase
         .from("contests")
-        .select("id, contest_number, theme, theme_description, end_date")
-        .eq("status", "active")
+        .select("id, contest_number, theme, theme_description, end_date, start_date")
+        .eq("status", "upcoming")
         .eq("contest_type", "photo")
-        .order("end_date", { ascending: true }),
+        .order("start_date", { ascending: true }),
       supabase
         .from("submissions")
         .select("contest_id, status")
@@ -135,8 +135,10 @@ export default async function ProfilePage({ params }: Props) {
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {photoContests.map((contest) => {
                   const submission = mySubmissions.find((s) => s.contest_id === contest.id);
-                  const endsAt = new Date(contest.end_date);
-                  const daysLeft = Math.ceil((endsAt.getTime() - Date.now()) / 86400000);
+                  const startsAt = new Date(contest.start_date);
+                  const msUntilVoting = startsAt.getTime() - new Date().getTime();
+                  const daysUntilVoting = Math.ceil(msUntilVoting / 86400000);
+                  const votingLabel = daysUntilVoting > 0 ? `Voting opens in ${daysUntilVoting}d` : "Voting opens soon";
                   const contestTitle = contest.theme ?? `Photo Contest #${contest.contest_number}`;
 
                   const statusColors: Record<string, { text: string; bg: string; border: string }> = {
@@ -162,7 +164,7 @@ export default async function ProfilePage({ params }: Props) {
                     >
                       <div style={{ minWidth: 0 }}>
                         <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "4px" }}>
-                          Contest #{contest.contest_number} &middot; {daysLeft > 0 ? `${daysLeft}d left` : "Closing soon"}
+                          Contest #{contest.contest_number} &middot; {votingLabel}
                         </p>
                         <p style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1rem", color: "var(--color-text)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                           {contestTitle}

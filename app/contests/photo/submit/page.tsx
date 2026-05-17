@@ -27,7 +27,7 @@ export default async function PhotoSubmitLandingPage() {
   const { data: activeContests } = await supabase
     .from("contests")
     .select("id, contest_number, theme, theme_description, end_date")
-    .eq("status", "active")
+    .eq("status", "upcoming")
     .eq("contest_type", "photo")
     .order("end_date", { ascending: true });
 
