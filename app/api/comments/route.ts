@@ -75,7 +75,7 @@ export async function POST(request: Request) {
       author_email: email || null,
       body: commentBody,
       ip_hash: ipHash,
-      is_approved: false,
+      is_approved: true,
       is_admin_reply: false,
       user_id: userId,
       contest_id: artwork?.contest_id ?? null,

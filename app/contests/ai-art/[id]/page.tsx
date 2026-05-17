@@ -10,6 +10,7 @@ import { ArtworkCard } from "@/components/contest/ArtworkCard";
 import { JsonLd } from "@/components/layout/JsonLd";
 import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
+import { CommentSection } from "@/components/comments/CommentSection";
 
 export const revalidate = 60;
 
@@ -206,6 +207,19 @@ export default async function AiArtContestPage({ params }: Props) {
             <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
               No artworks have been uploaded for this contest yet. Check back soon.
             </p>
+          </div>
+        )}
+
+        {artworks && artworks.length > 0 && (
+          <div style={{ marginTop: "64px", display: "flex", flexDirection: "column", gap: "48px" }}>
+            {artworks.map((artwork) => (
+              <div key={artwork.id}>
+                <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-muted)", marginBottom: "16px" }}>
+                  Comments on &ldquo;{artwork.title}&rdquo;
+                </p>
+                <CommentSection artworkId={artwork.id} />
+              </div>
+            ))}
           </div>
         )}
 
