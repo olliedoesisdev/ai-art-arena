@@ -33,10 +33,10 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const supabase = createAdminClient();
 
-  // 3. Fetch submission + contest + submitter before updating (need data for email)
+  // 3. Fetch submission + contest before updating (need data for email)
   const { data: submission, error: fetchError } = await supabase
     .from("submissions")
-    .select("id, contest_id, user_id, title, status, contests(contest_number, contest_type, theme), users(email, name)")
+    .select("id, contest_id, user_id, title, status, contests(contest_number, contest_type, theme)")
     .eq("id", submissionId)
     .single();
 
@@ -66,7 +66,12 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   // 5. Email the submitter (best effort — never block the response)
   const contest = (submission.contests as unknown) as { contest_number: number; contest_type: string; theme: string | null } | null;
-  const submitter = (submission.users as unknown) as { email: string; name: string | null } | null;
+  const { data: submitter } = await supabase
+    .from("users")
+    .select("email, name")
+    .eq("id", submission.user_id)
+    .single();
+
   if (submitter?.email && contest) {
     sendSubmissionRejected({
       email: submitter.email,

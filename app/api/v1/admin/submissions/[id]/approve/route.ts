@@ -34,10 +34,10 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const supabase = createAdminClient();
 
-  // 3. Fetch submission row + contest info + submitter email
+  // 3. Fetch submission row + contest info
   const { data: submission, error: fetchError } = await supabase
     .from("submissions")
-    .select("id, contest_id, user_id, image_url, title, description, status, contests(contest_number, contest_type, theme), users(email, name)")
+    .select("id, contest_id, user_id, image_url, title, description, status, contests(contest_number, contest_type, theme)")
     .eq("id", submissionId)
     .single();
 
@@ -124,7 +124,12 @@ export async function POST(req: NextRequest, { params }: Params) {
   revalidatePath(`/admin/contests/${submission.contest_id}/submissions`);
 
   // 10. Email the submitter (best effort — never block the response)
-  const submitter = (submission.users as unknown) as { email: string; name: string | null } | null;
+  const { data: submitter } = await supabase
+    .from("users")
+    .select("email, name")
+    .eq("id", submission.user_id)
+    .single();
+
   if (submitter?.email && contest) {
     sendSubmissionApproved({
       email: submitter.email,
