@@ -8,6 +8,7 @@ import { StartContestButton } from "@/components/admin/StartContestButton";
 import { DeleteArtworkButton } from "@/components/admin/DeleteArtworkButton";
 import { EditArtworkModal } from "@/components/admin/EditArtworkModal";
 import { ArtworkLightbox } from "@/components/admin/ArtworkLightbox";
+import { EditContestDatesModal } from "@/components/admin/EditContestDatesModal";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -62,6 +63,13 @@ export default async function ContestDetailPage({ params }: RouteContext) {
               }}>
                 Submissions →
               </Link>
+            )}
+            {contest.status !== "archived" && (
+              <EditContestDatesModal
+                contestId={id}
+                currentStartDate={contest.start_date}
+                currentEndDate={contest.end_date}
+              />
             )}
             <Link href={`/contests/${contest.contest_type === "photo" ? "photo" : "ai-art"}/${id}`} target="_blank" style={{
               fontSize: "0.8125rem", fontWeight: 600, color: "var(--color-purple)",
