@@ -343,6 +343,14 @@ body {
   background: var(--color-bg-surface2) !important;
 }
 
+/* ── Photo contest card hover ────────────────────────────── */
+.photo-contest-card {
+  transition: border-color 0.15s;
+}
+.photo-contest-card:hover {
+  border-color: rgba(139,92,246,0.35) !important;
+}
+
 /* ── Stack card hover ────────────────────────────────────── */
 /* --card-hover-border is set inline per-card as a CSS variable */
 .stack-card {

@@ -7,6 +7,7 @@ import { getHomeData } from "@/lib/data/home";
 import { JsonLd } from "@/components/layout/JsonLd";
 import { BlogCarousel } from "@/components/blog/BlogCarousel";
 import { BLOG_POSTS } from "@/lib/blog";
+import { auth } from "@/auth";
 
 export const revalidate = 60;
 
@@ -63,8 +64,14 @@ const carouselPosts = [...BLOG_POSTS]
   }));
 
 export default async function HomePage() {
-  const { stats, mosaicArtworks, lastWinner, lastWinnerWeek } = await getHomeData();
+  const [{ stats, mosaicArtworks, lastWinner, lastWinnerWeek }, session] = await Promise.all([
+    getHomeData(),
+    auth(),
+  ]);
   const activeId = stats?.active_id ?? null;
+  const photoSubmitHref = session?.user
+    ? "/profile/me"
+    : "/api/auth/signin?callbackUrl=/profile/me";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -140,6 +147,23 @@ export default async function HomePage() {
                 }}
               >
                 Apply as an artist &rarr;
+              </Link>
+              <Link
+                href={photoSubmitHref}
+                style={{
+                  fontFamily: "var(--font-syne)",
+                  fontWeight: 600,
+                  fontSize: "0.9375rem",
+                  color: "var(--color-text)",
+                  background: "transparent",
+                  border: "1px solid rgba(139,92,246,0.4)",
+                  padding: "13px 32px",
+                  borderRadius: "100px",
+                  textDecoration: "none",
+                  letterSpacing: "0.01em",
+                }}
+              >
+                Submit a photo &rarr;
               </Link>
               <Link
                 href="/signin"
