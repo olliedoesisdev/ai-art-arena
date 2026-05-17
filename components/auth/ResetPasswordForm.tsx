@@ -58,7 +58,7 @@ export function ResetPasswordForm({ token }: { token?: string }) {
     setError(null);
     setLoading(true);
 
-    const res = await fetch("/api/auth/reset-password/request", {
+    const res = await fetch("/api/v1/auth/reset-password/request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -85,7 +85,7 @@ export function ResetPasswordForm({ token }: { token?: string }) {
 
     setLoading(true);
 
-    const res = await fetch("/api/auth/reset-password/confirm", {
+    const res = await fetch("/api/v1/auth/reset-password/confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password }),

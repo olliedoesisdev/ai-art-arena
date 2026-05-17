@@ -10,7 +10,7 @@ export async function sendPasswordResetEmail(data: {
 }): Promise<void> {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  const resetUrl = `${SITE_URL_PUBLIC}/reset-password/confirm?token=${data.token}`;
+  const resetUrl = `${SITE_URL_PUBLIC}/reset-password?token=${data.token}`;
 
   await resend.emails.send({
     from: "AI Art Arena <notifications@olliedoesis.dev>",
