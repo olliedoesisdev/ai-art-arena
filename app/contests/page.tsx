@@ -312,165 +312,69 @@ export default async function ContestsPage() {
       .order("contest_number", { ascending: true }),
   ]);
 
-  const allContests = (contests ?? []) as Array<Contest & { artworks: Artwork[] }>;
-  const aiArt = allContests.filter((c) => c.contest_type === "ai_art");
-  const photo = allContests.filter((c) => c.contest_type === "photo");
-
-  const upcomingAiArt = (upcomingContests ?? []).filter((c) => c.contest_type === "ai_art");
-  const upcomingPhoto = (upcomingContests ?? []).filter((c) => c.contest_type === "photo");
+  const allActive = (contests ?? []) as Array<Contest & { artworks: Artwork[] }>;
 
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
       <div className="shell">
-        <p
-          style={{
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            color: "var(--color-purple-light)",
-            marginBottom: "16px",
-          }}
-        >
-          Active now
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "16px" }}>
+          All contests
         </p>
-        <h1
-          style={{
-            fontFamily: "var(--font-syne)",
-            fontWeight: 800,
-            fontSize: "clamp(2rem, 5vw, 3rem)",
-            letterSpacing: "-0.03em",
-            color: "var(--color-text)",
-            marginBottom: "12px",
-          }}
-        >
+        <h1 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "clamp(2rem, 5vw, 3rem)", letterSpacing: "-0.03em", color: "var(--color-text)", marginBottom: "12px" }}>
           Contests
         </h1>
         <p style={{ color: "var(--color-text-muted)", fontSize: "15px", margin: "0 0 56px" }}>
-          Vote on the active contests below. One vote per contest.
+          Vote on live contests, or submit to upcoming ones.
         </p>
 
-        {/* AI Art section */}
+        {/* 1. Live now */}
         <section style={{ marginBottom: "56px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginBottom: "20px",
-            }}
-          >
-            <h2
-              style={{
-                fontFamily: "var(--font-syne)",
-                fontWeight: 700,
-                fontSize: "1.125rem",
-                color: "var(--color-text)",
-                margin: 0,
-              }}
-            >
-              AI Art
-            </h2>
-            <Link
-              href="/contests/ai-art/archive"
-              style={{
-                fontFamily: "var(--font-dm-mono)",
-                fontSize: "11px",
-                color: "var(--color-text-muted)",
-                textDecoration: "none",
-                letterSpacing: "0.06em",
-              }}
-            >
-              Archive →
-            </Link>
-          </div>
-
-          {aiArt.length === 0 ? (
-            <EmptySection label="AI art" />
+          <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1.125rem", color: "var(--color-text)", margin: "0 0 20px" }}>
+            Live now
+          </h2>
+          {allActive.length === 0 ? (
+            <EmptySection label="active" />
           ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                gap: "16px",
-              }}
-            >
-              {aiArt.map((contest, i) => (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
+              {allActive.map((contest, i) => (
                 <ContestCard key={contest.id} contest={contest} priority={i === 0} />
-              ))}
-            </div>
-          )}
-
-          {upcomingAiArt.length > 0 && (
-            <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-              {upcomingAiArt.map((uc) => (
-                <UpcomingCard key={uc.id} contest={uc} submitHref={null} />
               ))}
             </div>
           )}
         </section>
 
-        {/* Photo section */}
-        <section>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginBottom: "20px",
-            }}
-          >
-            <h2
-              style={{
-                fontFamily: "var(--font-syne)",
-                fontWeight: 700,
-                fontSize: "1.125rem",
-                color: "var(--color-text)",
-                margin: 0,
-              }}
-            >
-              Photography
+        {/* 2. Coming up */}
+        {(upcomingContests ?? []).length > 0 && (
+          <section style={{ marginBottom: "56px" }}>
+            <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1.125rem", color: "var(--color-text)", margin: "0 0 20px" }}>
+              Coming up
             </h2>
-            <Link
-              href="/contests/photo/archive"
-              style={{
-                fontFamily: "var(--font-dm-mono)",
-                fontSize: "11px",
-                color: "var(--color-text-muted)",
-                textDecoration: "none",
-                letterSpacing: "0.06em",
-              }}
-            >
-              Archive →
-            </Link>
-          </div>
-
-          {photo.length === 0 ? (
-            <EmptySection label="photo" />
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                gap: "16px",
-              }}
-            >
-              {photo.map((contest, i) => (
-                <ContestCard key={contest.id} contest={contest} priority={false} />
-              ))}
-            </div>
-          )}
-
-          {upcomingPhoto.length > 0 && (
-            <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
-              {upcomingPhoto.map((uc) => {
-                const submitHref = session?.user
-                  ? `/contests/photo/${uc.id}/submit`
-                  : `/api/auth/signin?callbackUrl=${encodeURIComponent(`/contests/photo/${uc.id}/submit`)}`;
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {(upcomingContests ?? []).map((uc) => {
+                const submitHref = uc.contest_type === "photo"
+                  ? session?.user
+                    ? `/contests/photo/${uc.id}/submit`
+                    : `/api/auth/signin?callbackUrl=${encodeURIComponent(`/contests/photo/${uc.id}/submit`)}`
+                  : null;
                 return <UpcomingCard key={uc.id} contest={uc} submitHref={submitHref} />;
               })}
             </div>
-          )}
+          </section>
+        )}
+
+        {/* 3. Archives */}
+        <section>
+          <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1.125rem", color: "var(--color-text)", margin: "0 0 16px" }}>
+            Archive
+          </h2>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <Link href="/contests/ai-art/archive" style={{ padding: "10px 20px", background: "var(--color-bg-surface)", border: "1px solid var(--color-border-subtle)", borderRadius: "8px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 600, color: "var(--color-text-muted)", textDecoration: "none", letterSpacing: "0.06em" }}>
+              AI Art archive →
+            </Link>
+            <Link href="/contests/photo/archive" style={{ padding: "10px 20px", background: "var(--color-bg-surface)", border: "1px solid var(--color-border-subtle)", borderRadius: "8px", fontFamily: "var(--font-dm-mono)", fontSize: "12px", fontWeight: 600, color: "var(--color-text-muted)", textDecoration: "none", letterSpacing: "0.06em" }}>
+              Photography archive →
+            </Link>
+          </div>
         </section>
       </div>
     </div>
