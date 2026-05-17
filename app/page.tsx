@@ -287,19 +287,6 @@ export default async function HomePage() {
               }}>
                 That gap between directing and executing is where the work actually lives.
               </p>
-              <Link
-                href="/about"
-                style={{
-                  fontFamily: "var(--font-dm-mono)",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  color: "var(--color-purple-light)",
-                  textDecoration: "none",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                Read the full breakdown &rarr;
-              </Link>
             </div>
 
             {/* Right: decisions list */}
