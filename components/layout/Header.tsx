@@ -27,7 +27,6 @@ export async function Header() {
   const isAdmin = session?.user?.role === "admin";
 
   const NAV_LINKS = [
-    { href: "/", label: "Home" },
     { href: "/contests", label: "Contests" },
     { href: "/leaderboard", label: "Leaderboard" },
   ];
@@ -56,7 +55,7 @@ export async function Header() {
       >
         {/* Wordmark */}
         <Link
-          href="/"
+          href="/contests"
           style={{
             fontFamily: "var(--font-syne)",
             fontWeight: 800,
