@@ -67,7 +67,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     .upload(destPath, buffer, {
       contentType: "image/webp",
       cacheControl: "31536000",
-      upsert: false,
+      upsert: true,
     });
 
   if (uploadError) {
