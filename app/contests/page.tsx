@@ -308,9 +308,150 @@ export default async function ContestsPage() {
 
   const allActive = (contests ?? []) as Array<Contest & { artworks: Artwork[] }>;
 
+  const isSignedIn = !!session?.user;
+
+  // Sign-in callbackUrls for the banner buttons
+  const photoSignInUrl = `/api/auth/signin?callbackUrl=${encodeURIComponent("/contests/photo/submit")}`;
+  const aiArtSignInUrl = `/api/auth/signin?callbackUrl=${encodeURIComponent("/contests/ai-art/submit")}`;
+
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
       <div className="shell">
+
+        {/* ── SUBMIT BANNER ─────────────────────────────────────────── */}
+        {!isSignedIn ? (
+          /* Unauthenticated: full hero banner */
+          <div
+            style={{
+              background: "var(--color-bg-surface)",
+              border: "1px solid var(--color-border-mid)",
+              borderRadius: "16px",
+              padding: "36px 40px",
+              marginBottom: "56px",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            {/* subtle purple glow */}
+            <div aria-hidden style={{ position: "absolute", top: "-60px", right: "-60px", width: "260px", height: "260px", borderRadius: "50%", background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+            <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "12px" }}>
+              Enter a contest
+            </p>
+            <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "clamp(1.5rem, 3vw, 2rem)", letterSpacing: "-0.03em", color: "var(--color-text)", margin: "0 0 8px", lineHeight: 1.1 }}>
+              Submit your work. Win the vote.
+            </h2>
+            <p style={{ fontSize: "0.9375rem", color: "var(--color-text-muted)", lineHeight: 1.6, margin: "0 0 28px", maxWidth: "480px" }}>
+              Sign in to enter. Photo contests accept real photography. AI art contests accept AI-generated images.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+              <Link
+                href={photoSignInUrl}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "12px 24px",
+                  background: "rgba(245,158,11,0.1)",
+                  border: "1px solid rgba(245,158,11,0.35)",
+                  borderRadius: "100px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "#f59e0b",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Submit your photo &rarr;
+              </Link>
+              <Link
+                href={aiArtSignInUrl}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "12px 24px",
+                  background: "var(--color-purple-dim)",
+                  border: "1px solid rgba(139,92,246,0.35)",
+                  borderRadius: "100px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "var(--color-purple-light)",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Submit AI art &rarr;
+              </Link>
+            </div>
+          </div>
+        ) : (
+          /* Signed in: compact strip */
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "12px",
+              padding: "14px 20px",
+              background: "var(--color-bg-surface)",
+              border: "1px solid var(--color-border-subtle)",
+              borderRadius: "10px",
+              marginBottom: "40px",
+            }}
+          >
+            <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+              Enter a contest
+            </span>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <Link
+                href="/contests/photo/submit"
+                style={{
+                  padding: "7px 16px",
+                  background: "rgba(245,158,11,0.08)",
+                  border: "1px solid rgba(245,158,11,0.25)",
+                  borderRadius: "100px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "#f59e0b",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Submit photo &rarr;
+              </Link>
+              <Link
+                href="/contests/ai-art/submit"
+                style={{
+                  padding: "7px 16px",
+                  background: "var(--color-purple-dim2)",
+                  border: "1px solid var(--color-border-subtle)",
+                  borderRadius: "100px",
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "11px",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "var(--color-purple-light)",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Submit AI art &rarr;
+              </Link>
+            </div>
+          </div>
+        )}
+
         <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "16px" }}>
           All contests
         </p>
