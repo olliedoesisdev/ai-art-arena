@@ -53,9 +53,9 @@ type UpcomingContest = {
 function UpcomingCard({ contest, submitHref }: { contest: UpcomingContest; submitHref: string | null }) {
   const isPhoto = contest.contest_type === "photo";
   const votingOpens = new Date(contest.start_date);
-  const now = new Date();
-  const daysUntil = Math.ceil((votingOpens.getTime() - now.getTime()) / 86400000);
-  const opensLabel = daysUntil <= 0 ? "Starting soon" : daysUntil === 1 ? "Voting opens tomorrow" : `Voting opens in ${daysUntil} days`;
+  const dayName = votingOpens.toLocaleDateString("en-US", { weekday: "long", timeZone: "America/New_York" });
+  const dateStr = votingOpens.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/New_York" });
+  const timeStr = votingOpens.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZoneName: "short", timeZone: "America/New_York" });
 
   return (
     <div
@@ -72,7 +72,7 @@ function UpcomingCard({ contest, submitHref }: { contest: UpcomingContest; submi
       }}
     >
       <div style={{ minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
           <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)" }}>
             Contest #{contest.contest_number}
           </span>
@@ -87,19 +87,28 @@ function UpcomingCard({ contest, submitHref }: { contest: UpcomingContest; submi
             fontSize: "1.125rem",
             color: "var(--color-text)",
             letterSpacing: "-0.02em",
-            margin: "0 0 4px",
+            margin: "0 0 10px",
           }}
         >
           {contest.theme ?? `Contest #${contest.contest_number}`}
         </h3>
         {contest.theme_description && (
-          <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.55, margin: "0 0 6px", maxWidth: "480px" }}>
+          <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.55, margin: "0 0 12px", maxWidth: "480px" }}>
             {contest.theme_description}
           </p>
         )}
-        <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-dim)", margin: 0 }}>
-          {opensLabel}
-        </p>
+        {/* Voting start — prominent */}
+        <div style={{ display: "flex", alignItems: "baseline", gap: "8px", flexWrap: "wrap" }}>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+            Voting opens
+          </span>
+          <span style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em" }}>
+            {dayName}, {dateStr}
+          </span>
+          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", fontWeight: 600, color: "var(--color-purple-light)" }}>
+            {timeStr}
+          </span>
+        </div>
       </div>
 
       {isPhoto && submitHref && (
