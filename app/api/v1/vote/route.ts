@@ -107,8 +107,8 @@ export async function POST(request: Request) {
         (resetDate.getTime() - Date.now()) / (1000 * 60 * 60),
       );
       const errorMessage = userEmail
-        ? `You have already voted today. Your next vote is available in ${hoursUntilReset} hour${hoursUntilReset !== 1 ? "s" : ""}.`
-        : `This connection has reached the vote limit for this contest. Sign in to get your own personal vote. Next reset in ${hoursUntilReset} hour${hoursUntilReset !== 1 ? "s" : ""}.`;
+        ? `You have used all 10 votes for this contest. Resets in ${hoursUntilReset} hour${hoursUntilReset !== 1 ? "s" : ""}.`
+        : `This connection has reached the vote limit for this contest. Sign in to get your own personal votes. Resets in ${hoursUntilReset} hour${hoursUntilReset !== 1 ? "s" : ""}.`;
 
       logger.warn(
         { requestId, rateLimitKey, isAuthenticated: !!userEmail },
@@ -157,12 +157,19 @@ export async function POST(request: Request) {
     };
 
     if (!row.success) {
-      const EXPECTED_CODES = new Set(["ALREADY_VOTED", "CONTEST_NOT_ACTIVE"]);
+      const EXPECTED_CODES = new Set([
+        "ALREADY_VOTED",
+        "CONTEST_NOT_ACTIVE",
+        "VOTE_LIMIT_REACHED",
+        "ARTWORK_VOTE_LIMIT_REACHED",
+      ]);
       const map: Record<string, { status: number; error: string }> = {
-        CONTEST_NOT_FOUND: { status: 404, error: "Contest not found" },
-        CONTEST_NOT_ACTIVE: { status: 400, error: "Contest is not active" },
-        ARTWORK_NOT_FOUND: { status: 404, error: "Artwork not found" },
-        ALREADY_VOTED: { status: 409, error: "Already voted on this contest" },
+        CONTEST_NOT_FOUND:        { status: 404, error: "Contest not found" },
+        CONTEST_NOT_ACTIVE:       { status: 400, error: "Contest is not active" },
+        ARTWORK_NOT_FOUND:        { status: 404, error: "Artwork not found" },
+        ALREADY_VOTED:            { status: 409, error: "Already voted on this contest" },
+        VOTE_LIMIT_REACHED:       { status: 409, error: "You have used all 10 votes for this contest" },
+        ARTWORK_VOTE_LIMIT_REACHED: { status: 409, error: "You have reached the 5-vote limit on this artwork" },
       };
       const mapped = map[row.error_code ?? ""] ?? {
         status: 500,

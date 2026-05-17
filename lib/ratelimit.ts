@@ -2,18 +2,18 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import crypto from "crypto";
 
-// Authenticated users: 3 votes per contest window, keyed by email hash + contest.
+// Authenticated users: 10 votes per contest window, keyed by email hash + contest.
 export const voteRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(3, "24 h"),
+  limiter: Ratelimit.slidingWindow(10, "24 h"),
   analytics: true,
   prefix: "vote:authed",
 });
 
-// Anonymous users: 3 votes per IP per contest.
+// Anonymous users: 50 votes per IP per contest (hard cap also enforced in DB).
 export const anonVoteRateLimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(3, "24 h"),
+  limiter: Ratelimit.slidingWindow(50, "24 h"),
   analytics: true,
   prefix: "vote:anon",
 });
