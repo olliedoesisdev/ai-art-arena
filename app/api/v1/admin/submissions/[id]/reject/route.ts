@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { adminRateLimit } from "@/lib/ratelimit";
 import { logger, generateRequestId } from "@/lib/logger";
 import { getClientIP, hashIP } from "@/lib/utils";
+import { sendSubmissionRejected } from "@/lib/email";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -32,7 +33,23 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const supabase = createAdminClient();
 
-  // 3. Update submission status
+  // 3. Fetch submission + contest + submitter before updating (need data for email)
+  const { data: submission, error: fetchError } = await supabase
+    .from("submissions")
+    .select("id, contest_id, user_id, title, status, contests(contest_number, contest_type, theme), users(email, name)")
+    .eq("id", submissionId)
+    .single();
+
+  if (fetchError || !submission) {
+    log.warn("submission not found");
+    return NextResponse.json({ error: "Submission not found" }, { status: 404 });
+  }
+
+  if (submission.status === "rejected") {
+    return NextResponse.json({ error: "Submission is already rejected" }, { status: 400 });
+  }
+
+  // 4. Update submission status
   const { error } = await supabase
     .from("submissions")
     .update({
@@ -45,6 +62,21 @@ export async function POST(req: NextRequest, { params }: Params) {
   if (error) {
     log.error({ error }, "failed to reject submission");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+
+  // 5. Email the submitter (best effort — never block the response)
+  const contest = (submission.contests as unknown) as { contest_number: number; contest_type: string; theme: string | null } | null;
+  const submitter = (submission.users as unknown) as { email: string; name: string | null } | null;
+  if (submitter?.email && contest) {
+    sendSubmissionRejected({
+      email: submitter.email,
+      submitterName: submitter.name,
+      submissionTitle: submission.title,
+      contestNumber: contest.contest_number,
+      contestType: contest.contest_type,
+      contestId: submission.contest_id,
+      contestTheme: contest.theme,
+    }).catch((err) => log.error({ err }, "failed to send rejection email"));
   }
 
   log.info({ submissionId }, "submission rejected");

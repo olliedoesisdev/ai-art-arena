@@ -64,7 +64,7 @@ const carouselPosts = [...BLOG_POSTS]
   }));
 
 export default async function HomePage() {
-  const [{ stats, mosaicArtworks, lastWinner, lastWinnerContestNumber }, session] = await Promise.all([
+  const [{ stats, mosaicArtworks, lastWinner, lastWinnerContestNumber, recentVotes }, session] = await Promise.all([
     getHomeData(),
     auth(),
   ]);
@@ -521,8 +521,8 @@ export default async function HomePage() {
         <LastWinner artwork={lastWinner} contestNumber={lastWinnerContestNumber} />
       )}
 
-      {/* ── Live stats ───────────────────────────────────────────── */}
-      {stats && (
+      {/* ── Live stats — only render once there's real activity ─── */}
+      {stats && stats.total_votes > 0 && (
         <section style={{ paddingBottom: "80px" }}>
           <div className="shell">
             <div style={{
@@ -555,6 +555,86 @@ export default async function HomePage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Recent activity — shows platform is alive ────────────── */}
+      {recentVotes.length > 0 && (
+        <section style={{ paddingBottom: "80px" }}>
+          <div className="shell">
+            <p style={{
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "var(--color-purple-light)",
+              fontFamily: "var(--font-dm-mono)",
+              marginBottom: "20px",
+            }}>
+              Recent votes
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+              {recentVotes.map((vote, i) => {
+                const ago = (() => {
+                  const ms = Date.now() - new Date(vote.voted_at).getTime();
+                  const mins = Math.floor(ms / 60000);
+                  const hrs = Math.floor(ms / 3600000);
+                  const days = Math.floor(ms / 86400000);
+                  if (mins < 2) return "just now";
+                  if (mins < 60) return `${mins}m ago`;
+                  if (hrs < 24) return `${hrs}h ago`;
+                  return `${days}d ago`;
+                })();
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "12px 18px",
+                      background: "var(--color-bg-surface)",
+                      border: "1px solid var(--color-border-subtle)",
+                      borderRadius: "8px",
+                      gap: "16px",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+                      <span style={{
+                        width: "6px",
+                        height: "6px",
+                        borderRadius: "50%",
+                        background: "var(--color-purple-light)",
+                        flexShrink: 0,
+                      }} />
+                      <span style={{
+                        fontSize: "0.875rem",
+                        color: "var(--color-text-muted)",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}>
+                        Someone voted for{" "}
+                        <span style={{ color: "var(--color-text)", fontWeight: 500 }}>
+                          {vote.artwork_title}
+                        </span>
+                        {" "}in Contest #{vote.contest_number}
+                      </span>
+                    </div>
+                    <span style={{
+                      fontFamily: "var(--font-dm-mono)",
+                      fontSize: "11px",
+                      color: "var(--color-text-dim)",
+                      flexShrink: 0,
+                      letterSpacing: "0.04em",
+                    }}>
+                      {ago}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

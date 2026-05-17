@@ -55,7 +55,7 @@ export default async function ProfilePage({ params }: Props) {
     activityFeed.filter((a) => a.activity_type === "vote").map((a) => a.contest_number)
   ).size;
 
-  let photoContests: Array<{ id: string; contest_number: number; theme: string | null; theme_description: string | null; end_date: string; start_date: string }> = [];
+  let openContests: Array<{ id: string; contest_number: number; contest_type: string; theme: string | null; theme_description: string | null; end_date: string; start_date: string }> = [];
   let mySubmissions: Array<{ contest_id: string; status: string }> = [];
 
   if (isOwnProfile && session?.user?.id) {
@@ -63,16 +63,16 @@ export default async function ProfilePage({ params }: Props) {
     const [{ data: contests }, { data: subs }] = await Promise.all([
       supabase
         .from("contests")
-        .select("id, contest_number, theme, theme_description, end_date, start_date")
+        .select("id, contest_number, contest_type, theme, theme_description, end_date, start_date")
         .eq("status", "upcoming")
-        .eq("contest_type", "photo")
+        .in("contest_type", ["photo", "ai_art"])
         .order("start_date", { ascending: true }),
       supabase
         .from("submissions")
         .select("contest_id, status")
         .eq("user_id", session.user.id),
     ]);
-    photoContests = contests ?? [];
+    openContests = contests ?? [];
     mySubmissions = subs ?? [];
   }
 
@@ -92,21 +92,21 @@ export default async function ProfilePage({ params }: Props) {
           totalComments={totalComments}
         />
 
-        {/* Photo submission panel — own profile only */}
+        {/* Open contests submission panel — own profile only */}
         {isOwnProfile && (
           <div style={{ marginTop: "48px" }}>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "20px", gap: "12px" }}>
               <div>
                 <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "4px" }}>
-                  Photo contest
+                  Open contests
                 </p>
                 <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.25rem", color: "var(--color-text)", letterSpacing: "-0.02em", margin: 0 }}>
-                  Submit your photos
+                  Submit your work
                 </h2>
               </div>
-              {photoContests.length > 0 && (
+              {openContests.length > 0 && (
                 <Link
-                  href="/contests/photo/submit"
+                  href="/contests"
                   style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", fontWeight: 600, color: "var(--color-purple-light)", textDecoration: "none", letterSpacing: "0.06em", whiteSpace: "nowrap", flexShrink: 0 }}
                 >
                   All contests &rarr;
@@ -114,7 +114,7 @@ export default async function ProfilePage({ params }: Props) {
               )}
             </div>
 
-            {photoContests.length === 0 ? (
+            {openContests.length === 0 ? (
               <div
                 style={{
                   background: "var(--color-bg-surface)",
@@ -128,18 +128,27 @@ export default async function ProfilePage({ params }: Props) {
                   No open contests
                 </p>
                 <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", lineHeight: 1.6, margin: 0 }}>
-                  There are no active photo contests right now. Check back soon.
+                  There are no contests accepting submissions right now. Check back soon.
                 </p>
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {photoContests.map((contest) => {
+                {openContests.map((contest) => {
                   const submission = mySubmissions.find((s) => s.contest_id === contest.id);
                   const startsAt = new Date(contest.start_date);
                   const msUntilVoting = startsAt.getTime() - new Date().getTime();
                   const daysUntilVoting = Math.ceil(msUntilVoting / 86400000);
                   const votingLabel = daysUntilVoting > 0 ? `Voting opens in ${daysUntilVoting}d` : "Voting opens soon";
-                  const contestTitle = contest.theme ?? `Photo Contest #${contest.contest_number}`;
+                  const isPhoto = contest.contest_type === "photo";
+                  const contestTitle = contest.theme
+                    ? contest.theme
+                    : isPhoto
+                    ? `Photo Contest #${contest.contest_number}`
+                    : `AI Art Contest #${contest.contest_number}`;
+                  const submitHref = isPhoto
+                    ? `/contests/photo/${contest.id}/submit`
+                    : `/contests/ai-art/${contest.id}/submit`;
+                  const typeLabel = isPhoto ? "Photo" : "AI Art";
 
                   const statusColors: Record<string, { text: string; bg: string; border: string }> = {
                     pending: { text: "var(--color-status-warning)", bg: "var(--color-status-warningDim)", border: "rgba(251,191,36,0.25)" },
@@ -164,7 +173,7 @@ export default async function ProfilePage({ params }: Props) {
                     >
                       <div style={{ minWidth: 0 }}>
                         <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)", marginBottom: "4px" }}>
-                          Contest #{contest.contest_number} &middot; {votingLabel}
+                          {typeLabel} &middot; Contest #{contest.contest_number} &middot; {votingLabel}
                         </p>
                         <p style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1rem", color: "var(--color-text)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                           {contestTitle}
@@ -192,7 +201,7 @@ export default async function ProfilePage({ params }: Props) {
                         </span>
                       ) : (
                         <Link
-                          href={`/contests/photo/${contest.id}/submit`}
+                          href={submitHref}
                           style={{
                             padding: "8px 18px",
                             background: "var(--color-purple-dim)",
@@ -240,7 +249,7 @@ export default async function ProfilePage({ params }: Props) {
               Want to compete?
             </h2>
             <p style={{ color: "var(--color-text-muted)", fontSize: "14px", margin: "0 0 6px" }}>
-              Submit your AI artwork for the weekly contest.
+              Submit your artwork or photos to an open contest.
             </p>
             <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: 0, letterSpacing: "0.04em" }}>
               Built by <a href="/about" style={{ color: "var(--color-purple-light)", textDecoration: "none" }}>Oliver White</a>

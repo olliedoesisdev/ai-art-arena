@@ -6,6 +6,7 @@ import { adminRateLimit } from "@/lib/ratelimit";
 import { logger, generateRequestId } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
 import { getClientIP, hashIP } from "@/lib/utils";
+import { sendSubmissionApproved } from "@/lib/email";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -33,10 +34,10 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const supabase = createAdminClient();
 
-  // 3. Fetch submission row
+  // 3. Fetch submission row + contest info + submitter email
   const { data: submission, error: fetchError } = await supabase
     .from("submissions")
-    .select("id, contest_id, user_id, image_url, title, description, status")
+    .select("id, contest_id, user_id, image_url, title, description, status, contests(contest_number, contest_type, theme), users(email, name)")
     .eq("id", submissionId)
     .single();
 
@@ -115,9 +116,26 @@ export async function POST(req: NextRequest, { params }: Params) {
   // 8. Remove from private bucket (best effort)
   await supabase.storage.from("photo-submissions-private").remove([submission.image_url]);
 
-  // 9. Revalidate contest page
-  revalidatePath(`/contests/photo/${submission.contest_id}`);
+  // 9. Revalidate contest pages
+  const contest = (submission.contests as unknown) as { contest_number: number; contest_type: string; theme: string | null } | null;
+  const contestType = contest?.contest_type ?? "photo";
+  const contestPath = contestType === "photo" ? "photo" : "ai-art";
+  revalidatePath(`/contests/${contestPath}/${submission.contest_id}`);
   revalidatePath(`/admin/contests/${submission.contest_id}/submissions`);
+
+  // 10. Email the submitter (best effort — never block the response)
+  const submitter = (submission.users as unknown) as { email: string; name: string | null } | null;
+  if (submitter?.email && contest) {
+    sendSubmissionApproved({
+      email: submitter.email,
+      submitterName: submitter.name,
+      submissionTitle: submission.title,
+      contestNumber: contest.contest_number,
+      contestType: contest.contest_type,
+      contestId: submission.contest_id,
+      contestTheme: contest.theme,
+    }).catch((err) => log.error({ err }, "failed to send approval email"));
+  }
 
   log.info({ submissionId, artworkId: artwork.id }, "submission approved");
   return NextResponse.json({ success: true, artwork_id: artwork.id }, { status: 200 });

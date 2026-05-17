@@ -22,17 +22,24 @@ export interface LastWinnerArtwork {
   contest_id: string;
 }
 
+export interface RecentVote {
+  artwork_title: string;
+  contest_number: number;
+  voted_at: string;
+}
+
 export interface HomeData {
   stats: HomeStats | null;
   mosaicArtworks: MosaicArtwork[];
   lastWinner: LastWinnerArtwork | null;
   lastWinnerContestNumber: number | null;
+  recentVotes: RecentVote[];
 }
 
 export async function getHomeData(): Promise<HomeData> {
   const supabase = createPublicClient();
 
-  const [statsResult, mosaicResult, lastWinnerResult] = await Promise.all([
+  const [statsResult, mosaicResult, lastWinnerResult, recentVotesResult] = await Promise.all([
     supabase.rpc("get_homepage_stats"),
 
     supabase
@@ -49,6 +56,12 @@ export async function getHomeData(): Promise<HomeData> {
       .order("contest_number", { ascending: false })
       .limit(1)
       .maybeSingle(),
+
+    supabase
+      .from("votes")
+      .select("created_at, artworks(title), contests(contest_number)")
+      .order("created_at", { ascending: false })
+      .limit(6),
   ]);
 
   const stats =
@@ -75,5 +88,13 @@ export async function getHomeData(): Promise<HomeData> {
     }
   }
 
-  return { stats, mosaicArtworks, lastWinner, lastWinnerContestNumber };
+  const recentVotes: RecentVote[] = (recentVotesResult.data ?? [])
+    .filter((v) => v.artworks && v.contests)
+    .map((v) => ({
+      artwork_title: (v.artworks as unknown as { title: string } | null)?.title ?? "Unknown",
+      contest_number: (v.contests as unknown as { contest_number: number } | null)?.contest_number ?? 0,
+      voted_at: v.created_at,
+    }));
+
+  return { stats, mosaicArtworks, lastWinner, lastWinnerContestNumber, recentVotes };
 }

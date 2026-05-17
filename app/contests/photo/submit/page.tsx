@@ -31,6 +31,8 @@ export default async function PhotoSubmitLandingPage() {
     .eq("contest_type", "photo")
     .order("end_date", { ascending: true });
 
+  const now = new Date().getTime();
+
   return (
     <div className="animate-page" style={{ paddingTop: "48px", paddingBottom: "80px" }}>
       <div className="shell" style={{ maxWidth: "640px" }}>
@@ -117,7 +119,7 @@ export default async function PhotoSubmitLandingPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {activeContests.map((contest) => {
               const endsAt = new Date(contest.end_date);
-              const daysLeft = Math.ceil((endsAt.getTime() - Date.now()) / 86400000);
+              const daysLeft = Math.ceil((endsAt.getTime() - now) / 86400000);
               const contestTitle = contest.theme ?? `Photo Contest #${contest.contest_number}`;
 
               return (
