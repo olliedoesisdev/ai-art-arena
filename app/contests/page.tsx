@@ -57,82 +57,104 @@ function UpcomingCard({ contest, submitHref }: { contest: UpcomingContest; submi
   const dateStr = votingOpens.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/New_York" });
   const timeStr = votingOpens.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZoneName: "short", timeZone: "America/New_York" });
 
+  // Photo = warm amber accent / AI art = purple accent
+  const accent = isPhoto
+    ? { color: "#f59e0b", bg: "rgba(245,158,11,0.07)", border: "rgba(245,158,11,0.18)", btnBg: "rgba(245,158,11,0.1)", btnBorder: "rgba(245,158,11,0.35)", stripe: "rgba(245,158,11,0.06)" }
+    : { color: "var(--color-purple-light)", bg: "rgba(139,92,246,0.06)", border: "rgba(139,92,246,0.18)", btnBg: "var(--color-purple-dim)", btnBorder: "rgba(139,92,246,0.35)", stripe: "rgba(139,92,246,0.05)" };
+
+  const typeLabel = isPhoto ? "Photography" : "AI Art";
+  const typeIcon = isPhoto ? "📷" : "✦";
+
   return (
     <div
       style={{
-        background: "var(--color-bg-surface)",
-        border: "1px solid var(--color-border-subtle)",
+        background: `var(--color-bg-surface)`,
+        border: `1px solid ${accent.border}`,
         borderRadius: "14px",
-        padding: "24px 28px",
+        overflow: "hidden",
         display: "flex",
         flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "16px",
+        alignItems: "stretch",
       }}
     >
-      <div style={{ minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-purple-light)" }}>
-            Contest #{contest.contest_number}
-          </span>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.08em", color: "var(--color-status-success)", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)", borderRadius: "100px", padding: "2px 8px" }}>
-            Submissions open
-          </span>
-        </div>
-        <h3
-          style={{
-            fontFamily: "var(--font-syne)",
-            fontWeight: 800,
-            fontSize: "1.125rem",
-            color: "var(--color-text)",
-            letterSpacing: "-0.02em",
-            margin: "0 0 10px",
-          }}
-        >
-          {contest.theme ?? `Contest #${contest.contest_number}`}
-        </h3>
-        {contest.theme_description && (
-          <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.55, margin: "0 0 12px", maxWidth: "480px" }}>
-            {contest.theme_description}
-          </p>
-        )}
-        {/* Voting start — prominent */}
-        <div style={{ display: "flex", alignItems: "baseline", gap: "8px", flexWrap: "wrap" }}>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
-            Voting opens
-          </span>
-          <span style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em" }}>
-            {dayName}, {dateStr}
-          </span>
-          <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", fontWeight: 600, color: "var(--color-purple-light)" }}>
-            {timeStr}
-          </span>
-        </div>
-      </div>
+      {/* Left accent stripe */}
+      <div style={{ width: "4px", background: accent.color, flexShrink: 0, opacity: 0.7 }} />
 
-      {submitHref && (
-        <Link
-          href={submitHref}
-          style={{
-            padding: "9px 20px",
-            background: "var(--color-purple-dim)",
-            border: "1px solid rgba(139,92,246,0.35)",
-            borderRadius: "100px",
-            color: "var(--color-purple-light)",
-            fontFamily: "var(--font-dm-mono)",
-            fontSize: "11px",
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            textDecoration: "none",
-            whiteSpace: "nowrap",
-            flexShrink: 0,
-          }}
-        >
-          {isPhoto ? "Submit your photo →" : "Submit artwork →"}
-        </Link>
-      )}
+      {/* Content */}
+      <div
+        style={{
+          flex: 1,
+          padding: "24px 28px",
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "16px",
+          background: accent.stripe,
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px", flexWrap: "wrap" }}>
+            <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: accent.color }}>
+              {typeIcon} {typeLabel} &middot; Contest #{contest.contest_number}
+            </span>
+            <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, letterSpacing: "0.08em", color: "var(--color-status-success)", background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)", borderRadius: "100px", padding: "2px 8px" }}>
+              Submissions open
+            </span>
+          </div>
+          <h3
+            style={{
+              fontFamily: "var(--font-syne)",
+              fontWeight: 800,
+              fontSize: "1.125rem",
+              color: "var(--color-text)",
+              letterSpacing: "-0.02em",
+              margin: "0 0 10px",
+            }}
+          >
+            {contest.theme ?? `Contest #${contest.contest_number}`}
+          </h3>
+          {contest.theme_description && (
+            <p style={{ fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.55, margin: "0 0 12px", maxWidth: "480px" }}>
+              {contest.theme_description}
+            </p>
+          )}
+          <div style={{ display: "flex", alignItems: "baseline", gap: "8px", flexWrap: "wrap" }}>
+            <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-text-muted)" }}>
+              Voting opens
+            </span>
+            <span style={{ fontFamily: "var(--font-syne)", fontSize: "1.25rem", fontWeight: 800, color: "var(--color-text)", letterSpacing: "-0.02em" }}>
+              {dayName}, {dateStr}
+            </span>
+            <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "0.875rem", fontWeight: 600, color: accent.color }}>
+              {timeStr}
+            </span>
+          </div>
+        </div>
+
+        {submitHref && (
+          <Link
+            href={submitHref}
+            style={{
+              padding: "9px 20px",
+              background: accent.btnBg,
+              border: `1px solid ${accent.btnBorder}`,
+              borderRadius: "100px",
+              color: accent.color,
+              fontFamily: "var(--font-dm-mono)",
+              fontSize: "11px",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+            }}
+          >
+            {isPhoto ? "Submit your photo →" : "Submit artwork →"}
+          </Link>
+        )}
+      </div>
     </div>
   );
 }
