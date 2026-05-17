@@ -6,7 +6,7 @@ interface LeaderboardEntry {
   image_url: string;
   vote_count: number;
   contest_id: string;
-  contests: { contest_number: number } | null;
+  contests: { contest_number: number; contest_type: string } | null;
 }
 
 const RANK_COLORS: Record<number, string> = {
