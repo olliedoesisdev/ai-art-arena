@@ -9,8 +9,8 @@ import { LiveVoteCount } from "./LiveVoteCount";
 import { Artwork } from "@/lib/types";
 import { trackEvent } from "@/lib/gtag";
 
-const MAX_VOTES_PER_CONTEST = 10;
-const MAX_VOTES_PER_ARTWORK = 5;
+const MAX_VOTES_PER_CONTEST = 50;
+const MAX_VOTES_PER_ARTWORK = 50;
 
 interface ArtworkCardProps {
   artwork: Artwork;
@@ -148,13 +148,14 @@ export function ArtworkCard({
         setLocalContestVotes(newContestVotes);
         setLocalArtworkVotes(newArtworkVotes);
         trackEvent('vote_submitted', { contest_id: contestId, artwork_id: artwork.id, artwork_title: artwork.title });
-        const remaining = MAX_VOTES_PER_CONTEST - Math.max(userVotesOnContest, newContestVotes);
+        const remaining = MAX_VOTES_PER_CONTEST - newContestVotes;
         if (remaining > 0) {
           toast.success(`Voted for "${artwork.title}" — ${remaining} vote${remaining !== 1 ? "s" : ""} left`);
         } else {
           toast.success(`Voted for "${artwork.title}" — all votes used`);
         }
         router.refresh();
+        setIsVoting(false);
       } else {
         toast.error(data.error ?? "Vote failed");
         setIsVoting(false);
@@ -314,7 +315,7 @@ export function ArtworkCard({
         {/* Contest limit reached — show disabled state */}
         {contestLimitReached && !contestEnded && (
           <div className="py-[9px] text-center font-mono text-[11px] text-text-dim">
-            All 10 votes used
+            All {MAX_VOTES_PER_CONTEST} votes used
           </div>
         )}
       </div>
