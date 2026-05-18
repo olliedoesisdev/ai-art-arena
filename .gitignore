@@ -47,3 +47,11 @@ next-env.d.ts
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Local audit/tooling files — never commit these
+route-audit.csv
+*.audit.csv
+
+# Claude Code local settings — may contain MCP tokens
+.claude/settings.local.json
+mcp.json
