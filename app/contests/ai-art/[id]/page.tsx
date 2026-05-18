@@ -81,24 +81,28 @@ export default async function AiArtContestPage({ params }: Props) {
     redirect(active ? `/contests/ai-art/${active.id}` : "/contests");
   }
 
-  let hasVoted = false;
-  let userVoteArtworkId: string | null = null;
+  let userVotesOnContest = 0;
+  let userVotesPerArtwork: Record<string, number> = {};
 
   if (session?.user) {
-    const { data: vote } = await supabase
+    const { data: votes } = await supabase
       .from("votes")
       .select("artwork_id")
       .eq("contest_id", id)
-      .eq("user_id", session.user.id)
-      .single();
-    hasVoted = !!vote;
-    userVoteArtworkId = vote?.artwork_id ?? null;
+      .eq("user_id", session.user.id);
+    if (votes) {
+      userVotesOnContest = votes.length;
+      for (const v of votes) {
+        userVotesPerArtwork[v.artwork_id] = (userVotesPerArtwork[v.artwork_id] ?? 0) + 1;
+      }
+    }
   }
 
   const totalVotes = artworks?.reduce((sum, a) => sum + (a.vote_count ?? 0), 0) ?? 0;
   const maxVotes = artworks && artworks.length > 0 ? Math.max(...artworks.map((a) => a.vote_count)) : 0;
   const contestEnded = new Date(contest.end_date) <= new Date();
-  const votedArtwork = userVoteArtworkId ? artworks?.find((a) => a.id === userVoteArtworkId) : null;
+  const mostVotedArtworkId = Object.entries(userVotesPerArtwork).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+  const votedArtwork = mostVotedArtworkId ? artworks?.find((a) => a.id === mostVotedArtworkId) : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -132,28 +136,7 @@ export default async function AiArtContestPage({ params }: Props) {
 
         <StatsStrip totalVotes={totalVotes} artworkCount={artworks?.length ?? 0} startDate={contest.start_date} />
 
-        {hasVoted && votedArtwork && <VoteAlert artworkTitle={votedArtwork.title} />}
-
-        {hasVoted && !votedArtwork && (
-          <div
-            style={{
-              background: "var(--color-card-accent-2-dim)",
-              border: "1px solid var(--color-card-accent-2-border)",
-              borderRadius: "10px",
-              padding: "12px 18px",
-              marginBottom: "32px",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              fontFamily: "var(--font-dm-mono)",
-              fontSize: "13px",
-              color: "var(--color-card-accent-2)",
-            }}
-          >
-            <span>✓</span>
-            <span>Vote submitted — results update live.</span>
-          </div>
-        )}
+        {userVotesOnContest > 0 && votedArtwork && <VoteAlert artworkTitle={votedArtwork.title} />}
 
         {contestEnded && (
           <div
@@ -187,8 +170,8 @@ export default async function AiArtContestPage({ params }: Props) {
                 contestId={contest.id}
                 index={index}
                 isLeading={artwork.vote_count === maxVotes && maxVotes > 0}
-                isUserVote={userVoteArtworkId === artwork.id}
-                hasVoted={hasVoted}
+                userVotesOnArtwork={userVotesPerArtwork[artwork.id] ?? 0}
+                userVotesOnContest={userVotesOnContest}
                 totalVotes={totalVotes}
                 contestEnded={contestEnded}
               />

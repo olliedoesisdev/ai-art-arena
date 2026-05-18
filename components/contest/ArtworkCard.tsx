@@ -9,19 +9,26 @@ import { LiveVoteCount } from "./LiveVoteCount";
 import { Artwork } from "@/lib/types";
 import { trackEvent } from "@/lib/gtag";
 
+const MAX_VOTES_PER_CONTEST = 10;
+const MAX_VOTES_PER_ARTWORK = 5;
+
 interface ArtworkCardProps {
   artwork: Artwork;
   contestId: string;
   index: number;
   isLeading: boolean;
-  isUserVote: boolean;
-  hasVoted: boolean;
+  userVotesOnArtwork: number;
+  userVotesOnContest: number;
   totalVotes: number;
   contestEnded: boolean;
 }
 
 function localVoteKey(contestId: string) {
-  return `voted:${contestId}`;
+  return `votes:${contestId}`;
+}
+
+function localArtworkVoteKey(contestId: string, artworkId: string) {
+  return `votes:${contestId}:${artworkId}`;
 }
 
 // Per-card accent colours — documented in globals.css under "Artwork card accents"
@@ -75,19 +82,27 @@ export function ArtworkCard({
   contestId,
   index,
   isLeading,
-  isUserVote,
-  hasVoted,
+  userVotesOnArtwork,
+  userVotesOnContest,
   totalVotes,
   contestEnded,
 }: ArtworkCardProps) {
   const [isVoting, setIsVoting] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const [localVoted, setLocalVoted] = useState(() => {
+  // Local vote counts for optimistic UI (authenticated users rely on server counts)
+  const [localContestVotes, setLocalContestVotes] = useState(() => {
     try {
-      return typeof window !== "undefined" && !!localStorage.getItem(localVoteKey(contestId));
-    } catch {
-      return false;
-    }
+      return typeof window !== "undefined"
+        ? parseInt(localStorage.getItem(localVoteKey(contestId)) ?? "0", 10)
+        : 0;
+    } catch { return 0; }
+  });
+  const [localArtworkVotes, setLocalArtworkVotes] = useState(() => {
+    try {
+      return typeof window !== "undefined"
+        ? parseInt(localStorage.getItem(localArtworkVoteKey(contestId, artwork.id)) ?? "0", 10)
+        : 0;
+    } catch { return 0; }
   });
   const [copied, setCopied] = useState(false);
   const router = useRouter();
@@ -97,13 +112,22 @@ export function ArtworkCard({
   const accentShadow = ACCENT_SHADOW[index % ACCENT_SHADOW.length];
   const accentShadowSm = ACCENT_SHADOW_SM[index % ACCENT_SHADOW_SM.length];
   const accentDim = ACCENT_DIM[index % ACCENT_DIM.length];
-  const effectivelyVoted = hasVoted || localVoted;
-  const showResults = effectivelyVoted || contestEnded;
+
+  // Effective vote counts — server count wins for authenticated users (accurate after refresh),
+  // local count used as optimistic fallback for anonymous users between refreshes
+  const effectiveContestVotes = Math.max(userVotesOnContest, localContestVotes);
+  const effectiveArtworkVotes = Math.max(userVotesOnArtwork, localArtworkVotes);
+
+  const contestLimitReached = effectiveContestVotes >= MAX_VOTES_PER_CONTEST;
+  const artworkLimitReached = effectiveArtworkVotes >= MAX_VOTES_PER_ARTWORK;
+  const hasVotedOnThis = effectiveArtworkVotes > 0;
+  const canVote = !contestLimitReached && !artworkLimitReached && !contestEnded;
+  const showResults = effectiveContestVotes > 0 || contestEnded;
   const voteCount = artwork.vote_count;
   const pct = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
 
   async function handleVote() {
-    if (effectivelyVoted || isVoting || contestEnded) return;
+    if (!canVote || isVoting) return;
 
     setIsVoting(true);
     try {
@@ -115,10 +139,21 @@ export function ArtworkCard({
       const data = await res.json();
 
       if (res.ok) {
-        try { localStorage.setItem(localVoteKey(contestId), "1"); } catch { /* blocked */ }
-        setLocalVoted(true);
-        trackEvent('vote_submitted', { contest_id: contestId, artwork_id: artwork.id, artwork_title: artwork.title })
-        toast.success(`Voted for "${artwork.title}"`);
+        const newContestVotes = localContestVotes + 1;
+        const newArtworkVotes = localArtworkVotes + 1;
+        try {
+          localStorage.setItem(localVoteKey(contestId), String(newContestVotes));
+          localStorage.setItem(localArtworkVoteKey(contestId, artwork.id), String(newArtworkVotes));
+        } catch { /* blocked */ }
+        setLocalContestVotes(newContestVotes);
+        setLocalArtworkVotes(newArtworkVotes);
+        trackEvent('vote_submitted', { contest_id: contestId, artwork_id: artwork.id, artwork_title: artwork.title });
+        const remaining = MAX_VOTES_PER_CONTEST - Math.max(userVotesOnContest, newContestVotes);
+        if (remaining > 0) {
+          toast.success(`Voted for "${artwork.title}" — ${remaining} vote${remaining !== 1 ? "s" : ""} left`);
+        } else {
+          toast.success(`Voted for "${artwork.title}" — all votes used`);
+        }
         router.refresh();
       } else {
         toast.error(data.error ?? "Vote failed");
@@ -141,17 +176,17 @@ export function ArtworkCard({
     }
   }
 
-  const clickable = !effectivelyVoted && !contestEnded;
+  const clickable = canVote;
 
   // Border and shadow use per-accent CSS token variants — defined in globals.css
   const cardStyle: React.CSSProperties = {
-    border: isUserVote
+    border: hasVotedOnThis
       ? `1.5px solid ${accent}`
       : hovered && clickable
       ? `1.5px solid ${accentBorder}`
       : "1.5px solid var(--color-border-subtle)",
-    transform: isUserVote ? "translateY(-4px)" : hovered && clickable ? "translateY(-2px)" : "none",
-    boxShadow: isUserVote
+    transform: hasVotedOnThis ? "translateY(-4px)" : hovered && clickable ? "translateY(-2px)" : "none",
+    boxShadow: hasVotedOnThis
       ? `0 12px 40px ${accentShadow}`
       : hovered && clickable
       ? `0 8px 24px ${accentShadowSm}`
@@ -169,7 +204,7 @@ export function ArtworkCard({
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
       aria-label={clickable ? `Vote for ${artwork.title}` : undefined}
-      aria-pressed={isUserVote ? true : undefined}
+      aria-pressed={hasVotedOnThis ? true : undefined}
       className="relative overflow-hidden rounded-2xl bg-white/3 transition-[border-color,transform,box-shadow] duration-200"
       style={{ ...cardStyle, cursor: clickable ? "pointer" : "default" }}
     >
@@ -190,17 +225,17 @@ export function ArtworkCard({
           />
 
           {/* YOUR VOTE badge */}
-          {isUserVote && (
+          {hasVotedOnThis && (
             <div
               className="absolute right-2.5 top-2.5 rounded-[4px] px-2 py-[3px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-bg-base"
               style={{ background: accent }}
             >
-              Your vote
+              {effectiveArtworkVotes > 1 ? `Your vote ×${effectiveArtworkVotes}` : "Your vote"}
             </div>
           )}
 
           {/* LEADING / WINNER badge */}
-          {isLeading && showResults && !isUserVote && (
+          {isLeading && showResults && !hasVotedOnThis && (
             <div className="absolute right-2.5 top-2.5 rounded-[4px] bg-status-warning/90 px-2 py-[3px] font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-bg-base">
               {contestEnded ? "Winner" : "Leading"}
             </div>
@@ -233,7 +268,7 @@ export function ArtworkCard({
                 className="h-full rounded-xs transition-[width] duration-800 ease-in-out"
                 style={{
                   width: `${pct}%`,
-                  background: isUserVote ? accent : isLeading ? "var(--color-status-warning)" : "var(--color-purple)",
+                  background: hasVotedOnThis ? accent : isLeading ? "var(--color-status-warning)" : "var(--color-purple)",
                 }}
               />
             </div>
@@ -242,7 +277,7 @@ export function ArtworkCard({
                 <LiveVoteCount artworkId={artwork.id} initialCount={voteCount} />
                 {" votes"}
               </span>
-              <span style={{ color: isUserVote ? accent : undefined }}>
+              <span style={{ color: hasVotedOnThis ? accent : undefined }}>
                 {pct}%
               </span>
             </div>
@@ -250,7 +285,7 @@ export function ArtworkCard({
         )}
 
         {/* Share button — shown on the card the user voted for */}
-        {isUserVote && (
+        {hasVotedOnThis && (
           <button
             onClick={(e) => { e.stopPropagation(); handleShare(); }}
             className="mt-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-(--radius-sm) px-0 py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
@@ -264,20 +299,22 @@ export function ArtworkCard({
           </button>
         )}
 
-        {/* Vote button — shown to everyone before voting */}
-        {!effectivelyVoted && !contestEnded && (
+        {/* Vote button — shown when user can still vote on this artwork */}
+        {canVote && (
           <VoteButtonInline
             isVoting={isVoting}
             accent={accent}
             accentDim={accentDim}
             hovered={hovered}
+            votesLeft={MAX_VOTES_PER_CONTEST - effectiveContestVotes}
+            artworkVotesLeft={MAX_VOTES_PER_ARTWORK - effectiveArtworkVotes}
           />
         )}
 
-        {/* Quiet vote count when voted but this is not the user's pick */}
-        {effectivelyVoted && !isUserVote && !showResults && (
+        {/* Contest limit reached — show disabled state */}
+        {contestLimitReached && !contestEnded && (
           <div className="py-[9px] text-center font-mono text-[11px] text-text-dim">
-            <LiveVoteCount artworkId={artwork.id} initialCount={voteCount} /> votes
+            All 10 votes used
           </div>
         )}
       </div>
@@ -291,24 +328,43 @@ function VoteButtonInline({
   accent,
   accentDim,
   hovered,
+  votesLeft,
+  artworkVotesLeft,
 }: {
   isVoting: boolean;
   accent: string;
   accentDim: string;
   hovered: boolean;
+  votesLeft: number;
+  artworkVotesLeft: number;
 }) {
+  const label = isVoting
+    ? "SUBMITTING..."
+    : votesLeft === MAX_VOTES_PER_CONTEST
+    ? "VOTE"
+    : `VOTE (${votesLeft} left)`;
+
+  const subLabel = artworkVotesLeft < MAX_VOTES_PER_ARTWORK
+    ? `${artworkVotesLeft} more on this`
+    : null;
+
   return (
     <div
-      className="w-full rounded-(--radius-sm) px-0 py-[9px] text-center font-mono text-[12px] font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
+      className="w-full rounded-(--radius-sm) px-0 py-[9px] text-center font-mono font-semibold uppercase tracking-[0.08em] transition-[background,border-color,color] duration-200"
       style={{
         background: hovered ? accentDim : "var(--color-purple-dim2)",
         border: `1px solid ${hovered ? accent : "var(--color-border-subtle)"}`,
         color: hovered ? accent : "var(--color-text)",
         cursor: isVoting ? "wait" : "pointer",
         pointerEvents: "none", // click handled by parent article
+        fontSize: subLabel ? "11px" : "12px",
+        lineHeight: subLabel ? "1.3" : undefined,
       }}
     >
-      {isVoting ? "SUBMITTING..." : "VOTE"}
+      <div>{label}</div>
+      {subLabel && (
+        <div style={{ fontSize: "9px", opacity: 0.6, marginTop: "2px" }}>{subLabel}</div>
+      )}
     </div>
   );
 }

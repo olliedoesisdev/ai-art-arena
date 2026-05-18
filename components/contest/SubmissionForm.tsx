@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { ThemeBadge } from "./ThemeBadge";
 
 interface SubmissionFormProps {
@@ -50,8 +51,8 @@ export function SubmissionForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const handleFile = useCallback((selected: File) => {
     if (!ACCEPTED_TYPES.includes(selected.type)) {
@@ -99,7 +100,8 @@ export function SubmissionForm({
       const data = await res.json();
 
       if (res.ok) {
-        setSubmitted(true);
+        toast.success("Submission received — pending review.");
+        router.push("/profile/me");
       } else {
         toast.error(data.error ?? "Submission failed. Please try again.");
         setIsSubmitting(false);
@@ -108,36 +110,6 @@ export function SubmissionForm({
       toast.error("Network error — please try again.");
       setIsSubmitting(false);
     }
-  }
-
-  if (submitted) {
-    return (
-      <div
-        style={{
-          background: "var(--color-status-successDim)",
-          border: "1px solid rgba(52,211,153,0.25)",
-          borderRadius: "14px",
-          padding: "40px 32px",
-          textAlign: "center",
-        }}
-      >
-        <div style={{ fontSize: "2rem", marginBottom: "16px" }}>✓</div>
-        <h2
-          style={{
-            fontFamily: "var(--font-syne)",
-            fontWeight: 700,
-            fontSize: "1.25rem",
-            color: "var(--color-text)",
-            marginBottom: "10px",
-          }}
-        >
-          Submission received
-        </h2>
-        <p style={{ fontSize: "0.9375rem", color: "var(--color-text-muted)", lineHeight: 1.6 }}>
-          Your submission is pending review. You will be notified when it goes live.
-        </p>
-      </div>
-    );
   }
 
   return (
