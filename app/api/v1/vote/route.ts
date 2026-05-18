@@ -208,6 +208,8 @@ export async function POST(request: Request) {
     //    happen given the migration), skip revalidation rather than crashing.
     if (row.contest_id) {
       revalidatePath(`/contest/${row.contest_id}`);
+      revalidatePath(`/contests/ai-art/${row.contest_id}`);
+      revalidatePath(`/contests/photo/${row.contest_id}`);
     }
 
     const ms = Date.now() - start;
