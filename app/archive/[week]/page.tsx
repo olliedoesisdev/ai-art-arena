@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import { CommentSection } from "@/components/comments/CommentSection";
 import { JsonLd } from "@/components/layout/JsonLd";
 import { SITE_URL } from "@/lib/site";
+import { ShareResultButton } from "@/components/archive/ShareResultButton";
+import { ContestNotifyBanner } from "@/components/contest/ContestNotifyBanner";
 
 export const revalidate = 3600;
 
@@ -13,8 +15,36 @@ type Props = { params: { week: string } };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const week = params.week;
-  const title = `Day ${week} Results — AI Art Arena`;
-  const description = `Final results and winner for Day ${week} of the AI Art Arena AI art voting contest.`;
+  const supabase = createPublicClient();
+
+  const { data: contest } = await supabase
+    .from("contests")
+    .select("id, contest_number, theme, artworks(title, vote_count)")
+    .eq("contest_number", parseInt(week, 10))
+    .eq("status", "archived")
+    .single();
+
+  const artworks = (
+    (contest?.artworks ?? []) as Array<{ title: string; vote_count: number }>
+  )
+    .slice()
+    .sort((a, b) => b.vote_count - a.vote_count);
+
+  const winner = artworks[0];
+  const totalVotes = artworks.reduce((s, a) => s + a.vote_count, 0);
+
+  const title = winner
+    ? `"${winner.title}" won Contest #${week} — AI Art Arena`
+    : `Contest #${week} Results — AI Art Arena`;
+
+  const description = winner
+    ? `${winner.title} took ${winner.vote_count.toLocaleString()} of ${totalVotes.toLocaleString()} votes in Contest #${week}${contest?.theme ? ` (${contest.theme})` : ""}.`
+    : `Final results for Contest #${week} of AI Art Arena.`;
+
+  const ogImage = contest?.id
+    ? `${SITE_URL}/api/og/contest/${contest.id}`
+    : `${SITE_URL}/og-image.png`;
+
   return {
     title,
     description,
@@ -24,14 +54,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: `${SITE_URL}/archive/${week}`,
       siteName: "AI Art Arena",
-      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: `AI Art Arena Day ${week} results` }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`${SITE_URL}/og-image.png`],
+      images: [ogImage],
     },
   };
 }
@@ -222,6 +252,17 @@ export default async function ArchiveWeekPage({ params }: Props) {
           </div>
         )}
 
+        {/* Share button */}
+        {winner && (
+          <div style={{ marginBottom: "40px" }}>
+            <ShareResultButton
+              contestNumber={contest.contest_number}
+              winnerTitle={winner.title}
+              archiveUrl={`${SITE_URL}/archive/${contest.contest_number}`}
+            />
+          </div>
+        )}
+
         {/* All results */}
         <p
           style={{
@@ -311,6 +352,8 @@ export default async function ArchiveWeekPage({ params }: Props) {
             );
           })}
         </div>
+
+        <ContestNotifyBanner />
 
         {/* Attribution */}
         <p style={{ fontFamily: "var(--font-dm-mono)", fontSize: "11px", color: "var(--color-text-muted)", margin: "40px 0 0", letterSpacing: "0.04em" }}>

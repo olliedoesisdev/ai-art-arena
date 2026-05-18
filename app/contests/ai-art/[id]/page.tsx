@@ -11,6 +11,8 @@ import { JsonLd } from "@/components/layout/JsonLd";
 import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
 import { CommentSection } from "@/components/comments/CommentSection";
+import { SignInNudge } from "@/components/contest/SignInNudge";
+import { ContestNotifyBanner } from "@/components/contest/ContestNotifyBanner";
 
 export const revalidate = 60;
 
@@ -63,7 +65,7 @@ export default async function AiArtContestPage({ params }: Props) {
 
   const [{ data: contest, error: contestError }, { data: artworks }] = await Promise.all([
     supabase.from("contests").select("*").eq("id", id).single(),
-    supabase.from("artworks").select("*").eq("contest_id", id).order("display_order"),
+    supabase.from("artworks").select("*, submitter:submitted_by(id, display_name, avatar_url)").eq("contest_id", id).order("display_order"),
   ]);
 
   if (contestError || !contest) notFound();
@@ -136,6 +138,10 @@ export default async function AiArtContestPage({ params }: Props) {
 
         <StatsStrip totalVotes={totalVotes} artworkCount={artworks?.length ?? 0} startDate={contest.start_date} />
 
+        {!session?.user && contest.status === "active" && (
+          <SignInNudge callbackPath={`/contests/ai-art/${contest.id}`} />
+        )}
+
         {userVotesOnContest > 0 && votedArtwork && <VoteAlert artworkTitle={votedArtwork.title} />}
 
         {contestEnded && (
@@ -205,6 +211,8 @@ export default async function AiArtContestPage({ params }: Props) {
             ))}
           </div>
         )}
+
+        <ContestNotifyBanner />
 
         {/* CTA strip */}
         <div style={{ marginTop: "64px", display: "flex", flexDirection: "column", gap: "12px" }}>

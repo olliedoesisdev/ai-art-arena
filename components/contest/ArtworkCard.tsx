@@ -251,6 +251,37 @@ export function ArtworkCard({
           {artwork.title}
         </div>
 
+        {/* Submitter byline */}
+        {artwork.submitter && (
+          <Link
+            href={`/profile/${artwork.submitter.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="mb-2 flex items-center gap-1.5 no-underline"
+          >
+            <div
+              className="flex items-center justify-center overflow-hidden rounded-full"
+              style={{ width: "16px", height: "16px", background: "var(--color-bg-surface2)", border: "1px solid var(--color-border-subtle)", flexShrink: 0 }}
+            >
+              {artwork.submitter.avatar_url ? (
+                <Image
+                  src={artwork.submitter.avatar_url}
+                  alt={artwork.submitter.display_name ?? "Artist"}
+                  width={16}
+                  height={16}
+                  className="object-cover"
+                />
+              ) : (
+                <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "8px", fontWeight: 700, color: "var(--color-purple-light)" }}>
+                  {(artwork.submitter.display_name ?? "?").charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
+            <span style={{ fontFamily: "var(--font-dm-mono)", fontSize: "10px", fontWeight: 600, color: "var(--color-text-muted)", letterSpacing: "0.04em" }}>
+              {artwork.submitter.display_name ?? "Anonymous"}
+            </span>
+          </Link>
+        )}
+
         {/* Prompt */}
         {artwork.prompt && (
           <div

@@ -293,7 +293,9 @@ export default async function ContestsPage() {
   const supabase = createPublicClient();
   const session = await auth();
 
-  const [{ data: contests }, { data: upcomingContests }] = await Promise.all([
+  const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  const [{ data: contests }, { data: upcomingContests }, { count: recentVotes }] = await Promise.all([
     supabase
       .from("contests")
       .select("id, contest_number, status, contest_type, theme, theme_description, start_date, end_date, artwork_count, created_at, updated_at, artworks(id, image_url, title, vote_count, contest_id, prompt, created_at, updated_at)")
@@ -304,6 +306,10 @@ export default async function ContestsPage() {
       .select("id, contest_number, contest_type, theme, theme_description, submissions_open_at, start_date, end_date")
       .eq("status", "upcoming")
       .order("contest_number", { ascending: true }),
+    supabase
+      .from("votes")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", since24h),
   ]);
 
   const allActive = (contests ?? []) as Array<Contest & { artworks: Artwork[] }>;
@@ -464,9 +470,24 @@ export default async function ContestsPage() {
 
         {/* 1. Live now */}
         <section style={{ marginBottom: "56px" }}>
-          <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1.125rem", color: "var(--color-text)", margin: "0 0 20px" }}>
-            Live now
-          </h2>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "20px" }}>
+            <h2 style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "1.125rem", color: "var(--color-text)", margin: 0 }}>
+              Live now
+            </h2>
+            {recentVotes !== null && recentVotes > 0 && (
+              <span
+                style={{
+                  fontFamily: "var(--font-dm-mono)",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: "var(--color-status-success)",
+                  letterSpacing: "0.06em",
+                }}
+              >
+                {recentVotes.toLocaleString()} vote{recentVotes !== 1 ? "s" : ""} in the last 24h
+              </span>
+            )}
+          </div>
           {allActive.length === 0 ? (
             <EmptySection label="active" />
           ) : (

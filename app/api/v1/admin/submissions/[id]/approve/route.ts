@@ -89,6 +89,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       title: submission.title,
       prompt: submission.description ?? null,
       vote_count: 0,
+      submitted_by: submission.user_id,
     })
     .select("id")
     .single();

@@ -10,6 +10,8 @@ import { ArtworkCard } from "@/components/contest/ArtworkCard";
 import { JsonLd } from "@/components/layout/JsonLd";
 import { SITE_URL } from "@/lib/site";
 import { CommentSection } from "@/components/comments/CommentSection";
+import { SignInNudge } from "@/components/contest/SignInNudge";
+import { ContestNotifyBanner } from "@/components/contest/ContestNotifyBanner";
 
 export const revalidate = 60;
 
@@ -60,7 +62,7 @@ export default async function PhotoContestPage({ params }: Props) {
 
   const [{ data: contest, error: contestError }, { data: artworks }] = await Promise.all([
     supabase.from("contests").select("*").eq("id", id).single(),
-    supabase.from("artworks").select("*").eq("contest_id", id).order("display_order"),
+    supabase.from("artworks").select("*, submitter:submitted_by(id, display_name, avatar_url)").eq("contest_id", id).order("display_order"),
   ]);
 
   if (contestError || !contest) notFound();
@@ -133,6 +135,10 @@ export default async function PhotoContestPage({ params }: Props) {
 
         <StatsStrip totalVotes={totalVotes} artworkCount={artworks?.length ?? 0} startDate={contest.start_date} />
 
+        {!session?.user && contest.status === "active" && (
+          <SignInNudge callbackPath={`/contests/photo/${contest.id}`} />
+        )}
+
         {userVotesOnContest > 0 && votedArtwork && <VoteAlert artworkTitle={votedArtwork.title} />}
 
         {contestEnded && (
@@ -202,6 +208,8 @@ export default async function PhotoContestPage({ params }: Props) {
             ))}
           </div>
         )}
+
+        <ContestNotifyBanner />
       </div>
     </div>
   );

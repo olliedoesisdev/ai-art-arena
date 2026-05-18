@@ -42,6 +42,8 @@ export interface Artwork {
   title: string;
   prompt?: string;
   vote_count: number;
+  submitted_by?: string | null;
+  submitter?: { id: string; display_name: string | null; avatar_url: string | null } | null;
   created_at: string;
   updated_at: string;
 }
