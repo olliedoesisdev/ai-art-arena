@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/server";
+import { authRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE_BYTES = 3 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
   try {
+    const ipHash = hashIP(getClientIP(request));
+    const { success: allowed } = await authRateLimit.limit(`avatar:${ipHash}`);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests — try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -98,8 +106,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function DELETE(_request: NextRequest) {
+export async function DELETE(request: NextRequest) {
   try {
+    const ipHash = hashIP(getClientIP(request));
+    const { success: allowed } = await authRateLimit.limit(`avatar:${ipHash}`);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests — try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized." }, { status: 401 });

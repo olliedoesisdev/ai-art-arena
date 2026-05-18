@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
+import { authRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE = 10 * 1024 * 1024;
@@ -11,6 +13,12 @@ export async function POST(request: NextRequest) {
   logger.info({ requestId, path: "/api/upload/submission" }, "upload request received");
 
   try {
+    const ipHash = hashIP(getClientIP(request));
+    const { success: allowed } = await authRateLimit.limit(`upload:${ipHash}`);
+    if (!allowed) {
+      return NextResponse.json({ error: "Too many requests — try again later." }, { status: 429 });
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 

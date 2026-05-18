@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { resetRateLimit } from "@/lib/ratelimit";
@@ -18,12 +17,6 @@ export async function POST(request: Request) {
   logger.info({ requestId }, "password reset request received");
 
   try {
-    const ipHash = hashIP(getClientIP(request));
-    const { success } = await resetRateLimit.limit(ipHash);
-    if (!success) {
-      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
-    }
-
     let body: unknown;
     try { body = await request.json(); } catch {
       return jsonResponse(requestId, { error: "Invalid JSON" }, { status: 400 });
@@ -32,6 +25,12 @@ export async function POST(request: Request) {
     const result = Schema.safeParse(body);
     if (!result.success) {
       return jsonResponse(requestId, { error: "Valid email required" }, { status: 400 });
+    }
+
+    const ipHash = hashIP(getClientIP(request));
+    const { success } = await resetRateLimit.limit(ipHash);
+    if (!success) {
+      return jsonResponse(requestId, { error: "Too many requests — try again later" }, { status: 429 });
     }
 
     const { email } = result.data;

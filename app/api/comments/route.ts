@@ -1,10 +1,10 @@
-﻿import { NextResponse } from "next/server";
-import { createPublicClient } from "@/lib/supabase/server";
+﻿import { createPublicClient } from "@/lib/supabase/server";
 import { CreateCommentSchema } from "@/lib/validators";
 import { getClientIP, hashIP } from "@/lib/utils";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { sendCommentNotification, sendCommentOnYourArtwork } from "@/lib/email";
 import { auth } from "@/auth";
+import { authRateLimit } from "@/lib/ratelimit";
 
 export async function POST(request: Request) {
   const requestId = generateRequestId();
@@ -40,26 +40,19 @@ export async function POST(request: Request) {
       // stay anonymous
     }
 
-    // Rate limit: one comment per IP per 60 seconds
+    // Rate limit: 5 comments per IP per 15 minutes (Redis sliding window)
     const clientIP = getClientIP(request);
     const ipHash = hashIP(clientIP);
-
-    const supabase = createPublicClient();
-
-    const since = new Date(Date.now() - 60_000).toISOString();
-    const { count } = await supabase
-      .from("comments")
-      .select("id", { count: "exact", head: true })
-      .eq("ip_hash", ipHash)
-      .gte("created_at", since);
-
-    if ((count ?? 0) > 0) {
+    const { success: allowed } = await authRateLimit.limit(`comment:${ipHash}`);
+    if (!allowed) {
       logger.warn({ requestId, ipHash }, "comment rate limited");
-      return jsonResponse(requestId, 
+      return jsonResponse(requestId,
         { error: "Please wait before submitting another comment" },
         { status: 429 }
       );
     }
+
+    const supabase = createPublicClient();
 
     // Look up contest_id from the artwork so we can store it on the comment
     const { data: artwork } = await supabase

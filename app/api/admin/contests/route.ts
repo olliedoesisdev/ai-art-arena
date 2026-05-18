@@ -1,6 +1,6 @@
 ﻿import { createAdminClient } from "@/lib/supabase/server";
 import { auth } from "@/auth";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
 import { adminRateLimit } from "@/lib/ratelimit";
 import { getClientIP, hashIP } from "@/lib/utils";
@@ -8,12 +8,17 @@ import { z } from "zod";
 
 const CreateContestSchema = z.object({
   contest_number: z.number().int().positive(),
+  contest_type: z.enum(["ai_art", "photo"]).default("ai_art"),
   title: z.string().min(1).max(100).optional(),
   description: z.string().max(500).optional(),
+  submissions_open_at: z.iso.datetime().optional(),
   start_date: z.iso.datetime(),
   end_date: z.iso.datetime(),
-  status: z.enum(["active", "archived"]).default("active"),
+  status: z.enum(["upcoming", "active", "archived"]).default("upcoming"),
   artwork_count: z.number().int().min(1).max(50).default(6),
+  theme: z.string().max(80).optional(),
+  theme_description: z.string().max(300).optional(),
+  max_submissions: z.number().int().positive().optional(),
 }).refine(data => new Date(data.end_date) > new Date(data.start_date), {
   message: "End date must be after start date",
   path: ["end_date"],
@@ -53,7 +58,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { contest_number, title, description, start_date, end_date, status, artwork_count } = result.data;
+    const {
+      contest_number, contest_type, title, description,
+      submissions_open_at, start_date, end_date, status,
+      artwork_count, theme, theme_description, max_submissions,
+    } = result.data;
     const supabase = createAdminClient();
 
     const { data: existingContest } = await supabase
@@ -84,12 +93,17 @@ export async function POST(request: NextRequest) {
       .from("contests")
       .insert({
         contest_number,
+        contest_type,
         title: title ?? `Contest #${contest_number}`,
         description: description ?? null,
+        submissions_open_at: submissions_open_at ? new Date(submissions_open_at).toISOString() : null,
         start_date: new Date(start_date).toISOString(),
         end_date: new Date(end_date).toISOString(),
         status,
         artwork_count,
+        theme: theme ?? null,
+        theme_description: theme_description ?? null,
+        max_submissions: max_submissions ?? null,
       })
       .select()
       .single();

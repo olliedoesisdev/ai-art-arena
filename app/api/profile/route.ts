@@ -1,8 +1,10 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { z } from "zod";
 import { updateUserProfile } from "@/lib/data/profiles";
 import { logger, generateRequestId, jsonResponse } from "@/lib/logger";
+import { authRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 
 const UpdateProfileSchema = z.object({
   display_name: z.string().min(1).max(50).trim().optional(),
@@ -15,6 +17,12 @@ export async function PATCH(request: NextRequest) {
   const requestId = generateRequestId();
 
   try {
+    const ipHash = hashIP(getClientIP(request));
+    const { success: allowed } = await authRateLimit.limit(`profile:${ipHash}`);
+    if (!allowed) {
+      return jsonResponse(requestId, { error: "Too many requests — try again later." }, { status: 429 });
+    }
+
     const session = await auth();
     if (!session?.user?.id) {
       return jsonResponse(requestId, { error: "You must be signed in to update your profile." }, { status: 401 });

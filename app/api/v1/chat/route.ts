@@ -1,6 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createPublicClient } from "@/lib/supabase/server";
 import { logger, generateRequestId } from "@/lib/logger";
+import { authRateLimit } from "@/lib/ratelimit";
+import { getClientIP, hashIP } from "@/lib/utils";
 import { z } from "zod";
 
 const MessageSchema = z.object({
@@ -105,6 +107,12 @@ export async function POST(request: Request) {
     const result = ChatSchema.safeParse(body);
     if (!result.success) {
       return new Response(JSON.stringify({ error: "Invalid input" }), { status: 400 });
+    }
+
+    const ipHash = hashIP(getClientIP(request));
+    const { success: allowed } = await authRateLimit.limit(`chat:${ipHash}`);
+    if (!allowed) {
+      return new Response(JSON.stringify({ error: "Too many requests — slow down" }), { status: 429 });
     }
 
     const { messages } = result.data;
